@@ -39,7 +39,6 @@ extension LoginViewController: LoginViewDelegate {
     }
     
     func didTapFindButton() {
-        //수정 필요
         navigationController?.pushViewController(SignUpViewController(), animated: true)
     }
     

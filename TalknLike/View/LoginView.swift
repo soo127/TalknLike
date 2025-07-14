@@ -56,26 +56,27 @@ final class LoginView: UIView {
         findButton.setTitle("아이디/비밀번호 찾기", for: .normal)
         findButton.tintColor = .white
         
-        let horizontalStackView = UIStackView(arrangedSubviews: [signUpButton, findButton])
-        horizontalStackView.axis = .horizontal
-        horizontalStackView.distribution = .fillEqually
+        let hStack = UIStackView(arrangedSubviews: [signUpButton, findButton])
+        hStack.axis = .horizontal
+        hStack.distribution = .fillEqually
         
-        let verticalStackView = UIStackView(arrangedSubviews: [logoLabel, idField, passwordField, loginButton, horizontalStackView])
-        verticalStackView.setCustomSpacing(50, after: logoLabel)
-        verticalStackView.axis = .vertical
-        verticalStackView.spacing = 20
-        verticalStackView.translatesAutoresizingMaskIntoConstraints = false
+        let vStack = UIStackView(arrangedSubviews: [logoLabel, idField, passwordField, loginButton, hStack])
+        vStack.setCustomSpacing(50, after: logoLabel)
+        vStack.axis = .vertical
+        vStack.spacing = 20
+        vStack.translatesAutoresizingMaskIntoConstraints = false
         
-        addSubview(verticalStackView)
+        addSubview(vStack)
         
         NSLayoutConstraint.activate([
-            verticalStackView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 100),
-            verticalStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40),
-            verticalStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -40)
+            vStack.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 100),
+            vStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40),
+            vStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -40)
         ])
         
         loginButton.addTarget(self, action: #selector(loginTapped), for: .touchUpInside)
         signUpButton.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
+        findButton.addTarget(self, action: #selector(findTapped), for: .touchUpInside)
     }
     
 }
