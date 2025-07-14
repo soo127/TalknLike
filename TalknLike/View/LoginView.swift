@@ -11,60 +11,76 @@ final class LoginView: UIView {
 
     weak var delegate: LoginViewDelegate?
 
-    let idField = UITextField()
-    let passwordField = UITextField()
-    let signUpButton = UIButton(type: .system)
-
+    private let logoLabel = UILabel()
+    private let idField = UITextField()
+    private let passwordField = UITextField()
+    private let loginButton = UIButton(type: .system)
+    private let signUpButton = UIButton(type: .system)
+    private let findButton = UIButton(type: .system)
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
-        setupConstraints()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+   
     private func setup() {
-        backgroundColor = .blue
-
-        idField.placeholder = "실험용"
-        idField.borderStyle = .roundedRect
-
-        passwordField.placeholder = "비밀번호 (6자 이상)"
-        passwordField.borderStyle = .roundedRect
-
-        signUpButton.setTitle("회원가입", for: .normal)
-        signUpButton.backgroundColor = .systemBlue
-        signUpButton.tintColor = .white
-        signUpButton.layer.cornerRadius = 8
-
-        [idField, passwordField, signUpButton].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            addSubview($0)
-        }
+        backgroundColor = .lightGray
         
-//        loginButton.addTarget(self, action: #selector(loginTapped), for: .touchUpInside)
-        signUpButton.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
-           
-    }
-
-    private func setupConstraints() {
+        logoLabel.text = "TalknLike"
+        logoLabel.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        logoLabel.textAlignment = .center
+        logoLabel.textColor = .white
+        
+        idField.placeholder = "아이디"
+        idField.autocapitalizationType = .none
+        idField.borderStyle = .roundedRect
+        
+        passwordField.placeholder = "비밀번호"
+        passwordField.isSecureTextEntry = true
+        passwordField.autocapitalizationType = .none
+        passwordField.borderStyle = .roundedRect
+        
+        loginButton.setTitle("로그인", for: .normal)
+        loginButton.backgroundColor = .systemBlue
+        loginButton.tintColor = .white
+        loginButton.layer.cornerRadius = 8
+        loginButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        
+        signUpButton.setTitle("회원가입", for: .normal)
+        signUpButton.tintColor = .white
+        
+        findButton.setTitle("아이디/비밀번호 찾기", for: .normal)
+        findButton.tintColor = .white
+        
+        let horizontalStackView = UIStackView(arrangedSubviews: [signUpButton, findButton])
+        horizontalStackView.axis = .horizontal
+        horizontalStackView.distribution = .fillEqually
+        
+        let verticalStackView = UIStackView(arrangedSubviews: [logoLabel, idField, passwordField, loginButton, horizontalStackView])
+        verticalStackView.setCustomSpacing(50, after: logoLabel)
+        verticalStackView.axis = .vertical
+        verticalStackView.spacing = 20
+        verticalStackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        addSubview(verticalStackView)
+        
         NSLayoutConstraint.activate([
-            idField.topAnchor.constraint(equalTo: topAnchor, constant: 100),
-            idField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40),
-            idField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -40),
-
-            passwordField.topAnchor.constraint(equalTo: idField.bottomAnchor, constant: 20),
-            passwordField.leadingAnchor.constraint(equalTo: idField.leadingAnchor),
-            passwordField.trailingAnchor.constraint(equalTo: idField.trailingAnchor),
-
-            signUpButton.topAnchor.constraint(equalTo: passwordField.bottomAnchor, constant: 30),
-            signUpButton.leadingAnchor.constraint(equalTo: idField.leadingAnchor),
-            signUpButton.trailingAnchor.constraint(equalTo: idField.trailingAnchor),
-            signUpButton.heightAnchor.constraint(equalToConstant: 44)
+            verticalStackView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 100),
+            verticalStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40),
+            verticalStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -40)
         ])
+        
+        loginButton.addTarget(self, action: #selector(loginTapped), for: .touchUpInside)
+        signUpButton.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
     }
+    
+}
+
+extension LoginView {
     
     @objc private func loginTapped() {
         delegate?.didTapLoginButton()
@@ -74,5 +90,8 @@ final class LoginView: UIView {
         delegate?.didTapSignUpButton()
     }
     
-}
+    @objc private func findTapped() {
+        delegate?.didTapFindButton()
+    }
 
+}

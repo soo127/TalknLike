@@ -10,6 +10,7 @@ import UIKit
 protocol LoginViewDelegate: AnyObject {
     func didTapLoginButton()
     func didTapSignUpButton()
+    func didTapFindButton()
 }
 
 final class LoginViewController: UIViewController {
@@ -34,6 +35,11 @@ extension LoginViewController: LoginViewDelegate {
     }
 
     func didTapSignUpButton() {
+        navigationController?.pushViewController(SignUpViewController(), animated: true)
+    }
+    
+    func didTapFindButton() {
+        //수정 필요
         navigationController?.pushViewController(SignUpViewController(), animated: true)
     }
     
