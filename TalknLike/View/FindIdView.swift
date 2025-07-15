@@ -11,18 +11,11 @@ final class FindIdView: UIView {
 
     let title = UILabel()
     let phoneField = UITextField.make("전화번호", numberOnly: true)
-    let verifyButton = UIButton(type: .system)
+    let verifyButton = UIButton.make("인증", backgroundColor: .systemGray2)
     let certificationField = UITextField.make("인증번호 입력", numberOnly: true)
-    let submitButton = UIButton(type: .system)
-    
-    private lazy var phoneStack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [phoneField, verifyButton])
-        stack.axis = .horizontal
-        stack.spacing = 8
-        stack.distribution = .fillProportionally
-        return stack
-    }()
-    
+    let submitButton = UIButton.make("확인", backgroundColor: .systemBlue, height: 44)
+    private lazy var phoneStack = UIStackView.horizontalStack(views: [phoneField, verifyButton])
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -40,17 +33,7 @@ final class FindIdView: UIView {
         title.font = UIFont.systemFont(ofSize: 30, weight: .bold)
         title.textAlignment = .left
         title.textColor = .black
-        
-        verifyButton.setTitle("인증", for: .normal)
-        verifyButton.backgroundColor = .systemGray2
-        verifyButton.layer.cornerRadius = 3
-        verifyButton.setTitleColor(.white, for: .normal)
-        
-        submitButton.setTitle("확인", for: .normal)
-        submitButton.backgroundColor = .systemBlue
-        submitButton.tintColor = .white
-        submitButton.layer.cornerRadius = 8
-        submitButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
+
         submitButton.isEnabled = false
         submitButton.alpha = 0.5
     }

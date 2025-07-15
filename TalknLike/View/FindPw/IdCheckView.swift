@@ -14,7 +14,7 @@ final class IdCheckView: UIView, StepView {
     private let stepIndicator = StepIndicatorView()
     let title = UILabel()
     let idField = UITextField.make("아이디 입력")
-    let nextButton = UIButton(type: .system)
+    let nextButton = UIButton.make("다음", backgroundColor: .systemBlue, height: 44)
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -42,11 +42,6 @@ final class IdCheckView: UIView, StepView {
         title.textAlignment = .left
         title.textColor = .black
 
-        nextButton.setTitle("다음", for: .normal)
-        nextButton.backgroundColor = .systemBlue
-        nextButton.tintColor = .white
-        nextButton.layer.cornerRadius = 6
-        nextButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
         nextButton.addTarget(self, action: #selector(tapped), for: .touchUpInside)
 
         let vStack = UIStackView(arrangedSubviews: [title, idField, nextButton])

@@ -13,10 +13,12 @@ final class PhoneVerifyView: UIView, StepView {
     
     private let stepIndicator = StepIndicatorView()
     let title = UILabel()
-    let phoneField = UITextField.make("전화번호 입력", numberOnly: true)
+    let phoneField = UITextField.make("전화번호", numberOnly: true)
+    let verifyButton = UIButton.make("인증", backgroundColor: .systemGray2)
     let codeField = UITextField.make("인증번호 입력", numberOnly: true)
-    let nextButton = UIButton(type: .system)
-
+    let nextButton = UIButton.make("다음", backgroundColor: .systemBlue, height: 44)
+    private lazy var phoneStack = UIStackView.horizontalStack(views: [phoneField, verifyButton])
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -43,13 +45,9 @@ final class PhoneVerifyView: UIView, StepView {
         title.textAlignment = .left
         title.textColor = .black
         
-        nextButton.setTitle("다음", for: .normal)
-        nextButton.backgroundColor = .systemBlue
-        nextButton.tintColor = .white
-        nextButton.layer.cornerRadius = 6
         nextButton.addTarget(self, action: #selector(tapped), for: .touchUpInside)
 
-        let stack = UIStackView(arrangedSubviews: [title, phoneField, codeField, nextButton])
+        let stack = UIStackView(arrangedSubviews: [title, phoneStack, codeField, nextButton])
         stack.axis = .vertical
         stack.spacing = 20
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -60,7 +58,6 @@ final class PhoneVerifyView: UIView, StepView {
             stack.topAnchor.constraint(equalTo: stepIndicator.bottomAnchor, constant: 150),
             stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 30),
             stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -30),
-            nextButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
     

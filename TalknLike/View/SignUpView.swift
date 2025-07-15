@@ -12,17 +12,10 @@ final class SignUpView: UIView {
     let idField = UITextField.make("아이디")
     let passwordField = UITextField.make("비밀번호 (8자 이상)", secure: true)
     let passwordCheckField = UITextField.make("비밀번호 확인", secure: true)
-    let phoneField = UITextField.make("전화번호 (숫자만 입력)", numberOnly: true)
-    let verifyButton = UIButton(type: .system)
-    let signUpButton = UIButton(type: .system)
-
-    private lazy var phoneStack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [phoneField, verifyButton])
-        stack.axis = .horizontal
-        stack.spacing = 8
-        stack.distribution = .fillProportionally
-        return stack
-    }()
+    let phoneField = UITextField.make("전화번호", numberOnly: true)
+    let verifyButton = UIButton.make("인증", backgroundColor: .systemGray2)
+    let signUpButton = UIButton.make("회원가입", backgroundColor: .systemBlue, height: 44)
+    private lazy var phoneStack = UIStackView.horizontalStack(views: [phoneField, verifyButton])
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -36,15 +29,6 @@ final class SignUpView: UIView {
 
     private func setup() {
         backgroundColor = .white
-
-        verifyButton.setTitle("인증 요청", for: .normal)
-        verifyButton.setTitleColor(.systemBlue, for: .normal)
-
-        signUpButton.setTitle("회원가입", for: .normal)
-        signUpButton.backgroundColor = .systemBlue
-        signUpButton.tintColor = .white
-        signUpButton.layer.cornerRadius = 8
-        signUpButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
         signUpButton.isEnabled = false
         signUpButton.alpha = 0.5
     }

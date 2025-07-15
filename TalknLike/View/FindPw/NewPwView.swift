@@ -15,7 +15,7 @@ final class NewPwView: UIView, StepView {
     let title = UILabel()
     let passwordField = UITextField.make("새 비밀번호", secure: true)
     let confirmField = UITextField.make("비밀번호 확인", secure: true)
-    let finishButton = UIButton(type: .system)
+    let finishButton = UIButton.make("완료", backgroundColor: .systemBlue, height: 44)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -43,10 +43,6 @@ final class NewPwView: UIView, StepView {
         title.textAlignment = .left
         title.textColor = .black
         
-        finishButton.setTitle("완료", for: .normal)
-        finishButton.backgroundColor = .systemBlue
-        finishButton.tintColor = .white
-        finishButton.layer.cornerRadius = 6
         finishButton.addTarget(self, action: #selector(tapped), for: .touchUpInside)
         
         let stack = UIStackView(arrangedSubviews: [title, passwordField, confirmField, finishButton])
@@ -60,7 +56,6 @@ final class NewPwView: UIView, StepView {
             stack.topAnchor.constraint(equalTo: stepIndicator.bottomAnchor, constant: 150),
             stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 30),
             stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -30),
-            finishButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
     

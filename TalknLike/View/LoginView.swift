@@ -14,10 +14,10 @@ final class LoginView: UIView {
     private let logoLabel = UILabel()
     private let idField = UITextField.make("아이디")
     private let passwordField = UITextField.make("비밀번호", secure: true)
-    private let loginButton = UIButton(type: .system)
-    private let signUpButton = UIButton(type: .system)
-    private let findIdButton = UIButton(type: .system)
-    private let findPwButton = UIButton(type: .system)
+    private let loginButton = UIButton.make("로그인", backgroundColor: .systemBlue, height: 44)
+    private let signUpButton = UIButton.make("회원가입")
+    private let findIdButton = UIButton.make("아이디 찾기")
+    private let findPwButton = UIButton.make("비밀번호 찾기")
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -34,21 +34,6 @@ final class LoginView: UIView {
         logoLabel.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         logoLabel.textAlignment = .center
         logoLabel.textColor = .white
-        
-        loginButton.setTitle("로그인", for: .normal)
-        loginButton.backgroundColor = .systemBlue
-        loginButton.tintColor = .white
-        loginButton.layer.cornerRadius = 8
-        loginButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
-        
-        signUpButton.setTitle("회원가입", for: .normal)
-        signUpButton.tintColor = .white
-        
-        findIdButton.setTitle("아이디 찾기", for: .normal)
-        findIdButton.tintColor = .white
-        
-        findPwButton.setTitle("비밀번호 찾기", for: .normal)
-        findPwButton.tintColor = .white
         
         let hStack = UIStackView(arrangedSubviews: [signUpButton, findIdButton, findPwButton])
         hStack.axis = .horizontal
