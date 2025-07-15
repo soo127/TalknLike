@@ -9,13 +9,14 @@ import UIKit
 
 extension UIStackView {
     
-    static func horizontalStack(
+    static func make(
         views: [UIView],
+        axis: NSLayoutConstraint.Axis,
         spacing: CGFloat = 8,
         distribution: UIStackView.Distribution = .fillProportionally
     ) -> UIStackView {
         let stack = UIStackView(arrangedSubviews: views)
-        stack.axis = .horizontal
+        stack.axis = axis
         stack.spacing = spacing
         stack.distribution = distribution
         return stack

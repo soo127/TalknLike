@@ -15,7 +15,7 @@ final class SignUpView: UIView {
     let phoneField = UITextField.make("전화번호", numberOnly: true)
     let verifyButton = UIButton.make("인증", backgroundColor: .systemGray2)
     let signUpButton = UIButton.make("회원가입", backgroundColor: .systemBlue, height: 44)
-    private lazy var phoneStack = UIStackView.horizontalStack(views: [phoneField, verifyButton])
+    private lazy var phoneStack = UIStackView.make(views: [phoneField, verifyButton], axis: .horizontal)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -68,14 +68,10 @@ final class SignUpView: UIView {
         label.text = text
         label.font = UIFont.systemFont(ofSize: 12)
         label.textColor = .darkGray
+        
+        let titleStack = UIStackView.make(views: [icon, label], axis: .horizontal)
+        let mainStack = UIStackView.make(views: [titleStack, field], axis: .vertical)
 
-        let titleStack = UIStackView(arrangedSubviews: [icon, label])
-        titleStack.axis = .horizontal
-        titleStack.spacing = 6
-
-        let mainStack = UIStackView(arrangedSubviews: [titleStack, field])
-        mainStack.axis = .vertical
-        mainStack.spacing = 6
         return mainStack
     }
     

@@ -51,7 +51,6 @@ final class FindPwViewController: UIViewController {
             self?.goToNextStep()
         }
         contentView.addSubview(stepView)
-        //stepIndicator.updateStep(index: index)
 
         stepView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([

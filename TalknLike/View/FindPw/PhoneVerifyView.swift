@@ -17,7 +17,7 @@ final class PhoneVerifyView: UIView, StepView {
     let verifyButton = UIButton.make("인증", backgroundColor: .systemGray2)
     let codeField = UITextField.make("인증번호 입력", numberOnly: true)
     let nextButton = UIButton.make("다음", backgroundColor: .systemBlue, height: 44)
-    private lazy var phoneStack = UIStackView.horizontalStack(views: [phoneField, verifyButton])
+    private lazy var phoneStack = UIStackView.make(views: [phoneField, verifyButton], axis: .horizontal)
     
     override init(frame: CGRect) {
         super.init(frame: frame)

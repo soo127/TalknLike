@@ -46,11 +46,5 @@ final class StepIndicatorView: UIView {
             stack.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
-    
-    func updateStep(index: Int) {
-        for (i, label) in labels.enumerated() {
-            label.textColor = i == index ? .systemBlue : .gray
-        }
-    }
 
 }
