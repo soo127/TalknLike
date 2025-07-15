@@ -11,7 +11,9 @@ final class IdCheckView: UIView, StepView {
     
     var onNext: (() -> Void)?
 
-    let idField = UITextField()
+    private let stepIndicator = StepIndicatorView()
+    let title = UILabel()
+    let idField = UITextField.make("아이디 입력")
     let nextButton = UIButton(type: .system)
 
     override init(frame: CGRect) {
@@ -26,29 +28,41 @@ final class IdCheckView: UIView, StepView {
     private func setup() {
         backgroundColor = .white
 
-        idField.placeholder = "아이디 입력"
-        idField.borderStyle = .roundedRect
+        stepIndicator.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(stepIndicator)
+        NSLayoutConstraint.activate([
+            stepIndicator.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            stepIndicator.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stepIndicator.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stepIndicator.heightAnchor.constraint(equalToConstant: 40)
+        ])
         
+        title.text = "아이디를 입력해주세요."
+        title.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
+        title.textAlignment = .left
+        title.textColor = .black
+
         nextButton.setTitle("다음", for: .normal)
         nextButton.backgroundColor = .systemBlue
         nextButton.tintColor = .white
         nextButton.layer.cornerRadius = 6
+        nextButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
         nextButton.addTarget(self, action: #selector(tapped), for: .touchUpInside)
 
-        let stack = UIStackView(arrangedSubviews: [idField, nextButton])
-        stack.axis = .vertical
-        stack.spacing = 20
-        stack.translatesAutoresizingMaskIntoConstraints = false
-
-        addSubview(stack)
+        let vStack = UIStackView(arrangedSubviews: [title, idField, nextButton])
+        vStack.axis = .vertical
+        vStack.spacing = 20
+        vStack.translatesAutoresizingMaskIntoConstraints = false
+        vStack.setCustomSpacing(50, after: title)
+        addSubview(vStack)
+        
         NSLayoutConstraint.activate([
-            stack.centerYAnchor.constraint(equalTo: centerYAnchor),
-            stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 30),
-            stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -30),
-            nextButton.heightAnchor.constraint(equalToConstant: 44)
+            vStack.topAnchor.constraint(equalTo: stepIndicator.bottomAnchor, constant: 150),
+            vStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 30),
+            vStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -30)
         ])
     }
-    
+
 }
 
 extension IdCheckView {

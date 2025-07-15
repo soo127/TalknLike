@@ -9,10 +9,10 @@ import UIKit
 
 final class SignUpView: UIView {
     
-    let idField = UITextField()
-    let passwordField = UITextField()
-    let passwordCheckField = UITextField()
-    let phoneField = UITextField()
+    let idField = UITextField.make("아이디")
+    let passwordField = UITextField.make("비밀번호 (8자 이상)", secure: true)
+    let passwordCheckField = UITextField.make("비밀번호 확인", secure: true)
+    let phoneField = UITextField.make("전화번호 (숫자만 입력)", numberOnly: true)
     let verifyButton = UIButton(type: .system)
     let signUpButton = UIButton(type: .system)
 
@@ -36,22 +36,6 @@ final class SignUpView: UIView {
 
     private func setup() {
         backgroundColor = .white
-        
-        [idField, passwordField, passwordCheckField, phoneField].forEach {
-            $0.borderStyle = .roundedRect
-            $0.autocapitalizationType = .none
-        }
-
-        idField.placeholder = "아이디"
-        
-        passwordField.placeholder = "비밀번호 (8자 이상)"
-        passwordField.isSecureTextEntry = true
-        
-        passwordCheckField.placeholder = "비밀번호 확인"
-        passwordCheckField.isSecureTextEntry = true
-
-        phoneField.placeholder = "전화번호 (숫자만 입력)"
-        phoneField.keyboardType = .numberPad
 
         verifyButton.setTitle("인증 요청", for: .normal)
         verifyButton.setTitleColor(.systemBlue, for: .normal)

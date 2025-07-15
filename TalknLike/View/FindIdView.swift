@@ -10,9 +10,9 @@ import UIKit
 final class FindIdView: UIView {
 
     let title = UILabel()
-    let phoneField = UITextField()
+    let phoneField = UITextField.make("전화번호", numberOnly: true)
     let verifyButton = UIButton(type: .system)
-    let certificationField = UITextField()
+    let certificationField = UITextField.make("인증번호 입력", numberOnly: true)
     let submitButton = UIButton(type: .system)
     
     private lazy var phoneStack: UIStackView = {
@@ -41,18 +41,10 @@ final class FindIdView: UIView {
         title.textAlignment = .left
         title.textColor = .black
         
-        phoneField.placeholder = "전화번호"
-        phoneField.keyboardType = .numberPad
-        phoneField.borderStyle = .roundedRect
-
         verifyButton.setTitle("인증", for: .normal)
         verifyButton.backgroundColor = .systemGray2
         verifyButton.layer.cornerRadius = 3
         verifyButton.setTitleColor(.white, for: .normal)
-        
-        certificationField.placeholder = "인증번호 입력"
-        certificationField.keyboardType = .numberPad
-        certificationField.borderStyle = .roundedRect
         
         submitButton.setTitle("확인", for: .normal)
         submitButton.backgroundColor = .systemBlue

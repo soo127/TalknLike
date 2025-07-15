@@ -12,8 +12,8 @@ final class LoginView: UIView {
     weak var delegate: LoginViewDelegate?
 
     private let logoLabel = UILabel()
-    private let idField = UITextField()
-    private let passwordField = UITextField()
+    private let idField = UITextField.make("아이디")
+    private let passwordField = UITextField.make("비밀번호", secure: true)
     private let loginButton = UIButton(type: .system)
     private let signUpButton = UIButton(type: .system)
     private let findIdButton = UIButton(type: .system)
@@ -30,20 +30,10 @@ final class LoginView: UIView {
    
     private func setup() {
         backgroundColor = .lightGray
-        
         logoLabel.text = "TalknLike"
         logoLabel.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         logoLabel.textAlignment = .center
         logoLabel.textColor = .white
-        
-        idField.placeholder = "아이디"
-        idField.autocapitalizationType = .none
-        idField.borderStyle = .roundedRect
-        
-        passwordField.placeholder = "비밀번호"
-        passwordField.isSecureTextEntry = true
-        passwordField.autocapitalizationType = .none
-        passwordField.borderStyle = .roundedRect
         
         loginButton.setTitle("로그인", for: .normal)
         loginButton.backgroundColor = .systemBlue

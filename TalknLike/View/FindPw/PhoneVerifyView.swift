@@ -10,8 +10,11 @@ import UIKit
 final class PhoneVerifyView: UIView, StepView {
 
     var onNext: (() -> Void)?
-    let phoneField = UITextField()
-    let codeField = UITextField()
+    
+    private let stepIndicator = StepIndicatorView()
+    let title = UILabel()
+    let phoneField = UITextField.make("전화번호 입력", numberOnly: true)
+    let codeField = UITextField.make("인증번호 입력", numberOnly: true)
     let nextButton = UIButton(type: .system)
 
     override init(frame: CGRect) {
@@ -26,28 +29,35 @@ final class PhoneVerifyView: UIView, StepView {
     private func setup() {
         backgroundColor = .white
         
-        phoneField.placeholder = "전화번호 입력"
-        phoneField.borderStyle = .roundedRect
-        phoneField.keyboardType = .phonePad
-
-        codeField.placeholder = "인증번호 입력"
-        codeField.borderStyle = .roundedRect
-        codeField.keyboardType = .numberPad
-
+        stepIndicator.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(stepIndicator)
+        NSLayoutConstraint.activate([
+            stepIndicator.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            stepIndicator.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stepIndicator.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stepIndicator.heightAnchor.constraint(equalToConstant: 40)
+        ])
+        
+        title.text = "번호 인증을 완료해주세요."
+        title.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
+        title.textAlignment = .left
+        title.textColor = .black
+        
         nextButton.setTitle("다음", for: .normal)
         nextButton.backgroundColor = .systemBlue
         nextButton.tintColor = .white
         nextButton.layer.cornerRadius = 6
         nextButton.addTarget(self, action: #selector(tapped), for: .touchUpInside)
 
-        let stack = UIStackView(arrangedSubviews: [phoneField, codeField, nextButton])
+        let stack = UIStackView(arrangedSubviews: [title, phoneField, codeField, nextButton])
         stack.axis = .vertical
         stack.spacing = 20
         stack.translatesAutoresizingMaskIntoConstraints = false
-
+        stack.setCustomSpacing(50, after: title)
         addSubview(stack)
+        
         NSLayoutConstraint.activate([
-            stack.centerYAnchor.constraint(equalTo: centerYAnchor),
+            stack.topAnchor.constraint(equalTo: stepIndicator.bottomAnchor, constant: 150),
             stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 30),
             stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -30),
             nextButton.heightAnchor.constraint(equalToConstant: 44)

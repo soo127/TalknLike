@@ -13,7 +13,6 @@ protocol StepView {
 
 final class FindPwViewController: UIViewController {
 
-    private let stepIndicator = StepIndicatorView()
     private let contentView = UIView()
 
     private var stepIndex = 0
@@ -32,7 +31,7 @@ final class FindPwViewController: UIViewController {
     private func setupLayout() {
         view.backgroundColor = .white
 
-        let stack = UIStackView(arrangedSubviews: [stepIndicator, contentView])
+        let stack = UIStackView(arrangedSubviews: [ contentView])
         stack.axis = .vertical
         stack.translatesAutoresizingMaskIntoConstraints = false
 
@@ -41,8 +40,7 @@ final class FindPwViewController: UIViewController {
             stack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             stack.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             stack.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            stack.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            stepIndicator.heightAnchor.constraint(equalToConstant: 50)
+            stack.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 
@@ -53,6 +51,7 @@ final class FindPwViewController: UIViewController {
             self?.goToNextStep()
         }
         contentView.addSubview(stepView)
+        //stepIndicator.updateStep(index: index)
 
         stepView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
