@@ -16,7 +16,8 @@ final class LoginView: UIView {
     private let passwordField = UITextField()
     private let loginButton = UIButton(type: .system)
     private let signUpButton = UIButton(type: .system)
-    private let findButton = UIButton(type: .system)
+    private let findIdButton = UIButton(type: .system)
+    private let findPwButton = UIButton(type: .system)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -53,10 +54,13 @@ final class LoginView: UIView {
         signUpButton.setTitle("회원가입", for: .normal)
         signUpButton.tintColor = .white
         
-        findButton.setTitle("아이디/비밀번호 찾기", for: .normal)
-        findButton.tintColor = .white
+        findIdButton.setTitle("아이디 찾기", for: .normal)
+        findIdButton.tintColor = .white
         
-        let hStack = UIStackView(arrangedSubviews: [signUpButton, findButton])
+        findPwButton.setTitle("비밀번호 찾기", for: .normal)
+        findPwButton.tintColor = .white
+        
+        let hStack = UIStackView(arrangedSubviews: [signUpButton, findIdButton, findPwButton])
         hStack.axis = .horizontal
         hStack.distribution = .fillEqually
         
@@ -76,7 +80,9 @@ final class LoginView: UIView {
         
         loginButton.addTarget(self, action: #selector(loginTapped), for: .touchUpInside)
         signUpButton.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
-        findButton.addTarget(self, action: #selector(findTapped), for: .touchUpInside)
+        findIdButton.addTarget(self, action: #selector(findIdTapped), for: .touchUpInside)
+        findPwButton.addTarget(self, action: #selector(findPwTapped), for: .touchUpInside)
+        
     }
     
 }
@@ -91,8 +97,12 @@ extension LoginView {
         delegate?.didTapSignUpButton()
     }
     
-    @objc private func findTapped() {
-        delegate?.didTapFindButton()
+    @objc private func findIdTapped() {
+        delegate?.didTapFindIdButton()
+    }
+    
+    @objc private func findPwTapped() {
+        delegate?.didTapFindPwButton()
     }
 
 }
