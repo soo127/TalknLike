@@ -10,7 +10,7 @@ import UIKit
 protocol SignUpViewDelegate: AnyObject {
     func didTapVerifyButton()
     func didTapSignUpButton()
-    func textFieldsDidChange()
+    func didChangeTextFields()
 }
 
 final class SignUpViewController: UIViewController {
@@ -40,7 +40,7 @@ extension SignUpViewController: SignUpViewDelegate {
         present(alert, animated: true)
     }
     
-    func textFieldsDidChange() {
+    func didChangeTextFields() {
         let filled = true // 조건 붙이기
         if filled {
             signUpView.setSignUpButton()

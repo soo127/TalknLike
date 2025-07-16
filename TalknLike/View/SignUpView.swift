@@ -33,11 +33,11 @@ final class SignUpView: UIView {
         backgroundColor = .white
         signUpButton.isEnabled = false
         signUpButton.alpha = 0.5
-        verifyButton.addTarget(self, action: #selector(verifyButtonTapped), for: .touchUpInside)
-        signUpButton.addTarget(self, action: #selector(signUpButtonTapped), for: .touchUpInside)
+        signUpButton.addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
+        verifyButton.addTarget(self, action: #selector(didTapVerifyButton), for: .touchUpInside)
         [idField, passwordField, passwordCheckField, phoneField].forEach {
-                    $0.addTarget(self, action: #selector(textFieldsChanged), for: .editingChanged)
-                }
+            $0.addTarget(self, action: #selector(didChangeTextFields), for: .editingChanged)
+        }
     }
 
     private func setupConstraints() {
@@ -68,8 +68,10 @@ final class SignUpView: UIView {
     private func makeField(icon: String, text: String, field: UIView) -> UIStackView {
         let icon = UIImageView(image: UIImage(systemName: icon))
         icon.tintColor = .gray
-        icon.translatesAutoresizingMaskIntoConstraints = false
-        icon.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        NSLayoutConstraint.activate([
+            icon.widthAnchor.constraint(equalToConstant: 20),
+            icon.heightAnchor.constraint(equalToConstant: 20)
+        ])
 
         let label = UILabel()
         label.text = text
@@ -78,7 +80,7 @@ final class SignUpView: UIView {
         
         let titleStack = UIStackView.make(views: [icon, label], axis: .horizontal)
         let mainStack = UIStackView.make(views: [titleStack, field], axis: .vertical)
-
+        
         return mainStack
     }
     
@@ -91,17 +93,18 @@ final class SignUpView: UIView {
 
 extension SignUpView {
     
-    @objc func verifyButtonTapped() {
+    @objc func didTapVerifyButton() {
         delegate?.didTapVerifyButton()
     }
     
-    @objc func signUpButtonTapped() {
+    @objc func didTapSignUpButton() {
         delegate?.didTapSignUpButton()
     }
     
-    @objc func textFieldsChanged() {
-        delegate?.textFieldsDidChange()
+    @objc func didChangeTextFields() {
+        delegate?.didChangeTextFields()
     }
+    
 }
 
 

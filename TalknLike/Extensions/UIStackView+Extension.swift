@@ -13,7 +13,7 @@ extension UIStackView {
         views: [UIView],
         axis: NSLayoutConstraint.Axis,
         spacing: CGFloat = 8,
-        distribution: UIStackView.Distribution = .fillProportionally
+        distribution: UIStackView.Distribution = .fill
     ) -> UIStackView {
         let stack = UIStackView(arrangedSubviews: views)
         stack.axis = axis

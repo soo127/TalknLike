@@ -14,7 +14,7 @@ final class FindIdView: UIView {
     let verifyButton = UIButton.make("인증", backgroundColor: .systemGray2)
     let certificationField = UITextField.make("인증번호 입력", numberOnly: true)
     let submitButton = UIButton.make("확인", backgroundColor: .systemBlue, height: 44)
-    private lazy var phoneStack = UIStackView.make(views: [phoneField, verifyButton], axis: .horizontal)
+    private lazy var phoneStack = UIStackView.make(views: [phoneField, verifyButton], axis: .horizontal, distribution: .fillProportionally)
 
     override init(frame: CGRect) {
         super.init(frame: frame)
