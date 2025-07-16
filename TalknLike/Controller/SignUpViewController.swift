@@ -7,6 +7,12 @@
 
 import UIKit
 
+protocol SignUpViewDelegate: AnyObject {
+    func didTapVerifyButton()
+    func didTapSignUpButton()
+    func textFieldsDidChange()
+}
+
 final class SignUpViewController: UIViewController {
     
     private let signUpView = SignUpView()
@@ -17,10 +23,7 @@ final class SignUpViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        [signUpView.idField, signUpView.passwordField, signUpView.passwordCheckField, signUpView.phoneField].forEach {
-            $0.addTarget(self, action: #selector(textFieldsChanged), for: .editingChanged)
-        }
-        signUpView.signUpButton.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
+        signUpView.delegate = self
     }
 
     @objc private func textFieldsChanged() {
@@ -41,3 +44,18 @@ final class SignUpViewController: UIViewController {
     
 }
 
+extension SignUpViewController: SignUpViewDelegate {
+    
+    func didTapVerifyButton() {
+        
+    }
+    
+    func didTapSignUpButton() {
+        
+    }
+    
+    func textFieldsDidChange() {
+        
+    }
+    
+}

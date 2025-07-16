@@ -57,7 +57,6 @@ final class LoginView: UIView {
         signUpButton.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
         findIdButton.addTarget(self, action: #selector(findIdTapped), for: .touchUpInside)
         findPwButton.addTarget(self, action: #selector(findPwTapped), for: .touchUpInside)
-        
     }
     
 }

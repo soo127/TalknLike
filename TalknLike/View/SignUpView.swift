@@ -9,6 +9,8 @@ import UIKit
 
 final class SignUpView: UIView {
     
+    weak var delegate: SignUpViewDelegate?
+
     let idField = UITextField.make("아이디")
     let passwordField = UITextField.make("비밀번호 (8자 이상)", secure: true)
     let passwordCheckField = UITextField.make("비밀번호 확인", secure: true)
@@ -31,6 +33,11 @@ final class SignUpView: UIView {
         backgroundColor = .white
         signUpButton.isEnabled = false
         signUpButton.alpha = 0.5
+        verifyButton.addTarget(self, action: #selector(verifyButtonTapped), for: .touchUpInside)
+        signUpButton.addTarget(self, action: #selector(signUpButtonTapped), for: .touchUpInside)
+        [idField, passwordField, passwordCheckField, phoneField].forEach {
+                    $0.addTarget(self, action: #selector(textFieldsChanged), for: .editingChanged)
+                }
     }
 
     private func setupConstraints() {
@@ -75,6 +82,21 @@ final class SignUpView: UIView {
         return mainStack
     }
     
+}
+
+extension SignUpView {
+    
+    @objc func verifyButtonTapped() {
+        delegate?.didTapVerifyButton()
+    }
+    
+    @objc func signUpButtonTapped() {
+        delegate?.didTapSignUpButton()
+    }
+    
+    @objc func textFieldsChanged() {
+        delegate?.textFieldsDidChange()
+    }
 }
 
 
