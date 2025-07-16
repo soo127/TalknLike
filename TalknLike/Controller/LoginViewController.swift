@@ -44,7 +44,7 @@ extension LoginViewController: LoginViewDelegate {
     }
     
     func didTapFindPwButton() {
-        navigationController?.pushViewController(FindPwViewController(), animated: true)
+        navigationController?.pushViewController(IdCheckViewController(), animated: true)
     }
     
 }

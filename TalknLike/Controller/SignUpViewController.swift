@@ -25,22 +25,6 @@ final class SignUpViewController: UIViewController {
         super.viewDidLoad()
         signUpView.delegate = self
     }
-
-    @objc private func textFieldsChanged() {
-        let filled = !signUpView.idField.text!.isEmpty &&
-                     !signUpView.passwordField.text!.isEmpty &&
-                     !signUpView.passwordCheckField.text!.isEmpty &&
-                     !signUpView.phoneField.text!.isEmpty
-
-        signUpView.signUpButton.isEnabled = filled
-        signUpView.signUpButton.alpha = filled ? 1.0 : 0.5
-    }
-
-    @objc private func signUpTapped() {
-        let alert = UIAlertController(title: "가입 완료", message: "환영합니다!", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "확인", style: .default))
-        present(alert, animated: true)
-    }
     
 }
 
@@ -51,11 +35,16 @@ extension SignUpViewController: SignUpViewDelegate {
     }
     
     func didTapSignUpButton() {
-        
+        let alert = UIAlertController(title: "가입 완료", message: "환영합니다!", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
     }
     
     func textFieldsDidChange() {
-        
+        let filled = true // 조건 붙이기
+        if filled {
+            signUpView.setSignUpButton()
+        }
     }
     
 }

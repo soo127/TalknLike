@@ -82,6 +82,11 @@ final class SignUpView: UIView {
         return mainStack
     }
     
+    func setSignUpButton() {
+        signUpButton.isEnabled = true
+        signUpButton.alpha = 1.0
+    }
+    
 }
 
 extension SignUpView {

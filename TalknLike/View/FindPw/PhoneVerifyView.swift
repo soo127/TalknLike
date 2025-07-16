@@ -7,10 +7,8 @@
 
 import UIKit
 
-final class PhoneVerifyView: UIView, StepView {
+final class PhoneVerifyView: UIView {
 
-    var onNext: (() -> Void)?
-    
     private let stepIndicator = StepIndicatorView()
     let title = UILabel()
     let phoneField = UITextField.make("전화번호", numberOnly: true)
@@ -44,8 +42,6 @@ final class PhoneVerifyView: UIView, StepView {
         title.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
         title.textAlignment = .left
         title.textColor = .black
-        
-        nextButton.addTarget(self, action: #selector(tapped), for: .touchUpInside)
 
         let stack = UIStackView(arrangedSubviews: [title, phoneStack, codeField, nextButton])
         stack.axis = .vertical
@@ -59,14 +55,6 @@ final class PhoneVerifyView: UIView, StepView {
             stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 30),
             stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -30),
         ])
-    }
-    
-}
-
-extension PhoneVerifyView {
-    
-    @objc private func tapped() {
-        onNext?()
     }
     
 }

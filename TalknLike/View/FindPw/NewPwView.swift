@@ -7,9 +7,7 @@
 
 import UIKit
 
-final class NewPwView: UIView, StepView {
-    
-    var onNext: (() -> Void)?
+final class NewPwView: UIView {
     
     private let stepIndicator = StepIndicatorView()
     let title = UILabel()
@@ -43,8 +41,6 @@ final class NewPwView: UIView, StepView {
         title.textAlignment = .left
         title.textColor = .black
         
-        finishButton.addTarget(self, action: #selector(tapped), for: .touchUpInside)
-        
         let stack = UIStackView(arrangedSubviews: [title, passwordField, confirmField, finishButton])
         stack.axis = .vertical
         stack.spacing = 20
@@ -59,11 +55,4 @@ final class NewPwView: UIView, StepView {
         ])
     }
     
-}
-
-extension NewPwView {
-    
-    @objc private func tapped() {
-        onNext?()
-    }
 }

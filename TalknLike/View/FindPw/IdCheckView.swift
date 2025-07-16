@@ -7,10 +7,8 @@
 
 import UIKit
 
-final class IdCheckView: UIView, StepView {
+final class IdCheckView: UIView {
     
-    var onNext: (() -> Void)?
-
     private let stepIndicator = StepIndicatorView()
     let title = UILabel()
     let idField = UITextField.make("아이디 입력")
@@ -42,8 +40,6 @@ final class IdCheckView: UIView, StepView {
         title.textAlignment = .left
         title.textColor = .black
 
-        nextButton.addTarget(self, action: #selector(tapped), for: .touchUpInside)
-
         let vStack = UIStackView(arrangedSubviews: [title, idField, nextButton])
         vStack.axis = .vertical
         vStack.spacing = 20
@@ -58,12 +54,4 @@ final class IdCheckView: UIView, StepView {
         ])
     }
 
-}
-
-extension IdCheckView {
-    
-    @objc private func tapped() {
-        onNext?()
-    }
-    
 }
