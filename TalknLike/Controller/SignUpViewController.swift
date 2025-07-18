@@ -6,17 +6,21 @@
 //
 
 import UIKit
+import Combine
+import FirebaseFirestore
+
 
 protocol SignUpViewDelegate: AnyObject {
     func didTapVerifyButton()
     func didTapSignUpButton()
-    func didChangeTextFields()
+    func didChangeEmailFields()
 }
 
 final class SignUpViewController: UIViewController {
     
     private let signUpView = SignUpView()
-
+    private let db = Firestore.firestore()
+    
     override func loadView() {
         view = signUpView
     }
@@ -40,11 +44,10 @@ extension SignUpViewController: SignUpViewDelegate {
         present(alert, animated: true)
     }
     
-    func didChangeTextFields() {
-        let filled = true // 조건 붙이기
-        if filled {
-            signUpView.setSignUpButton()
-        }
+    func didChangeEmailFields() {
+        guard let text = signUpView.emailField.text else { return }
+        signUpView.emailVerifyButton.isEnabled = !text.isEmpty
+        signUpView.emailVerifyButton.alpha = text.isEmpty ? 0.5 : 1.0
     }
-    
+
 }

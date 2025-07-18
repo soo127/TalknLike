@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8D7BA88D2E274274002D9003 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8D7BA88C2E274274002D9003 /* FirebaseAnalytics */; };
+		8D45AFC12E2A2D1B001409F0 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 8D45AFC02E2A2D1B001409F0 /* FirebaseFirestore */; };
+		8D45AFC32E2A2D25001409F0 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 8D45AFC22E2A2D25001409F0 /* FirebaseCore */; };
+		8D45AFC52E2A2D4C001409F0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8D45AFC42E2A2D4C001409F0 /* FirebaseAuth */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,7 +71,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D7BA88D2E274274002D9003 /* FirebaseAnalytics in Frameworks */,
+				8D45AFC32E2A2D25001409F0 /* FirebaseCore in Frameworks */,
+				8D45AFC12E2A2D1B001409F0 /* FirebaseFirestore in Frameworks */,
+				8D45AFC52E2A2D4C001409F0 /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,12 +94,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8D45AFBF2E2A2D1B001409F0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		8D9C89902E24AC0300E8EF25 = {
 			isa = PBXGroup;
 			children = (
 				8D9C899B2E24AC0300E8EF25 /* TalknLike */,
 				8D9C89B22E24AC0500E8EF25 /* TalknLikeTests */,
 				8D9C89BC2E24AC0500E8EF25 /* TalknLikeUITests */,
+				8D45AFBF2E2A2D1B001409F0 /* Frameworks */,
 				8D9C899A2E24AC0300E8EF25 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -130,7 +142,9 @@
 			);
 			name = TalknLike;
 			packageProductDependencies = (
-				8D7BA88C2E274274002D9003 /* FirebaseAnalytics */,
+				8D45AFC02E2A2D1B001409F0 /* FirebaseFirestore */,
+				8D45AFC22E2A2D25001409F0 /* FirebaseCore */,
+				8D45AFC42E2A2D4C001409F0 /* FirebaseAuth */,
 			);
 			productName = TalknLike;
 			productReference = 8D9C89992E24AC0300E8EF25 /* TalknLike.app */;
@@ -591,10 +605,20 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		8D7BA88C2E274274002D9003 /* FirebaseAnalytics */ = {
+		8D45AFC02E2A2D1B001409F0 /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 8D7BA88B2E274274002D9003 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalytics;
+			productName = FirebaseFirestore;
+		};
+		8D45AFC22E2A2D25001409F0 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8D7BA88B2E274274002D9003 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		8D45AFC42E2A2D4C001409F0 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8D7BA88B2E274274002D9003 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
