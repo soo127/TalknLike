@@ -37,10 +37,12 @@ extension LoginViewController: LoginViewDelegate {
               let pw = loginView.passwordField.text else {
             return
         }
-        Auth.auth().signIn(withEmail: email, password: pw) { [weak self] result, error in
+        Auth.auth().signIn(withEmail: email, password: pw) { result, error in
             if let user = result?.user {
                 print("로그인 성공: \(user.uid)")
-                self?.navigationController?.pushViewController(SignUpViewController(), animated: true)
+                if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                    sceneDelegate.window?.rootViewController = MainViewController()
+                }
             }
             if let error = error {
                 print("에러: \(error.localizedDescription)")
