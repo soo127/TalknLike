@@ -12,10 +12,11 @@ final class SignUpView: UIView {
     weak var delegate: SignUpViewDelegate?
 
     let emailField = UITextField.make("이메일")
-    let emailVerifyButton = UIButton.make("인증", backgroundColor: .systemGray)
+    let emailVerifyButton = UIButton.make("인증", backgroundColor: .systemGray2)
     let passwordField = UITextField.make("비밀번호 (8자 이상)", secure: true)
     let passwordCheckField = UITextField.make("비밀번호 확인", secure: true)
     let signUpButton = UIButton.make("가입", backgroundColor: .systemBlue, height: 44)
+    let emailLabel = UILabel()
 
     private lazy var emailStack = UIStackView.make(views: [emailField, emailVerifyButton], axis: .horizontal)
 
@@ -35,19 +36,26 @@ final class SignUpView: UIView {
         emailVerifyButton.isEnabled = false
         emailVerifyButton.alpha = 0.5
         
+        emailLabel.font = UIFont.systemFont(ofSize: 12)
+        emailLabel.numberOfLines = 1
+        
         signUpButton.isEnabled = false
         signUpButton.alpha = 0.5
 
         signUpButton.addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
         emailVerifyButton.addTarget(self, action: #selector(didTapVerifyButton), for: .touchUpInside)
-
-        emailField.addTarget(self, action: #selector(didChangeEmailFields), for: .editingChanged)
-        
     }
 
     private func setupConstraints() {
-        let stackView = UIStackView(arrangedSubviews: [
+        let emailFieldGroup = UIStackView(arrangedSubviews: [
             makeField(icon: "envelope.fill", text: "이메일", field: emailStack),
+            emailLabel
+        ])
+        emailFieldGroup.axis = .vertical
+        emailFieldGroup.spacing = 4
+
+        let stackView = UIStackView(arrangedSubviews: [
+            emailFieldGroup,
             makeField(icon: "lock.fill", text: "비밀번호", field: passwordField),
             makeField(icon: "lock.fill", text: "비밀번호 확인", field: passwordCheckField),
             signUpButton
@@ -88,14 +96,9 @@ final class SignUpView: UIView {
 
         return mainStack
     }
-
-    func setSignUpButton(enabled: Bool) {
-        signUpButton.isEnabled = enabled
-        signUpButton.alpha = enabled ? 1.0 : 0.5
-    }
 }
 
-
+// MARK: - Delegate Event 연결
 extension SignUpView {
     
     @objc func didTapVerifyButton() {
@@ -105,11 +108,20 @@ extension SignUpView {
     @objc func didTapSignUpButton() {
         delegate?.didTapSignUpButton()
     }
+
+}
+
+// MARK: - 외부에서 호출할 메서드들
+extension SignUpView {
     
-    @objc func didChangeEmailFields() {
-        delegate?.didChangeEmailFields()
+    func showEmailFieldMessage(result: EmailCheckResult) {
+        emailLabel.text = result.errorMessage
+        emailLabel.textColor = result.isValid ? .systemGreen : .systemRed
+    }
+    
+    func updateVerifyButton(result: EmailCheckResult) {
+        emailVerifyButton.isEnabled = result.isValid
+        emailVerifyButton.alpha = result.isValid ? 1.0 : 0.5
     }
     
 }
-
-

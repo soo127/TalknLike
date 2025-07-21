@@ -7,19 +7,19 @@
 
 import UIKit
 import Combine
+import FirebaseAuth
 import FirebaseFirestore
-
 
 protocol SignUpViewDelegate: AnyObject {
     func didTapVerifyButton()
     func didTapSignUpButton()
-    func didChangeEmailFields()
 }
 
 final class SignUpViewController: UIViewController {
     
     private let signUpView = SignUpView()
     private let db = Firestore.firestore()
+    private var cancellables = Set<AnyCancellable>()
     
     override func loadView() {
         view = signUpView
@@ -28,6 +28,49 @@ final class SignUpViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         signUpView.delegate = self
+        observeEmailField()
+    }
+    
+    private func observeEmailField() {
+        let publisher = NotificationCenter.default.publisher(for: UITextField.textDidChangeNotification, object: signUpView.emailField)
+            
+        publisher
+            .compactMap { ($0.object as? UITextField)?.text }
+            .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
+            .removeDuplicates()
+            .sink { [weak self] email in
+                self?.handleEmailInputChange(email: email)
+            }
+            .store(in: &cancellables)
+    }
+
+    private func handleEmailInputChange(email: String) {
+        Task { [weak self] in
+            guard let self = self else {
+                return
+            }
+            let result = await self.checkEmailStatus(email: email)
+            self.updateUI(for: result)
+        }
+    }
+    
+    private func checkEmailStatus(email: String) async -> EmailCheckResult {
+        guard !email.isEmpty else { return .empty }
+        do {
+            return try await db.collection("Users")
+                .whereField("email", isEqualTo: email)
+                .getDocuments()
+                .documents
+                .isEmpty ? .available : .duplicate
+        } catch {
+            print("Firestore 에러: \(error)")
+            return .error
+        }
+    }
+    
+    private func updateUI(for result: EmailCheckResult) {
+        signUpView.showEmailFieldMessage(result: result)
+        signUpView.updateVerifyButton(result: result)
     }
     
 }
@@ -44,10 +87,4 @@ extension SignUpViewController: SignUpViewDelegate {
         present(alert, animated: true)
     }
     
-    func didChangeEmailFields() {
-        guard let text = signUpView.emailField.text else { return }
-        signUpView.emailVerifyButton.isEnabled = !text.isEmpty
-        signUpView.emailVerifyButton.alpha = text.isEmpty ? 0.5 : 1.0
-    }
-
 }
