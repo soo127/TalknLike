@@ -12,8 +12,8 @@ final class LoginView: UIView {
     weak var delegate: LoginViewDelegate?
 
     private let logoLabel = UILabel()
-    private let idField = UITextField.make("아이디")
-    private let passwordField = UITextField.make("비밀번호", secure: true)
+    let emailField = UITextField.make("이메일")
+    let passwordField = UITextField.make("비밀번호", secure: true)
     private let loginButton = UIButton.make("로그인", backgroundColor: .systemBlue, height: 44)
     private let signUpButton = UIButton.make("회원가입")
     private let findIdButton = UIButton.make("아이디 찾기")
@@ -39,7 +39,7 @@ final class LoginView: UIView {
         hStack.axis = .horizontal
         hStack.distribution = .fillEqually
         
-        let vStack = UIStackView(arrangedSubviews: [logoLabel, idField, passwordField, loginButton, hStack])
+        let vStack = UIStackView(arrangedSubviews: [logoLabel, emailField, passwordField, loginButton, hStack])
         vStack.setCustomSpacing(50, after: logoLabel)
         vStack.axis = .vertical
         vStack.spacing = 20

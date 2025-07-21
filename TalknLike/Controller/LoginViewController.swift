@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 protocol LoginViewDelegate: AnyObject {
     func didTapLoginButton()
@@ -32,7 +33,19 @@ final class LoginViewController: UIViewController {
 extension LoginViewController: LoginViewDelegate {
     
     func didTapLoginButton() {
-        navigationController?.pushViewController(SignUpViewController(), animated: true)
+        guard let email = loginView.emailField.text,
+              let pw = loginView.passwordField.text else {
+            return
+        }
+        Auth.auth().signIn(withEmail: email, password: pw) { [weak self] result, error in
+            if let user = result?.user {
+                print("로그인 성공: \(user.uid)")
+                self?.navigationController?.pushViewController(SignUpViewController(), animated: true)
+            }
+            if let error = error {
+                print("에러: \(error.localizedDescription)")
+            }
+        }
     }
 
     func didTapSignUpButton() {

@@ -38,9 +38,6 @@ final class SignUpView: UIView {
         
         emailLabel.font = UIFont.systemFont(ofSize: 12)
         emailLabel.numberOfLines = 1
-        
-        signUpButton.isEnabled = false
-        signUpButton.alpha = 0.5
 
         signUpButton.addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
         emailVerifyButton.addTarget(self, action: #selector(didTapVerifyButton), for: .touchUpInside)

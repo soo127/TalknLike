@@ -78,13 +78,40 @@ final class SignUpViewController: UIViewController {
 extension SignUpViewController: SignUpViewDelegate {
     
     func didTapVerifyButton() {
-        
+        //추후 이메일 인증 로직 추가
     }
     
     func didTapSignUpButton() {
-        let alert = UIAlertController(title: "가입 완료", message: "환영합니다!", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "확인", style: .default))
-        present(alert, animated: true)
+        guard let email = signUpView.emailField.text,
+              let pw = signUpView.passwordField.text else {
+            return
+        }
+        
+        Auth.auth().createUser(withEmail: email, password: pw) { [weak self] result, error in
+            if let error = error {
+                print("회원가입 실패: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let user = result?.user else { return }
+            
+            let userData: [String: Any] = [
+                "uid": user.uid,
+                "email": email,
+                "createdAt": Date()
+            ]
+            
+            Firestore.firestore().collection("Users").document(user.uid).setData(userData) { error in
+                if let error = error {
+                    print("Firestore 저장 실패: \(error.localizedDescription)")
+                } else {
+                    print("회원가입 완료, DB 저장")
+                    let alert = UIAlertController(title: "가입 완료", message: "환영합니다!", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "확인", style: .default))
+                    self?.present(alert, animated: true)
+                }
+            }
+        }
     }
     
 }
