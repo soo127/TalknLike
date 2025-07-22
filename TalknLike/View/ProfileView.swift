@@ -44,7 +44,6 @@ final class ProfileView: UIView {
 
     private func makeProfileHeader() -> UIView {
         let container = UIView()
-        container.translatesAutoresizingMaskIntoConstraints = false
 
         let profileImageView = UIImageView()
         profileImageView.backgroundColor = .lightGray
@@ -63,29 +62,33 @@ final class ProfileView: UIView {
 
         let editButton = UIButton(type: .system)
         editButton.setTitle("편집", for: .normal)
+        editButton.translatesAutoresizingMaskIntoConstraints = false
+
 
         let textStack = UIStackView(arrangedSubviews: [nicknameLabel, introLabel])
         textStack.axis = .vertical
         textStack.spacing = 4
-
-        let horizontalStack = UIStackView(arrangedSubviews: [profileImageView, textStack, editButton])
-        horizontalStack.spacing = 16
-        horizontalStack.alignment = .center
-        horizontalStack.translatesAutoresizingMaskIntoConstraints = false
-
-        container.addSubview(horizontalStack)
+        textStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        container.addSubview(profileImageView)
+        container.addSubview(textStack)
+        container.addSubview(editButton)
 
         NSLayoutConstraint.activate([
             profileImageView.widthAnchor.constraint(equalToConstant: 80),
             profileImageView.heightAnchor.constraint(equalToConstant: 80),
+            
+            profileImageView.topAnchor.constraint(equalTo: container.topAnchor),
+            profileImageView.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16),
+            editButton.topAnchor.constraint(equalTo: container.topAnchor),
+            editButton.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -16),
 
-            horizontalStack.topAnchor.constraint(equalTo: container.topAnchor, constant: 16),
-            horizontalStack.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16),
-            horizontalStack.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -16),
-            horizontalStack.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -16)
+            textStack.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 16),
+            textStack.topAnchor.constraint(equalTo: container.topAnchor),
+            profileImageView.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -16)
         ])
 
-        // tableHeaderView는 오토레이아웃 지원 x -> frame 기반 직접 설정
+        // tableHeaderView는 container의 내부 subviews의 Auto Layout에 기반해서 높이 계산
         let width = UIScreen.main.bounds.width
         let targetSize = CGSize(width: width, height: UIView.layoutFittingCompressedSize.height)
         let height = container.systemLayoutSizeFitting(targetSize).height
@@ -94,5 +97,4 @@ final class ProfileView: UIView {
         return container
     }
 
-    
 }
