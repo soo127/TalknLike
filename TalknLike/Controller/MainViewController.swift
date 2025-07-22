@@ -27,7 +27,7 @@ final class MainViewController: UITabBarController {
         let friendsVC = UINavigationController(rootViewController: SignUpViewController())
         friendsVC.tabBarItem = UITabBarItem(title: "친구", image: UIImage(systemName: "person.2"), tag: 3)
 
-        let profileVC = UINavigationController(rootViewController: SignUpViewController())
+        let profileVC = UINavigationController(rootViewController: ProfileViewController())
         profileVC.tabBarItem = UITabBarItem(title: "프로필", image: UIImage(systemName: "person.crop.circle"), tag: 4)
 
         viewControllers = [feedVC, searchVC, uploadVC, friendsVC, profileVC]
