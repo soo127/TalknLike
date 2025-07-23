@@ -6,17 +6,18 @@
 //
 
 import UIKit
+import Combine
 
 final class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     private let profileView = ProfileView()
-
     private let menuItems: [(String, UIImage?)] = [
         ("내 프로필", UIImage(systemName: "person")),
         ("내가 쓴 글", UIImage(systemName: "doc.text")),
         ("설정", UIImage(systemName: "gearshape")),
         ("친구 목록", UIImage(systemName: "person.2")),
     ]
+    private var cancellables = Set<AnyCancellable>()
 
     override func loadView() {
         view = profileView
@@ -26,6 +27,14 @@ final class ProfileViewController: UIViewController, UITableViewDelegate, UITabl
         super.viewDidLoad()
         profileView.tableView.delegate = self
         profileView.tableView.dataSource = self
+        
+        CurrentUserStore.shared.userPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] user in
+                self?.profileView.nicknameLabel.text = user.nickname
+                self?.profileView.introLabel.text = user.bio
+            }
+            .store(in: &cancellables)
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

@@ -97,8 +97,8 @@ extension SignUpViewController: SignUpViewDelegate {
             
             let userData: [String: Any] = [
                 "uid": user.uid,
-                "email": email,
-                "createdAt": Date()
+                "nickname": "테스트 별명",
+                "bio": "테스트"
             ]
             
             Firestore.firestore().collection("Users").document(user.uid).setData(userData) { error in

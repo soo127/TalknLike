@@ -10,6 +10,9 @@ import UIKit
 final class ProfileView: UIView {
 
     let tableView = UITableView(frame: .zero, style: .grouped)
+    let profileImageView = UIImageView()
+    let nicknameLabel = UILabel()
+    let introLabel = UILabel()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -45,17 +48,14 @@ final class ProfileView: UIView {
     private func makeProfileHeader() -> UIView {
         let container = UIView()
 
-        let profileImageView = UIImageView()
         profileImageView.backgroundColor = .lightGray
         profileImageView.layer.cornerRadius = 40
         profileImageView.clipsToBounds = true
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
 
-        let nicknameLabel = UILabel()
         nicknameLabel.font = .boldSystemFont(ofSize: 20)
         nicknameLabel.text = "닉네임"
 
-        let introLabel = UILabel()
         introLabel.font = .systemFont(ofSize: 14)
         introLabel.textColor = .secondaryLabel
         introLabel.text = "자기소개를 해보세요."
@@ -63,8 +63,8 @@ final class ProfileView: UIView {
         let editButton = UIButton(type: .system)
         editButton.setTitle("편집", for: .normal)
         editButton.translatesAutoresizingMaskIntoConstraints = false
-
-
+        editButton.addTarget(self, action: #selector(editProfile), for: .touchUpInside)
+        
         let textStack = UIStackView(arrangedSubviews: [nicknameLabel, introLabel])
         textStack.axis = .vertical
         textStack.spacing = 4
@@ -95,6 +95,20 @@ final class ProfileView: UIView {
         container.frame = CGRect(x: 0, y: 0, width: width, height: height)
 
         return container
+    }
+    
+    @objc private func editProfile() {
+        Task {
+            do {
+                try await CurrentUserStore.shared.update(
+                    nickname: "테스트용22",
+                    bio: "입니다22"
+                )
+                print("프로필 업데이트 완료")
+            } catch {
+                print("업데이트 실패: \(error.localizedDescription)")
+            }
+        }
     }
 
 }
