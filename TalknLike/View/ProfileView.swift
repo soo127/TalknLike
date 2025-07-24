@@ -102,7 +102,8 @@ final class ProfileView: UIView {
             do {
                 try await CurrentUserStore.shared.update(
                     nickname: "테스트용22",
-                    bio: "입니다22"
+                    bio: "입니다22",
+                    photoURL: "person.circle.fill"
                 )
                 print("프로필 업데이트 완료")
             } catch {

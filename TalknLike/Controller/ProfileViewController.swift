@@ -33,6 +33,7 @@ final class ProfileViewController: UIViewController, UITableViewDelegate, UITabl
             .sink { [weak self] user in
                 self?.profileView.nicknameLabel.text = user.nickname
                 self?.profileView.introLabel.text = user.bio
+                self?.profileView.profileImageView.image = UIImage(systemName: user.photoURL)
             }
             .store(in: &cancellables)
     }

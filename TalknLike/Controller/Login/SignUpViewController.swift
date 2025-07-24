@@ -46,7 +46,7 @@ final class SignUpViewController: UIViewController {
 
     private func handleEmailInputChange(email: String) {
         Task { [weak self] in
-            guard let self = self else {
+            guard let self else {
                 return
             }
             let result = await self.checkEmailStatus(email: email)
@@ -98,7 +98,8 @@ extension SignUpViewController: SignUpViewDelegate {
             let userData: [String: Any] = [
                 "uid": user.uid,
                 "nickname": "테스트 별명",
-                "bio": "테스트"
+                "bio": "테스트",
+                "photoURL": "person.fill"
             ]
             
             Firestore.firestore().collection("Users").document(user.uid).setData(userData) { error in

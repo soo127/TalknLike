@@ -9,6 +9,7 @@ struct UserProfile: Decodable {
     let uid: String
     var nickname: String
     var bio: String
+    var photoURL: String
 }
 
 extension UserProfile {
@@ -16,7 +17,8 @@ extension UserProfile {
         return [
             "uid": uid,
             "nickname": nickname,
-            "bio": bio
+            "bio": bio,
+            "photoURL": photoURL
         ]
     }
 }

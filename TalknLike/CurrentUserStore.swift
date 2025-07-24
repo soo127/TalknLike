@@ -13,7 +13,6 @@ import FirebaseFirestore
 final class CurrentUserStore {
 
     static let shared = CurrentUserStore()
-
     private let userSubject = CurrentValueSubject<UserProfile?, Never>(nil)
 
     var userPublisher: AnyPublisher<UserProfile, Never> {
@@ -42,9 +41,10 @@ final class CurrentUserStore {
         }
     }
     
-    func update(nickname: String?, bio: String?) async throws {
+    func update(nickname: String?, bio: String?, photoURL: String?) async throws {
         guard let nickname,
               let bio,
+              let photoURL,
               let uid = Auth.auth().currentUser?.uid else {
             return
         }
@@ -54,7 +54,8 @@ final class CurrentUserStore {
         }
         user.nickname = nickname
         user.bio = bio
-
+        user.photoURL = photoURL
+        
         try await Firestore.firestore()
             .collection("Users")
             .document(uid)
@@ -63,8 +64,4 @@ final class CurrentUserStore {
         userSubject.send(user)
     }
 
-    var currentUser: UserProfile? {
-        userSubject.value
-    }
-    
 }
