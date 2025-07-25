@@ -25,6 +25,8 @@ final class ProfileViewController: UIViewController, UITableViewDelegate, UITabl
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        profileView.editButton.addTarget(self, action: #selector(editProfile), for: .touchUpInside)
+
         profileView.tableView.delegate = self
         profileView.tableView.dataSource = self
         
@@ -36,6 +38,10 @@ final class ProfileViewController: UIViewController, UITableViewDelegate, UITabl
                 self?.profileView.profileImageView.image = UIImage(systemName: user.photoURL)
             }
             .store(in: &cancellables)
+    }
+    
+    @objc private func editProfile() {
+        navigationController?.pushViewController(ProfileEditViewController(), animated: true)
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

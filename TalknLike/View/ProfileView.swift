@@ -10,6 +10,7 @@ import UIKit
 final class ProfileView: UIView {
 
     let tableView = UITableView(frame: .zero, style: .grouped)
+    let editButton = UIButton(type: .system)
     let profileImageView = UIImageView()
     let nicknameLabel = UILabel()
     let introLabel = UILabel()
@@ -30,9 +31,7 @@ final class ProfileView: UIView {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .systemBackground
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-
         tableView.register(ProfileMenuCell.self, forCellReuseIdentifier: "ProfileMenuCell")
-
         tableView.tableHeaderView = makeProfileHeader()
     }
 
@@ -60,10 +59,8 @@ final class ProfileView: UIView {
         introLabel.textColor = .secondaryLabel
         introLabel.text = "자기소개를 해보세요."
 
-        let editButton = UIButton(type: .system)
         editButton.setTitle("편집", for: .normal)
         editButton.translatesAutoresizingMaskIntoConstraints = false
-        editButton.addTarget(self, action: #selector(editProfile), for: .touchUpInside)
         
         let textStack = UIStackView(arrangedSubviews: [nicknameLabel, introLabel])
         textStack.axis = .vertical
@@ -95,21 +92,6 @@ final class ProfileView: UIView {
         container.frame = CGRect(x: 0, y: 0, width: width, height: height)
 
         return container
-    }
-    
-    @objc private func editProfile() {
-        Task {
-            do {
-                try await CurrentUserStore.shared.update(
-                    nickname: "테스트용22",
-                    bio: "입니다22",
-                    photoURL: "person.circle.fill"
-                )
-                print("프로필 업데이트 완료")
-            } catch {
-                print("업데이트 실패: \(error.localizedDescription)")
-            }
-        }
     }
 
 }
