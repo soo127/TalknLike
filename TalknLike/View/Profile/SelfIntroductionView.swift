@@ -9,31 +9,12 @@ import UIKit
 
 final class SelfIntroductionView: UIView, UITextViewDelegate {
 
-    private let placeholderLabel: UILabel = {
-        let label = UILabel()
-        label.text = "자기소개를 입력하세요"
-        label.textColor = .placeholderText
-        label.font = .systemFont(ofSize: 16)
-        return label
-    }()
-
-    let textView: UITextView = {
-        let tv = UITextView()
-        tv.font = .systemFont(ofSize: 16)
-        tv.layer.cornerRadius = 8
-        tv.isScrollEnabled = false
-        return tv
-    }()
-
-    private let separator: UIView = {
-        let view = UIView()
-        view.backgroundColor = .systemGray5
-        return view
-    }()
+    private let placeholderLabel = UILabel()
+    let textView = UITextView()
+    private let separator = UIView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .systemBackground
         textView.delegate = self
         setup()
     }
@@ -43,6 +24,16 @@ final class SelfIntroductionView: UIView, UITextViewDelegate {
     }
 
     private func setup() {
+        placeholderLabel.text = "자기소개를 입력하세요"
+        placeholderLabel.textColor = .placeholderText
+        placeholderLabel.font = .systemFont(ofSize: 16)
+        
+        textView.font = .systemFont(ofSize: 16)
+        textView.layer.cornerRadius = 8
+        textView.isScrollEnabled = false
+        
+        separator.backgroundColor = .systemGray5
+
         addSubview(textView)
         addSubview(placeholderLabel)
         addSubview(separator)
@@ -61,8 +52,8 @@ final class SelfIntroductionView: UIView, UITextViewDelegate {
             placeholderLabel.leadingAnchor.constraint(equalTo: textView.leadingAnchor, constant: 5),
 
             separator.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 8),
-            separator.leadingAnchor.constraint(equalTo: leadingAnchor),
-            separator.trailingAnchor.constraint(equalTo: trailingAnchor),
+            separator.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            separator.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             separator.heightAnchor.constraint(equalToConstant: 1)
         ])
     }

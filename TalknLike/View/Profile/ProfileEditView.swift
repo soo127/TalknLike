@@ -9,6 +9,8 @@ import UIKit
 
 final class ProfileEditView: UIView {
 
+    let cameraButton = UIButton()
+    let imageButton = UIButton()
     let tableView = UITableView(frame: .zero, style: .grouped)
 
     override init(frame: CGRect) {
@@ -28,27 +30,31 @@ final class ProfileEditView: UIView {
         tableView.register(ProfileEditCell.self, forCellReuseIdentifier: "ProfileEditCell")
         tableView.tableHeaderView = profileEditor()
     }
-
+    
     private func profileEditor() -> UIView {
         let header = UIView()
-        let imageButton = UIButton()
+
+        let cameraConfig = UIImage.SymbolConfiguration(pointSize: 28, weight: .regular)
+        let cameraImage = UIImage(systemName: "camera.circle.fill", withConfiguration: cameraConfig)
+        cameraButton.setImage(cameraImage, for: .normal)
+        cameraButton.translatesAutoresizingMaskIntoConstraints = false
+
         let config = UIImage.SymbolConfiguration(pointSize: 80, weight: .regular)
-        let image = UIImage(systemName: "camera.circle", withConfiguration: config)
+        let image = UIImage(systemName: "person.crop.circle", withConfiguration: config)
         imageButton.setImage(image, for: .normal)
-        imageButton.tintColor = .gray
-        imageButton.imageView?.contentMode = .scaleAspectFit
         imageButton.translatesAutoresizingMaskIntoConstraints = false
-        
+
+        header.addSubview(cameraButton)
         header.addSubview(imageButton)
 
         NSLayoutConstraint.activate([
             imageButton.centerXAnchor.constraint(equalTo: header.centerXAnchor),
             imageButton.centerYAnchor.constraint(equalTo: header.centerYAnchor),
-            imageButton.widthAnchor.constraint(equalToConstant: 80),
-            imageButton.heightAnchor.constraint(equalToConstant: 80),
+            cameraButton.trailingAnchor.constraint(equalTo: imageButton.trailingAnchor, constant: 4),
+            cameraButton.bottomAnchor.constraint(equalTo: imageButton.bottomAnchor, constant: 4)
         ])
-        
-        header.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 150)
+
+        header.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 180)
         return header
     }
     

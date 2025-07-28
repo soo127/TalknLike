@@ -25,6 +25,9 @@ final class ProfileEditViewController: UIViewController, UITableViewDelegate, UI
         super.viewDidLoad()
         profileEditView.tableView.delegate = self
         profileEditView.tableView.dataSource = self
+        
+        profileEditView.cameraButton.addTarget(self, action: #selector(didTapProfile), for: .touchUpInside)
+        profileEditView.imageButton.addTarget(self, action: #selector(didTapProfile), for: .touchUpInside)
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -42,8 +45,18 @@ final class ProfileEditViewController: UIViewController, UITableViewDelegate, UI
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        navigationController?.pushViewController(SelfIntroductionViewController(), animated: true)
-        // TODO: 이동 처리
+        switch indexPath.row {
+        case 0:
+            navigationController?.pushViewController(NicknameViewController(), animated: true)
+        case 1:
+            navigationController?.pushViewController(SelfIntroductionViewController(), animated: true)
+        default:
+            print("Error in ProfileEditViewController")
+        }
+    }
+    
+    @objc private func didTapProfile() {
+        
     }
     
 }
