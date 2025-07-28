@@ -41,7 +41,7 @@ final class ProfileEditCell: UITableViewCell {
         valueLabel.font = .systemFont(ofSize: 15)
 
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12), // ✅ 높이 확보
+            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
             titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
 
@@ -56,5 +56,4 @@ final class ProfileEditCell: UITableViewCell {
         ])
     }
 
-    
 }

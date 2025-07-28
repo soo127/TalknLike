@@ -44,9 +44,7 @@ final class NicknameViewController: UIViewController {
         Task {
             do {
                 try await CurrentUserStore.shared.update(
-                    nickname: nicknameEditView.textField.text,
-                    bio: "테스트용 33",
-                    photoURL: "person.circle.fill"
+                    nickname: nicknameEditView.textField.text
                 )
                 print("프로필 업데이트 완료")
             } catch {

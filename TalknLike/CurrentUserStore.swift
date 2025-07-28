@@ -41,21 +41,22 @@ final class CurrentUserStore {
         }
     }
     
-    func update(nickname: String?, bio: String?, photoURL: String?) async throws {
-        guard let nickname,
-              let bio,
-              let photoURL,
-              let uid = Auth.auth().currentUser?.uid else {
-            return
+    func update(nickname: String? = nil,
+                 bio: String? = nil,
+                 photoURL: String? = nil) async throws {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        guard var user = userSubject.value else { return }
+        
+        if let nickname = nickname {
+            user.nickname = nickname
+        }
+        if let bio = bio {
+            user.bio = bio
+        }
+        if let photoURL = photoURL {
+            user.photoURL = photoURL
         }
 
-        guard var user = userSubject.value else {
-            return
-        }
-        user.nickname = nickname
-        user.bio = bio
-        user.photoURL = photoURL
-        
         try await Firestore.firestore()
             .collection("Users")
             .document(uid)

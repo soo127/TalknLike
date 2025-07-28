@@ -11,10 +11,8 @@ import Combine
 final class ProfileEditViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     private let profileEditView = ProfileEditView()
-    private let menuItems: [(String, String?)] = [
-        ("닉네임", nil),
-        ("자기소개", "안녕하세요"),
-    ]
+    private let menu = ProfileEditItem.allCases
+    private var user: UserProfile?
     private var cancellables = Set<AnyCancellable>()
 
     override func loadView() {
@@ -23,36 +21,58 @@ final class ProfileEditViewController: UIViewController, UITableViewDelegate, UI
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupTableView()
+        bindUser()
+        setupActions()
+    }
+
+    private func setupTableView() {
         profileEditView.tableView.delegate = self
         profileEditView.tableView.dataSource = self
-        
+    }
+
+    private func setupActions() {
         profileEditView.cameraButton.addTarget(self, action: #selector(didTapProfile), for: .touchUpInside)
         profileEditView.imageButton.addTarget(self, action: #selector(didTapProfile), for: .touchUpInside)
     }
 
+    private func bindUser() {
+        CurrentUserStore.shared.userPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] user in
+                guard let self = self else { return }
+                self.user = user
+                self.profileEditView.tableView.reloadData()
+            }
+            .store(in: &cancellables)
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return menuItems.count
+        return menu.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ProfileEditCell", for: indexPath) as? ProfileEditCell else {
             return UITableViewCell()
         }
-        let (title, value) = menuItems[indexPath.row]
-        cell.configure(title: title, value: value)
+        let item = menu[indexPath.row]
+        let value: String?
+        
+        switch item {
+        case .nickname:
+            value = user?.nickname
+        case .bio:
+            value = user?.bio
+        }
+        
+        cell.configure(title: item.title, value: value)
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        switch indexPath.row {
-        case 0:
-            navigationController?.pushViewController(NicknameViewController(), animated: true)
-        case 1:
-            navigationController?.pushViewController(SelfIntroductionViewController(), animated: true)
-        default:
-            print("Error in ProfileEditViewController")
-        }
+        let item = menu[indexPath.row]
+        navigationController?.pushViewController(item.destinationViewController(), animated: true)
     }
     
     @objc private func didTapProfile() {

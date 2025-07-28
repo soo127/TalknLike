@@ -44,9 +44,7 @@ final class SelfIntroductionViewController: UIViewController {
         Task {
             do {
                 try await CurrentUserStore.shared.update(
-                    nickname: "테스트용22",
-                    bio: selfIntroductionView.textView.text,
-                    photoURL: "person.circle.fill"
+                    bio: selfIntroductionView.textView.text
                 )
                 print("프로필 업데이트 완료")
             } catch {
