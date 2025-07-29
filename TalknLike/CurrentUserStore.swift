@@ -21,12 +21,6 @@ final class CurrentUserStore {
             .eraseToAnyPublisher()
     }
 
-    private init() {
-        Task {
-            await fetchCurrentUser()
-        }
-    }
-
     func fetchCurrentUser() async {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         do {
@@ -63,6 +57,10 @@ final class CurrentUserStore {
             .setData(user.asDictionary(), merge: true)
 
         userSubject.send(user)
+    }
+    
+    var currentUser: UserProfile? {
+        userSubject.value
     }
 
 }

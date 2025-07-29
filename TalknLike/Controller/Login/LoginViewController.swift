@@ -31,21 +31,21 @@ final class LoginViewController: UIViewController {
 }
 
 extension LoginViewController: LoginViewDelegate {
-    
+
     func didTapLoginButton() {
         guard let email = loginView.emailField.text,
               let pw = loginView.passwordField.text else {
             return
         }
-        Auth.auth().signIn(withEmail: email, password: pw) { result, error in
-            if let user = result?.user {
-                print("로그인 성공: \(user.uid)")
+        Task {
+            do {
+                try await Auth.auth().signIn(withEmail: email, password: pw)
+                await CurrentUserStore.shared.fetchCurrentUser()
                 if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
                     sceneDelegate.window?.rootViewController = MainViewController()
                 }
-            }
-            if let error = error {
-                print("에러: \(error.localizedDescription)")
+            } catch {
+                print("로그인 실패: \(error.localizedDescription)")
             }
         }
     }

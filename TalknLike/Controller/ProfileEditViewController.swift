@@ -14,7 +14,6 @@ final class ProfileEditViewController: UIViewController, UITableViewDelegate, UI
 
     private let profileEditView = ProfileEditView()
     private let menu = ProfileEditItem.allCases
-    private var user: UserProfile?
     private var cancellables = Set<AnyCancellable>()
 
     override func loadView() {
@@ -42,7 +41,6 @@ final class ProfileEditViewController: UIViewController, UITableViewDelegate, UI
         CurrentUserStore.shared.userPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] user in
-                self?.user = user
                 self?.profileEditView.tableView.reloadData()
                 Task { [weak self] in
                     let image = try await ImageLoader.loadImage(from: user.photoURL)
@@ -66,9 +64,9 @@ final class ProfileEditViewController: UIViewController, UITableViewDelegate, UI
         
         switch item {
         case .nickname:
-            value = user?.nickname
+            value = CurrentUserStore.shared.currentUser?.nickname
         case .bio:
-            value = user?.bio
+            value = CurrentUserStore.shared.currentUser?.bio
         }
         
         cell.configure(title: item.title, value: value)
@@ -105,23 +103,22 @@ extension ProfileEditViewController: PHPickerViewControllerDelegate {
             return
         }
         
-        itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
+        itemProvider.loadObject(ofClass: UIImage.self) { image, error in
             guard let selectedImage = image as? UIImage,
                   let imageData = selectedImage.jpegData(compressionQuality: 0.5),
-            let user = self?.user else {
+                  let uid = CurrentUserStore.shared.currentUser?.uid else {
                 return
             }
                                     
             Task {
                 do {
-                    let fileName = "\(user.uid).jpg"
+                    let fileName = "\(uid).jpg"
                     try await SupabaseManager.imageBucket()
                         .upload(fileName, data: imageData, options: FileOptions(contentType: "image/jpeg"))
                     
                     try await CurrentUserStore.shared.update(
                         photoURL: SupabaseManager.publicImageURL(for: fileName)
                     )
-                    print("이미지 업로드 성공")
                 } catch {
                     print("이미지 업로드 실패: \(error)")
                 }

@@ -8,7 +8,7 @@
 import UIKit
 import Combine
 
-final class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+final class ProfileViewController: UIViewController {
 
     private let profileView = ProfileView()
     private let menuItems: [(String, UIImage?)] = [
@@ -25,11 +25,21 @@ final class ProfileViewController: UIViewController, UITableViewDelegate, UITabl
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        profileView.editButton.addTarget(self, action: #selector(editProfile), for: .touchUpInside)
-
+        setupTableView()
+        setupActions()
+        bindUser()
+    }
+    
+    private func setupTableView() {
         profileView.tableView.delegate = self
         profileView.tableView.dataSource = self
-        
+    }
+
+    private func setupActions() {
+        profileView.editButton.addTarget(self, action: #selector(editProfile), for: .touchUpInside)
+    }
+
+    private func bindUser() {
         CurrentUserStore.shared.userPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] user in
@@ -45,7 +55,11 @@ final class ProfileViewController: UIViewController, UITableViewDelegate, UITabl
     @objc private func editProfile() {
         navigationController?.pushViewController(ProfileEditViewController(), animated: true)
     }
+    
+}
 
+extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return menuItems.count
     }
@@ -63,6 +77,6 @@ final class ProfileViewController: UIViewController, UITableViewDelegate, UITabl
         tableView.deselectRow(at: indexPath, animated: true)
         // TODO: 이동 처리
     }
-    
+        
 }
 
