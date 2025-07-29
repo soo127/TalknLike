@@ -6,10 +6,12 @@
 //
 
 import UIKit
+import Combine
 
 final class PostViewController: UITabBarController {
     
     private let postView = PostView()
+    private var cancellables = Set<AnyCancellable>()
 
     override func loadView() {
         view = postView
@@ -17,6 +19,19 @@ final class PostViewController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        bindUser()
+    }
+    
+    private func bindUser() {
+        CurrentUserStore.shared.userPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] user in
+                self?.postView.nicknameLabel.text = user.nickname
+                Task {
+                    self?.postView.profileImageView.image = try? await ImageLoader.loadImage(from: user.photoURL) ?? UIImage(systemName: "person.circle")
+                }
+            }
+            .store(in: &cancellables)
     }
     
 }

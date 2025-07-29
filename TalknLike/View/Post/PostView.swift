@@ -10,7 +10,11 @@ import UIKit
 final class PostView: UIView, UITextViewDelegate {
     
     private let placeholderLabel = UILabel()
+    let profileImageView = UIImageView()
+    let editButton = UIButton(type: .system)
+    let nicknameLabel = UILabel()
     let textView = UITextView()
+    private let separator = UIView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -32,17 +36,50 @@ final class PostView: UIView, UITextViewDelegate {
         textView.layer.cornerRadius = 8
         textView.translatesAutoresizingMaskIntoConstraints = false
         
-        addSubview(textView)
-        addSubview(placeholderLabel)
+        profileImageView.layer.cornerRadius = 30
+        profileImageView.clipsToBounds = true
+        profileImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        editButton.setTitle("편집", for: .normal)
+
+        nicknameLabel.font = .boldSystemFont(ofSize: 20)
+        nicknameLabel.text = "닉네임"
+        
+        separator.backgroundColor = .systemGray5
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        
+
+        let vStackProfileInfo = UIStackView(arrangedSubviews: [nicknameLabel, editButton])
+        vStackProfileInfo.axis = .vertical
+        vStackProfileInfo.alignment = .leading
+        vStackProfileInfo.spacing = 4
+
+        let profileStack = UIStackView(arrangedSubviews: [profileImageView, vStackProfileInfo])
+        profileStack.axis = .horizontal
+        profileStack.spacing = 12
+        
+        let mainStack = UIStackView(arrangedSubviews: [profileStack, separator, textView])
+        mainStack.axis = .vertical
+        mainStack.spacing = 12
+        mainStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        addSubview(mainStack)
+        textView.addSubview(placeholderLabel)
         
         NSLayoutConstraint.activate([
-            textView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 80),
-            textView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            textView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            mainStack.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 30),
+            mainStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            mainStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            
+            profileImageView.widthAnchor.constraint(equalToConstant: 60),
+            profileImageView.heightAnchor.constraint(equalToConstant: 60),
+            
+            separator.heightAnchor.constraint(equalToConstant: 1),
+            
             textView.heightAnchor.constraint(equalToConstant: 300),
             
             placeholderLabel.topAnchor.constraint(equalTo: textView.topAnchor, constant: 8),
-            placeholderLabel.leadingAnchor.constraint(equalTo: textView.leadingAnchor, constant: 5),
+            placeholderLabel.leadingAnchor.constraint(equalTo: textView.leadingAnchor, constant: 5)
         ])
     }
     
