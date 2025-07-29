@@ -46,7 +46,6 @@ final class NicknameViewController: UIViewController {
                 try await CurrentUserStore.shared.update(
                     nickname: nicknameEditView.textField.text
                 )
-                print("프로필 업데이트 완료")
             } catch {
                 print("업데이트 실패: \(error.localizedDescription)")
             }

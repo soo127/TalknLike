@@ -42,10 +42,11 @@ final class ProfileEditView: UIView {
         let config = UIImage.SymbolConfiguration(pointSize: 80, weight: .regular)
         let image = UIImage(systemName: "person.crop.circle", withConfiguration: config)
         imageButton.setImage(image, for: .normal)
+        imageButton.imageView?.layer.cornerRadius = 40
         imageButton.translatesAutoresizingMaskIntoConstraints = false
 
-        header.addSubview(cameraButton)
         header.addSubview(imageButton)
+        header.addSubview(cameraButton)
 
         NSLayoutConstraint.activate([
             imageButton.centerXAnchor.constraint(equalTo: header.centerXAnchor),

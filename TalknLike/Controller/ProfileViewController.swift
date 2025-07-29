@@ -35,7 +35,9 @@ final class ProfileViewController: UIViewController, UITableViewDelegate, UITabl
             .sink { [weak self] user in
                 self?.profileView.nicknameLabel.text = user.nickname
                 self?.profileView.introLabel.text = user.bio
-                self?.profileView.profileImageView.image = UIImage(systemName: user.photoURL)
+                Task {
+                    self?.profileView.profileImageView.image = try? await ImageLoader.loadImage(from: user.photoURL) ?? UIImage(systemName: "person.circle")
+                }
             }
             .store(in: &cancellables)
     }

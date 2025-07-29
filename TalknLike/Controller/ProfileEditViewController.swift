@@ -7,6 +7,8 @@
 
 import UIKit
 import Combine
+import PhotosUI
+import Supabase
 
 final class ProfileEditViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -40,9 +42,13 @@ final class ProfileEditViewController: UIViewController, UITableViewDelegate, UI
         CurrentUserStore.shared.userPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] user in
-                guard let self = self else { return }
-                self.user = user
-                self.profileEditView.tableView.reloadData()
+                self?.user = user
+                self?.profileEditView.tableView.reloadData()
+                Task { [weak self] in
+                    let image = try await ImageLoader.loadImage(from: user.photoURL)
+                    let resizedImage = image?.resized(to: CGSize(width: 80, height: 80))
+                    self?.profileEditView.imageButton.setImage(resizedImage, for: .normal)
+                }
             }
             .store(in: &cancellables)
     }
@@ -76,7 +82,51 @@ final class ProfileEditViewController: UIViewController, UITableViewDelegate, UI
     }
     
     @objc private func didTapProfile() {
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = 1
+        configuration.filter = .images
+
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+        present(picker, animated: true)
+    }
+    
+}
+
+extension ProfileEditViewController: PHPickerViewControllerDelegate {
+    
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        defer {
+            picker.dismiss(animated: true)
+        }
         
+        guard let itemProvider = results.first?.itemProvider,
+              itemProvider.canLoadObject(ofClass: UIImage.self) else {
+            return
+        }
+        
+        itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
+            guard let selectedImage = image as? UIImage,
+                  let imageData = selectedImage.jpegData(compressionQuality: 0.5),
+            let user = self?.user else {
+                return
+            }
+                                    
+            Task {
+                do {
+                    let fileName = "\(user.uid).jpg"
+                    try await SupabaseManager.imageBucket()
+                        .upload(fileName, data: imageData, options: FileOptions(contentType: "image/jpeg"))
+                    
+                    try await CurrentUserStore.shared.update(
+                        photoURL: SupabaseManager.publicImageURL(for: fileName)
+                    )
+                    print("이미지 업로드 성공")
+                } catch {
+                    print("이미지 업로드 실패: \(error)")
+                }
+            }
+        }
     }
     
 }
