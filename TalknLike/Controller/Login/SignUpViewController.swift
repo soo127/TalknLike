@@ -36,7 +36,7 @@ final class SignUpViewController: UIViewController {
             
         publisher
             .compactMap { ($0.object as? UITextField)?.text }
-            .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
+            .debounce(for: .seconds(1.2), scheduler: RunLoop.main)
             .removeDuplicates()
             .sink { [weak self] email in
                 self?.handleEmailInputChange(email: email)

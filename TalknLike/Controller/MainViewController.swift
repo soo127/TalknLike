@@ -18,19 +18,16 @@ final class MainViewController: UITabBarController {
         let feedVC = UINavigationController(rootViewController: SignUpViewController())
         feedVC.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), tag: 0)
 
-        let searchVC = UINavigationController(rootViewController: SignUpViewController())
-        searchVC.tabBarItem = UITabBarItem(title: "검색", image: UIImage(systemName: "magnifyingglass"), tag: 1)
-
-        let uploadVC = UINavigationController(rootViewController: SignUpViewController())
-        uploadVC.tabBarItem = UITabBarItem(title: "업로드", image: UIImage(systemName: "plus.square"), tag: 2)
+        let uploadVC = UINavigationController(rootViewController: PostViewController())
+        uploadVC.tabBarItem = UITabBarItem(title: "게시", image: UIImage(systemName: "plus.square"), tag: 1)
 
         let friendsVC = UINavigationController(rootViewController: SignUpViewController())
-        friendsVC.tabBarItem = UITabBarItem(title: "친구", image: UIImage(systemName: "person.2"), tag: 3)
+        friendsVC.tabBarItem = UITabBarItem(title: "친구", image: UIImage(systemName: "person.2"), tag: 2)
 
         let profileVC = UINavigationController(rootViewController: ProfileViewController())
-        profileVC.tabBarItem = UITabBarItem(title: "프로필", image: UIImage(systemName: "person.crop.circle"), tag: 4)
+        profileVC.tabBarItem = UITabBarItem(title: "프로필", image: UIImage(systemName: "person.crop.circle"), tag: 3)
 
-        viewControllers = [feedVC, searchVC, uploadVC, friendsVC, profileVC]
+        viewControllers = [feedVC, uploadVC, friendsVC, profileVC]
     }
     
 }
