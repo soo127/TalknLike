@@ -7,12 +7,14 @@
 
 import UIKit
 import Combine
+import FirebaseFirestore
+import Supabase
 
 final class PostViewController: UIViewController {
     
     private let postView = PostView()
     private var cancellables = Set<AnyCancellable>()
-
+    
     override func loadView() {
         view = postView
     }
@@ -43,8 +45,22 @@ final class PostViewController: UIViewController {
     }
     
     @objc private func didTapPost() {
-        // 게시 처리 로직
-        dismiss(animated: true)
+        guard let user = CurrentUserStore.shared.currentUser else { return }
+        let content = postView.textView.text ?? ""
+        
+        Task {
+            do {
+                try await Firestore.firestore().collection("Posts").addDocument(data: [
+                    "userId": user.uid,
+                    "nickname": user.nickname,
+                    "content": content,
+                    "createdAt": Date()
+                ])
+            } catch {
+                print("게시글 업로드 실패:", error)
+            }
+            dismiss(animated: true)
+        }
     }
     
     private func bindUser() {

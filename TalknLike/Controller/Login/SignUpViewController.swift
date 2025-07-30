@@ -18,7 +18,6 @@ protocol SignUpViewDelegate: AnyObject {
 final class SignUpViewController: UIViewController {
     
     private let signUpView = SignUpView()
-    private let db = Firestore.firestore()
     private var cancellables = Set<AnyCancellable>()
     
     override func loadView() {
@@ -57,7 +56,7 @@ final class SignUpViewController: UIViewController {
     private func checkEmailStatus(email: String) async -> EmailCheckResult {
         guard !email.isEmpty else { return .empty }
         do {
-            return try await db.collection("Users")
+            return try await Firestore.firestore().collection("Users")
                 .whereField("email", isEqualTo: email)
                 .getDocuments()
                 .documents

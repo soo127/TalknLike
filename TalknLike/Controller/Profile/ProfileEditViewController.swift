@@ -105,25 +105,25 @@ extension ProfileEditViewController: PHPickerViewControllerDelegate {
         
         itemProvider.loadObject(ofClass: UIImage.self) { image, error in
             guard let selectedImage = image as? UIImage,
-                  let imageData = selectedImage.jpegData(compressionQuality: 0.5),
                   let uid = CurrentUserStore.shared.currentUser?.uid else {
                 return
             }
-                                    
+            
             Task {
                 do {
                     let fileName = "\(uid).jpg"
-                    try await SupabaseManager.imageBucket()
-                        .upload(fileName, data: imageData, options: FileOptions(contentType: "image/jpeg"))
-                    
-                    try await CurrentUserStore.shared.update(
-                        photoURL: SupabaseManager.publicImageURL(for: fileName)
+                    try await SupabaseManager.uploadImage(
+                        selectedImage,
+                        fileName: fileName,
+                        bucket: .profileImages
                     )
+                    
+                    try await CurrentUserStore.shared.update(photoURL: SupabaseManager.publicImageURL(fileName: fileName, bucket: .profileImages))
+                    
                 } catch {
-                    print("이미지 업로드 실패: \(error)")
+                    print("프로필 이미지 업로드 실패: \(error)")
                 }
             }
         }
     }
-    
 }
