@@ -23,7 +23,7 @@ enum SupabaseManager {
         }
         
         try await client.storage.from(bucket.rawValue)
-            .upload(fileName, data: data, options: FileOptions(contentType: "image/jpeg"))
+            .upload(fileName, data: data, options: FileOptions(contentType: "image/jpeg", upsert: true))
     }
     
     static func publicImageURL(fileName: String, bucket: Bucket) -> String {

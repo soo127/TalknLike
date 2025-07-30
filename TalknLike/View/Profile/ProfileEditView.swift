@@ -37,6 +37,7 @@ final class ProfileEditView: UIView {
         let cameraConfig = UIImage.SymbolConfiguration(pointSize: 28, weight: .regular)
         let cameraImage = UIImage(systemName: "camera.circle.fill", withConfiguration: cameraConfig)
         cameraButton.setImage(cameraImage, for: .normal)
+        cameraButton.tintColor = .black
         cameraButton.translatesAutoresizingMaskIntoConstraints = false
 
         let config = UIImage.SymbolConfiguration(pointSize: 80, weight: .regular)
