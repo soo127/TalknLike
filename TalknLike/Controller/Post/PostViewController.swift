@@ -8,7 +8,7 @@
 import UIKit
 import Combine
 
-final class PostViewController: UITabBarController {
+final class PostViewController: UIViewController {
     
     private let postView = PostView()
     private var cancellables = Set<AnyCancellable>()
@@ -19,7 +19,32 @@ final class PostViewController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .systemBackground
         bindUser()
+        setupNavigationBar()
+    }
+    
+    private func setupNavigationBar() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: .close,
+            target: self,
+            action: #selector(didTapClose)
+        )
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: "게시",
+            style: .done,
+            target: self,
+            action: #selector(didTapPost)
+        )
+    }
+    
+    @objc private func didTapClose() {
+        dismiss(animated: true)
+    }
+    
+    @objc private func didTapPost() {
+        // 게시 처리 로직
+        dismiss(animated: true)
     }
     
     private func bindUser() {

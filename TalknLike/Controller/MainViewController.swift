@@ -11,6 +11,7 @@ final class MainViewController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        delegate = self
         setupTabs()
     }
 
@@ -18,16 +19,34 @@ final class MainViewController: UITabBarController {
         let feedVC = UINavigationController(rootViewController: SignUpViewController())
         feedVC.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), tag: 0)
 
-        let uploadVC = UINavigationController(rootViewController: PostViewController())
-        uploadVC.tabBarItem = UITabBarItem(title: "게시", image: UIImage(systemName: "plus.square"), tag: 1)
-
         let friendsVC = UINavigationController(rootViewController: SignUpViewController())
-        friendsVC.tabBarItem = UITabBarItem(title: "친구", image: UIImage(systemName: "person.2"), tag: 2)
+        friendsVC.tabBarItem = UITabBarItem(title: "친구", image: UIImage(systemName: "person.2"), tag: 1)
+        
+        let dummyUploadVC = UIViewController()
+        dummyUploadVC.tabBarItem = UITabBarItem(title: "게시", image: UIImage(systemName: "plus.square"), tag: 2)
+
+        let alarmVC = UINavigationController(rootViewController: SignUpViewController())
+        alarmVC.tabBarItem = UITabBarItem(title: "알림", image: UIImage(systemName: "bell"), tag: 3)
 
         let profileVC = UINavigationController(rootViewController: ProfileViewController())
-        profileVC.tabBarItem = UITabBarItem(title: "프로필", image: UIImage(systemName: "person.crop.circle"), tag: 3)
+        profileVC.tabBarItem = UITabBarItem(title: "프로필", image: UIImage(systemName: "person.crop.circle"), tag: 4)
 
-        viewControllers = [feedVC, uploadVC, friendsVC, profileVC]
+        viewControllers = [feedVC, friendsVC, dummyUploadVC, alarmVC, profileVC]
+    }
+    
+}
+
+extension MainViewController: UITabBarControllerDelegate {
+    
+    func tabBarController(_ tabBarController: UITabBarController,
+                          shouldSelect viewController: UIViewController) -> Bool {
+        if viewController.tabBarItem.tag == 2 {
+            let nav = UINavigationController(rootViewController: PostViewController())
+            nav.modalPresentationStyle = .fullScreen
+            present(nav, animated: true)
+            return false
+        }
+        return true
     }
     
 }
