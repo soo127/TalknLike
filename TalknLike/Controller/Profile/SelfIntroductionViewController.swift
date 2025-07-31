@@ -41,11 +41,10 @@ final class SelfIntroductionViewController: UIViewController {
     }
 
     @objc private func didTapSave() {
+        let bio = selfIntroductionView.textView.text
         Task {
             do {
-                try await CurrentUserStore.shared.update(
-                    bio: selfIntroductionView.textView.text
-                )
+                try await CurrentUserStore.shared.update(bio: bio)
             } catch {
                 print("업데이트 실패: \(error.localizedDescription)")
             }

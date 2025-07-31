@@ -50,12 +50,13 @@ final class PostViewController: UIViewController {
         
         Task {
             do {
-                try await Firestore.firestore().collection("Posts").addDocument(data: [
-                    "userId": user.uid,
-                    "nickname": user.nickname,
-                    "content": content,
-                    "createdAt": Date()
-                ])
+                try await Firestore.firestore()
+                    .collection("Posts")
+                    .addDocument(data: [
+                        "profile": user.asDictionary(),
+                        "content": content,
+                        "createdAt": Date()
+                    ])
             } catch {
                 print("게시글 업로드 실패:", error)
             }
@@ -68,7 +69,7 @@ final class PostViewController: UIViewController {
             .receive(on: RunLoop.main)
             .sink { [weak self] user in
                 self?.postView.nicknameLabel.text = user.nickname
-                Task {
+                Task { @MainActor [weak self] in
                     self?.postView.profileImageView.image = try? await ImageLoader.loadImage(from: user.photoURL) ?? UIImage(systemName: "person.circle")
                 }
             }

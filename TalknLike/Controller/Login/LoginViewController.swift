@@ -37,7 +37,7 @@ extension LoginViewController: LoginViewDelegate {
               let pw = loginView.passwordField.text else {
             return
         }
-        Task {
+        Task { @MainActor in
             do {
                 try await Auth.auth().signIn(withEmail: email, password: pw)
                 await CurrentUserStore.shared.fetchCurrentUser()

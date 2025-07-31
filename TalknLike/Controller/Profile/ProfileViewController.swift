@@ -45,7 +45,7 @@ final class ProfileViewController: UIViewController {
             .sink { [weak self] user in
                 self?.profileView.nicknameLabel.text = user.nickname
                 self?.profileView.introLabel.text = user.bio
-                Task {
+                Task { @MainActor [weak self] in
                     self?.profileView.profileImageView.image = try? await ImageLoader.loadImage(from: user.photoURL) ?? UIImage(systemName: "person.circle")
                 }
             }
@@ -76,6 +76,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         // TODO: 이동 처리
+        navigationController?.pushViewController(MyPostsViewController(), animated: true)
     }
         
 }

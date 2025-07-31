@@ -41,11 +41,10 @@ final class NicknameViewController: UIViewController {
     }
 
     @objc private func didTapSave() {
+        let nickname = nicknameEditView.textField.text
         Task {
             do {
-                try await CurrentUserStore.shared.update(
-                    nickname: nicknameEditView.textField.text
-                )
+                try await CurrentUserStore.shared.update(nickname: nickname)
             } catch {
                 print("업데이트 실패: \(error.localizedDescription)")
             }
