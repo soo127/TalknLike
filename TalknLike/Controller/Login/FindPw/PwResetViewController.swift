@@ -23,8 +23,7 @@ final class PwResetViewController: UIViewController {
     @objc func tapped() {
         let alert = UIAlertController(title: "완료", message: "비밀번호가 재설정되었습니다", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { [weak self] _ in
-            guard let self = self else { return }
-            self.navigationController?.setViewControllers([LoginViewController()], animated: true)
+            self?.navigationController?.setViewControllers([LoginViewController()], animated: true)
         }))
         present(alert, animated: true)
     }

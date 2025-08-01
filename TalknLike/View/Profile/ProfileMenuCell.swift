@@ -45,8 +45,6 @@ final class ProfileMenuCell: UITableViewCell {
             iconView.heightAnchor.constraint(equalToConstant: 24),
 
             stack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
-            stack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            stack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12)
         ])
     }

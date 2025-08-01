@@ -15,13 +15,22 @@ enum SupabaseManager {
         supabaseKey: Constants.supabaseKey
     )
     
-    static func uploadImage(_ image: UIImage,
-                            fileName: String,
-                            bucket: Bucket) async throws {
-        guard let data = image.jpegData(compressionQuality: 0.5) else {
-            throw UploadError.invalidData
-        }
-        
+    static func uploadImage(
+        _ image: UIImage,
+        fileName: String,
+        bucket: Bucket
+    ) async throws {
+        try await image
+            .jpegData(compressionQuality: 0.5)
+            .handleSome { try await uploadData($0, fileName: fileName, bucket: bucket) }
+            .handleNone { throw UploadError.invalidData }
+    }
+    
+    private static func uploadData(
+        _ data: Data,
+        fileName: String,
+        bucket: Bucket
+    ) async throws {
         try await client.storage.from(bucket.rawValue)
             .upload(fileName, data: data, options: FileOptions(contentType: "image/jpeg", upsert: true))
     }

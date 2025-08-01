@@ -22,24 +22,24 @@ final class CurrentUserStore {
     }
 
     func fetchCurrentUser() async {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        do {
-            let userProfile = try await Firestore.firestore()
-                .collection("Users")
-                .document(uid)
-                .getDocument()
-                .data(as: UserProfile.self)
-            userSubject.send(userProfile)
-        } catch {
-            print("fetchCurrentUser error: \(error)")
+        guard let uid = Auth.auth().currentUser?.uid else {
+            return
         }
+        let userProfile = try? await Firestore.firestore()
+            .collection("Users")
+            .document(uid)
+            .getDocument()
+            .data(as: UserProfile.self)
+        userSubject.send(userProfile)
     }
     
     func update(nickname: String? = nil,
                  bio: String? = nil,
                  photoURL: String? = nil) async throws {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        guard var user = userSubject.value else { return }
+        guard let uid = Auth.auth().currentUser?.uid,
+              var user = userSubject.value else {
+            return
+        }
         
         if let nickname = nickname {
             user.nickname = nickname

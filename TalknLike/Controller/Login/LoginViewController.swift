@@ -9,10 +9,18 @@ import UIKit
 import FirebaseAuth
 
 protocol LoginViewDelegate: AnyObject {
-    func didTapLoginButton()
-    func didTapSignUpButton()
-    func didTapFindIdButton()
-    func didTapFindPwButton()
+    func didTapButton(_ button: LoginViewController.Button)
+}
+
+extension LoginViewController {
+    
+    enum Button {
+        case login
+        case signUp
+        case findId
+        case findPw
+    }
+    
 }
 
 final class LoginViewController: UIViewController {
@@ -31,8 +39,21 @@ final class LoginViewController: UIViewController {
 }
 
 extension LoginViewController: LoginViewDelegate {
+    
+    func didTapButton(_ button: LoginViewController.Button) {
+        switch button {
+        case .login:
+            self.didTapLoginButton()
+        case .signUp:
+            self.didTapSignUpButton()
+        case .findId:
+            self.didTapFindIdButton()
+        case .findPw:
+            self.didTapFindPwButton()
+        }
+    }
 
-    func didTapLoginButton() {
+    private func didTapLoginButton() {
         guard let email = loginView.emailField.text,
               let pw = loginView.passwordField.text else {
             return
@@ -50,15 +71,15 @@ extension LoginViewController: LoginViewDelegate {
         }
     }
 
-    func didTapSignUpButton() {
+    private func didTapSignUpButton() {
         navigationController?.pushViewController(SignUpViewController(), animated: true)
     }
     
-    func didTapFindIdButton() {
+    private func didTapFindIdButton() {
         navigationController?.pushViewController(FindIdViewController(), animated: true)
     }
     
-    func didTapFindPwButton() {
+    private func didTapFindPwButton() {
         navigationController?.pushViewController(IdCheckViewController(), animated: true)
     }
     

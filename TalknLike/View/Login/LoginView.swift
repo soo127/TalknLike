@@ -64,19 +64,19 @@ final class LoginView: UIView {
 extension LoginView {
     
     @objc private func loginTapped() {
-        delegate?.didTapLoginButton()
+        delegate?.didTapButton(.login)
     }
     
     @objc private func signUpTapped() {
-        delegate?.didTapSignUpButton()
+        delegate?.didTapButton(.signUp)
     }
     
     @objc private func findIdTapped() {
-        delegate?.didTapFindIdButton()
+        delegate?.didTapButton(.findId)
     }
     
     @objc private func findPwTapped() {
-        delegate?.didTapFindPwButton()
+        delegate?.didTapButton(.findPw)
     }
 
 }
