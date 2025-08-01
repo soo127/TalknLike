@@ -11,6 +11,7 @@ final class ProfileMenuCell: UITableViewCell {
 
     private let iconView = UIImageView()
     private let titleLabel = UILabel()
+    private var hStack = UIStackView()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -25,28 +26,39 @@ final class ProfileMenuCell: UITableViewCell {
         iconView.image = image
         titleLabel.text = title
     }
-
+    
     private func setup() {
+        setupIconView()
+        setupTitleLabel()
+        setupCell()
+    }
+    
+}
+
+extension ProfileMenuCell {
+    
+    private func setupCell() {
+        hStack = UIStackView.make(
+            views: [iconView, titleLabel],
+            axis: .horizontal,
+            spacing: 12,
+        )
+        
+        contentView.addSubview(hStack)
+        hStack.anchor(
+            top: contentView.topAnchor,
+            bottom: contentView.bottomAnchor,
+            padding: UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+        )
+    }
+    
+    private func setupIconView() {
         iconView.contentMode = .scaleAspectFit
         iconView.tintColor = .label
-        iconView.translatesAutoresizingMaskIntoConstraints = false
-
+    }
+    
+    private func setupTitleLabel() {
         titleLabel.font = .systemFont(ofSize: 16)
-
-        let stack = UIStackView(arrangedSubviews: [iconView, titleLabel])
-        stack.spacing = 12
-        stack.alignment = .center
-        stack.translatesAutoresizingMaskIntoConstraints = false
-
-        contentView.addSubview(stack)
-
-        NSLayoutConstraint.activate([
-            iconView.widthAnchor.constraint(equalToConstant: 24),
-            iconView.heightAnchor.constraint(equalToConstant: 24),
-
-            stack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
-            stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12)
-        ])
     }
     
 }

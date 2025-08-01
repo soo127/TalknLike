@@ -26,34 +26,54 @@ final class ProfileEditCell: UITableViewCell {
         titleLabel.text = title
         valueLabel.text = value
     }
-
+    
     private func setup() {
-        [titleLabel, valueLabel, accessoryIcon].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            contentView.addSubview($0)
-        }
-
-        accessoryIcon.tintColor = .systemGray
-        accessoryIcon.contentMode = .scaleAspectFit
-        valueLabel.textColor = .secondaryLabel
-        valueLabel.textAlignment = .right
-        titleLabel.font = .systemFont(ofSize: 16)
-        valueLabel.font = .systemFont(ofSize: 15)
-
-        NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
-            titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-
-            accessoryIcon.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            accessoryIcon.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
-            accessoryIcon.widthAnchor.constraint(equalToConstant: 12),
-            accessoryIcon.heightAnchor.constraint(equalToConstant: 18),
-
-            valueLabel.trailingAnchor.constraint(equalTo: accessoryIcon.leadingAnchor, constant: -8),
-            valueLabel.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
-            valueLabel.leadingAnchor.constraint(greaterThanOrEqualTo: titleLabel.trailingAnchor, constant: 8)
-        ])
+        setupTitleLabel()
+        setupIcon()
+        setupValueLabel()
     }
 
+}
+
+extension ProfileEditCell {
+    
+    private func setupTitleLabel() {
+        titleLabel.font = .systemFont(ofSize: 16)
+        
+        contentView.addSubview(titleLabel)
+        titleLabel.anchor(
+            top: contentView.topAnchor,
+            leading: contentView.leadingAnchor,
+            bottom: contentView.bottomAnchor,
+            padding: UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+        )
+    }
+    
+    private func setupIcon() {
+        accessoryIcon.tintColor = .systemGray
+        accessoryIcon.contentMode = .scaleAspectFit
+        
+        contentView.addSubview(accessoryIcon)
+        accessoryIcon.anchor(
+            top: contentView.topAnchor,
+            bottom: contentView.bottomAnchor,
+            trailing: contentView.trailingAnchor,
+            padding: UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+        )
+    }
+    
+    private func setupValueLabel() {
+        valueLabel.textColor = .secondaryLabel
+        valueLabel.textAlignment = .right
+        valueLabel.font = .systemFont(ofSize: 15)
+
+        contentView.addSubview(valueLabel)
+        valueLabel.anchor(
+            top: contentView.topAnchor,
+            bottom: contentView.bottomAnchor,
+            trailing: accessoryIcon.leadingAnchor,
+            padding: UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 8)
+        )
+    }
+    
 }

@@ -20,19 +20,19 @@ extension UIView {
     ) {
         translatesAutoresizingMaskIntoConstraints = false
 
-        if let top = top {
+        if let top {
             topAnchor.constraint(equalTo: top, constant: padding.top).isActive = true
         }
 
-        if let leading = leading {
+        if let leading {
             leadingAnchor.constraint(equalTo: leading, constant: padding.left).isActive = true
         }
 
-        if let bottom = bottom {
+        if let bottom {
             bottomAnchor.constraint(equalTo: bottom, constant: -padding.bottom).isActive = true
         }
 
-        if let trailing = trailing {
+        if let trailing {
             trailingAnchor.constraint(equalTo: trailing, constant: -padding.right).isActive = true
         }
 
@@ -42,6 +42,21 @@ extension UIView {
 
         if height != 0 {
             heightAnchor.constraint(equalToConstant: height).isActive = true
+        }
+    }
+    
+    func anchor(
+        centerX: NSLayoutXAxisAnchor? = nil,
+        centerY: NSLayoutYAxisAnchor? = nil
+    ) {
+        translatesAutoresizingMaskIntoConstraints = false
+
+        if let centerX {
+            centerXAnchor.constraint(equalTo: centerX).isActive = true
+        }
+
+        if let centerY {
+            centerYAnchor.constraint(equalTo: centerY).isActive = true
         }
     }
     
