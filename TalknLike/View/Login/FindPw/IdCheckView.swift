@@ -22,36 +22,50 @@ final class IdCheckView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     private func setup() {
         backgroundColor = .white
+        setupIndicator()
+        setupTitle()
+        setupLayout()
+    }
 
-        stepIndicator.translatesAutoresizingMaskIntoConstraints = false
+}
+
+extension IdCheckView {
+    
+    private func setupIndicator() {
         addSubview(stepIndicator)
-        NSLayoutConstraint.activate([
-            stepIndicator.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-            stepIndicator.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stepIndicator.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stepIndicator.heightAnchor.constraint(equalToConstant: 40)
-        ])
-        
+        stepIndicator.anchor(
+            top: safeAreaLayoutGuide.topAnchor,
+            leading: leadingAnchor,
+            trailing: trailingAnchor,
+            height: 40
+        )
+    }
+
+    private func setupTitle() {
         title.text = "아이디를 입력해주세요."
         title.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
         title.textAlignment = .left
         title.textColor = .black
-
-        let vStack = UIStackView(arrangedSubviews: [title, idField, nextButton])
-        vStack.axis = .vertical
-        vStack.spacing = 20
-        vStack.translatesAutoresizingMaskIntoConstraints = false
-        vStack.setCustomSpacing(50, after: title)
-        addSubview(vStack)
+    }
+    
+    private func setupLayout() {
+        let stack = UIStackView.make(
+            views: [title, idField, nextButton],
+            axis: .vertical,
+            spacing: 20
+        )
+        stack.setCustomSpacing(50, after: title)
         
-        NSLayoutConstraint.activate([
-            vStack.topAnchor.constraint(equalTo: stepIndicator.bottomAnchor, constant: 150),
-            vStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 30),
-            vStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -30)
-        ])
+        addSubview(stack)
+        stack.anchor(
+            top: stepIndicator.bottomAnchor,
+            leading: leadingAnchor,
+            trailing: trailingAnchor,
+            padding: UIEdgeInsets(top: 150, left: 30, bottom: 0, right: 30)
+        )
     }
 
 }

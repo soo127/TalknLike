@@ -18,45 +18,66 @@ final class LoginView: UIView {
     private let signUpButton = UIButton.make("회원가입")
     private let findIdButton = UIButton.make("아이디 찾기")
     private let findPwButton = UIButton.make("비밀번호 찾기")
+    private var menuButtons = UIStackView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        backgroundColor = .lightGray
         setup()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-   
+    
     private func setup() {
-        backgroundColor = .lightGray
+        setupLogoLabel()
+        setupButtonActions()
+        setupMenus()
+        setupLayout()
+    }
+    
+}
+
+extension LoginView {
+    
+    private func setupLogoLabel() {
         logoLabel.text = "TalknLike"
         logoLabel.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         logoLabel.textAlignment = .center
         logoLabel.textColor = .white
-        
-        let hStack = UIStackView(arrangedSubviews: [signUpButton, findIdButton, findPwButton])
-        hStack.axis = .horizontal
-        hStack.distribution = .fillEqually
-        
-        let vStack = UIStackView(arrangedSubviews: [logoLabel, emailField, passwordField, loginButton, hStack])
-        vStack.setCustomSpacing(50, after: logoLabel)
-        vStack.axis = .vertical
-        vStack.spacing = 20
-        vStack.translatesAutoresizingMaskIntoConstraints = false
-        
-        addSubview(vStack)
-        
-        NSLayoutConstraint.activate([
-            vStack.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 100),
-            vStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40),
-            vStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -40)
-        ])
-        
+    }
+    
+    func setupButtonActions() {
         loginButton.addTarget(self, action: #selector(loginTapped), for: .touchUpInside)
         signUpButton.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
         findIdButton.addTarget(self, action: #selector(findIdTapped), for: .touchUpInside)
         findPwButton.addTarget(self, action: #selector(findPwTapped), for: .touchUpInside)
+    }
+   
+    private func setupMenus() {
+        menuButtons = UIStackView.make(
+            views: [signUpButton, findIdButton, findPwButton],
+            axis: .horizontal,
+            distribution: .fillEqually
+        )
+    }
+    
+    private func setupLayout() {
+        let stack = UIStackView.make(
+            views: [logoLabel, emailField, passwordField, loginButton, menuButtons],
+            axis: .vertical,
+            spacing: 20
+        )
+        stack.setCustomSpacing(50, after: logoLabel)
+        
+        addSubview(stack)
+        stack.anchor(
+            top: safeAreaLayoutGuide.topAnchor,
+            leading: leadingAnchor,
+            trailing: trailingAnchor,
+            padding: UIEdgeInsets(top: 100, left: 40, bottom: 0, right: 40)
+        )
     }
     
 }

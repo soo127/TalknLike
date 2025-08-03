@@ -15,10 +15,10 @@ final class PostView: UIView, UITextViewDelegate {
     let nicknameLabel = UILabel()
     let textView = UITextView()
     private let separator = UIView()
+    private var profileHeader = UIStackView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        textView.delegate = self
         setup()
     }
     
@@ -27,65 +27,84 @@ final class PostView: UIView, UITextViewDelegate {
     }
     
     private func setup() {
-        placeholderLabel.text = "이 텍스트창이 당신을 기다리고 있어요."
-        placeholderLabel.textColor = .placeholderText
-        placeholderLabel.font = .systemFont(ofSize: 16)
-        placeholderLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        textView.font = .systemFont(ofSize: 16)
-        textView.layer.cornerRadius = 8
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        
-        profileImageView.layer.cornerRadius = 30
-        profileImageView.clipsToBounds = true
-        profileImageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        editButton.setTitle("편집", for: .normal)
-
-        nicknameLabel.font = .boldSystemFont(ofSize: 20)
-        nicknameLabel.text = "닉네임"
-        
-        separator.backgroundColor = .systemGray5
-        separator.translatesAutoresizingMaskIntoConstraints = false
-        
-
-        let vStackProfileInfo = UIStackView(arrangedSubviews: [nicknameLabel, editButton])
-        vStackProfileInfo.axis = .vertical
-        vStackProfileInfo.alignment = .leading
-        vStackProfileInfo.spacing = 4
-
-        let profileStack = UIStackView(arrangedSubviews: [profileImageView, vStackProfileInfo])
-        profileStack.axis = .horizontal
-        profileStack.spacing = 12
-        
-        let mainStack = UIStackView(arrangedSubviews: [profileStack, separator, textView])
-        mainStack.axis = .vertical
-        mainStack.spacing = 12
-        mainStack.translatesAutoresizingMaskIntoConstraints = false
-        
-        addSubview(mainStack)
-        textView.addSubview(placeholderLabel)
-        
-        NSLayoutConstraint.activate([
-            mainStack.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 30),
-            mainStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            mainStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            
-            profileImageView.widthAnchor.constraint(equalToConstant: 60),
-            profileImageView.heightAnchor.constraint(equalToConstant: 60),
-            
-            separator.heightAnchor.constraint(equalToConstant: 1),
-            
-            textView.heightAnchor.constraint(equalToConstant: 300),
-            
-            placeholderLabel.topAnchor.constraint(equalTo: textView.topAnchor, constant: 8),
-            placeholderLabel.leadingAnchor.constraint(equalTo: textView.leadingAnchor, constant: 5)
-        ])
+        setupHeader()
+        setupPost()
     }
     
-    // Placeholder
     func textViewDidChange(_ textView: UITextView) {
         placeholderLabel.isHidden = !textView.text.isEmpty
     }
     
+}
+
+extension PostView {
+    
+    private func setupHeader() {
+        setupTextView()
+        setupPlaceholder()
+        setupProfileImageView()
+        setupEditButton()
+        setupNicknameLabel()
+        
+        let vStack = UIStackView.make(views: [nicknameLabel, editButton], axis: .vertical, spacing: 4)
+        vStack.alignment = .leading
+        profileHeader = UIStackView.make(views: [profileImageView, vStack], axis: .horizontal, spacing: 12)
+    }
+    
+    private func setupPost() {
+        let postView = UIStackView(arrangedSubviews: [profileHeader, separator, textView])
+        postView.axis = .vertical
+        postView.spacing = 12
+        
+        addSubview(postView)
+        postView.anchor(
+            top: safeAreaLayoutGuide.topAnchor,
+            leading: leadingAnchor,
+            trailing: trailingAnchor,
+            padding: UIEdgeInsets(top: 20, left: 16, bottom: 0, right: 16)
+        )
+    }
+    
+    private func setupTextView() {
+        textView.delegate = self
+        textView.font = .systemFont(ofSize: 16)
+        textView.layer.cornerRadius = 8
+        
+        textView.addSubview(placeholderLabel)
+        textView.anchor(height: 300)
+    }
+    
+    private func setupPlaceholder() {
+        placeholderLabel.text = "이 텍스트창이 당신을 기다리고 있어요."
+        placeholderLabel.textColor = .placeholderText
+        placeholderLabel.font = .systemFont(ofSize: 16)
+        
+        placeholderLabel.anchor(
+            top: textView.topAnchor,
+            leading: textView.leadingAnchor,
+            padding: UIEdgeInsets(top: 8, left: 5, bottom: 0, right: 0)
+        )
+    }
+    
+    private func setupProfileImageView() {
+        profileImageView.layer.cornerRadius = 30
+        profileImageView.clipsToBounds = true
+        
+        profileImageView.anchor(width: 60, height: 60)
+    }
+    
+    private func setupEditButton() {
+        editButton.setTitle("편집", for: .normal)
+    }
+    
+    private func setupNicknameLabel() {
+        nicknameLabel.font = .boldSystemFont(ofSize: 20)
+        nicknameLabel.text = "닉네임"
+    }
+    
+    private func setupSeparator() {
+        separator.backgroundColor = .systemGray5
+        separator.anchor(height: 1)
+    }
+
 }

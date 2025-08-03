@@ -16,35 +16,33 @@ final class StepIndicatorView: UIView {
         super.init(frame: frame)
         setup()
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     private func setup() {
         backgroundColor = .systemGray6
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.distribution = .fillEqually
-        stack.translatesAutoresizingMaskIntoConstraints = false
-
-        for title in titles {
+        labels = titles.map { title in
             let label = UILabel()
             label.text = title
             label.textAlignment = .center
-            label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+            label.font = .systemFont(ofSize: 14, weight: .medium)
             label.textColor = .gray
-            labels.append(label)
-            stack.addArrangedSubview(label)
+            return label
         }
-
-        addSubview(stack)
-        NSLayoutConstraint.activate([
-            stack.topAnchor.constraint(equalTo: topAnchor),
-            stack.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stack.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stack.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
+        
+        let stack = UIStackView.make(
+            views: labels,
+            axis: .horizontal,
+            distribution: .fillEqually
+        )
+        stack.anchor(
+            top: topAnchor,
+            leading: leadingAnchor,
+            bottom: bottomAnchor,
+            trailing: trailingAnchor
+        )
     }
-
+    
 }

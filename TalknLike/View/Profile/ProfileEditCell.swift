@@ -9,9 +9,9 @@ import UIKit
 
 final class ProfileEditCell: UITableViewCell {
 
-    let titleLabel = UILabel()
-    let valueLabel = UILabel()
-    let accessoryIcon = UIImageView(image: UIImage(systemName: "chevron.right"))
+    private let titleLabel = UILabel()
+    private let valueLabel = UILabel()
+    private let accessoryIcon = UIImageView(image: UIImage(systemName: "chevron.right"))
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

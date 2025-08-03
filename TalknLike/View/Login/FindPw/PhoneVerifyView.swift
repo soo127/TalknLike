@@ -15,7 +15,7 @@ final class PhoneVerifyView: UIView {
     let verifyButton = UIButton.make("인증", backgroundColor: .systemGray2)
     let codeField = UITextField.make("인증번호 입력", numberOnly: true)
     let nextButton = UIButton.make("다음", backgroundColor: .systemBlue, height: 44)
-    private lazy var phoneStack = UIStackView.make(views: [phoneField, verifyButton], axis: .horizontal, distribution: .fillProportionally)
+    private lazy var phoneStack = UIStackView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -25,36 +25,59 @@ final class PhoneVerifyView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     private func setup() {
         backgroundColor = .white
-        
-        stepIndicator.translatesAutoresizingMaskIntoConstraints = false
+        setupStepIndicator()
+        setupTitle()
+        setupPhoneStack()
+        setupLayout()
+    }
+
+}
+
+extension PhoneVerifyView {
+    
+    private func setupStepIndicator() {
         addSubview(stepIndicator)
-        NSLayoutConstraint.activate([
-            stepIndicator.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-            stepIndicator.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stepIndicator.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stepIndicator.heightAnchor.constraint(equalToConstant: 40)
-        ])
-        
+        stepIndicator.anchor(
+            top: safeAreaLayoutGuide.topAnchor,
+            leading: leadingAnchor,
+            trailing: trailingAnchor,
+            height: 40,
+        )
+    }
+    
+    private func setupTitle() {
         title.text = "번호 인증을 완료해주세요."
         title.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
         title.textAlignment = .left
         title.textColor = .black
-
-        let stack = UIStackView(arrangedSubviews: [title, phoneStack, codeField, nextButton])
-        stack.axis = .vertical
-        stack.spacing = 20
-        stack.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
+    private func setupPhoneStack() {
+        phoneStack = UIStackView.make(
+            views: [phoneField, verifyButton],
+            axis: .horizontal,
+            distribution: .fillProportionally
+        )
+    }
+    
+    private func setupLayout() {
+        let stack = UIStackView.make(
+            views: [title, phoneStack, codeField, nextButton],
+            axis: .vertical,
+            spacing: 20
+        )
         stack.setCustomSpacing(50, after: title)
-        addSubview(stack)
         
-        NSLayoutConstraint.activate([
-            stack.topAnchor.constraint(equalTo: stepIndicator.bottomAnchor, constant: 150),
-            stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 30),
-            stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -30),
-        ])
+        addSubview(stack)
+        stack.anchor(
+            top: safeAreaLayoutGuide.bottomAnchor,
+            leading: leadingAnchor,
+            trailing: trailingAnchor,
+            padding: UIEdgeInsets(top: 150, left: 30, bottom: 0, right: 30)
+        )
     }
     
 }

@@ -26,33 +26,47 @@ final class NewPwView: UIView {
     
     private func setup() {
         backgroundColor = .white
-        
-        stepIndicator.translatesAutoresizingMaskIntoConstraints = false
+        setupIndicator()
+        setupTitle()
+        setupLayout()
+    }
+    
+}
+
+extension NewPwView {
+    
+    private func setupIndicator() {
         addSubview(stepIndicator)
-        NSLayoutConstraint.activate([
-            stepIndicator.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-            stepIndicator.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stepIndicator.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stepIndicator.heightAnchor.constraint(equalToConstant: 40)
-        ])
-        
+        stepIndicator.anchor(
+            top: safeAreaLayoutGuide.topAnchor,
+            leading: leadingAnchor,
+            trailing: trailingAnchor,
+            height: 40
+        )
+    }
+    
+    private func setupTitle() {
         title.text = "비밀번호를 재설정합니다."
         title.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
         title.textAlignment = .left
         title.textColor = .black
-        
-        let stack = UIStackView(arrangedSubviews: [title, passwordField, confirmField, finishButton])
-        stack.axis = .vertical
-        stack.spacing = 20
-        stack.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
+    private func setupLayout() {
+        let stack = UIStackView.make(
+            views: [title, passwordField, confirmField, finishButton],
+            axis: .vertical,
+            spacing: 20
+        )
         stack.setCustomSpacing(50, after: title)
-        addSubview(stack)
         
-        NSLayoutConstraint.activate([
-            stack.topAnchor.constraint(equalTo: stepIndicator.bottomAnchor, constant: 150),
-            stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 30),
-            stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -30),
-        ])
+        addSubview(stack)
+        stack.anchor(
+            top: safeAreaLayoutGuide.bottomAnchor,
+            leading: leadingAnchor,
+            trailing: trailingAnchor,
+            padding: UIEdgeInsets(top: 150, left: 30, bottom: 0, right: 30)
+        )
     }
     
 }

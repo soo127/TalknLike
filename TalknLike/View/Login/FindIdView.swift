@@ -14,56 +14,66 @@ final class FindIdView: UIView {
     let verifyButton = UIButton.make("인증", backgroundColor: .systemGray2)
     let certificationField = UITextField.make("인증번호 입력", numberOnly: true)
     let submitButton = UIButton.make("확인", backgroundColor: .systemBlue, height: 44)
-    private lazy var phoneStack = UIStackView.make(views: [phoneField, verifyButton], axis: .horizontal, distribution: .fillProportionally)
+    private lazy var phoneStack = UIStackView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
-        setupConstraints()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     private func setup() {
         backgroundColor = .white
-            
+        setupTitle()
+        setupSubmitButton()
+        setupPhone()
+        setupLayout()
+    }
+
+}
+
+extension FindIdView {
+    
+    private func setupTitle() {
         title.text = "아이디 찾기"
         title.font = UIFont.systemFont(ofSize: 30, weight: .bold)
         title.textAlignment = .left
         title.textColor = .black
-
+    }
+    
+    private func setupSubmitButton() {
         submitButton.isEnabled = false
         submitButton.alpha = 0.5
     }
+    
+    private func setupPhone() {
+        phoneStack = UIStackView.make(
+            views: [phoneField, verifyButton],
+            axis: .horizontal,
+            distribution: .fillProportionally
+        )
+        phoneField.widthAnchor.constraint(equalTo: phoneStack.widthAnchor, multiplier: 0.7).isActive = true
+    }
 
-    private func setupConstraints() {
-        [title, phoneField, verifyButton, submitButton, certificationField].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
-
-        let stack = UIStackView(arrangedSubviews: [
-            title,
-            phoneStack,
-            certificationField,
-            submitButton
-        ])
-        stack.axis = .vertical
-        stack.spacing = 10
+    private func setupLayout() {
+        let stack = UIStackView.make(
+            views: [title, phoneStack, certificationField, submitButton],
+            axis: .vertical,
+            spacing: 10
+        )
         stack.setCustomSpacing(40, after: title)
         stack.setCustomSpacing(40, after: certificationField)
-        stack.translatesAutoresizingMaskIntoConstraints = false
 
         addSubview(stack)
-
-        NSLayoutConstraint.activate([
-            stack.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 100),
-            stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 30),
-            stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -30),
-            phoneField.widthAnchor.constraint(equalTo: phoneStack.widthAnchor, multiplier: 0.7)
-        ])
+        stack.anchor(
+            top: safeAreaLayoutGuide.topAnchor,
+            leading: leadingAnchor,
+            trailing: trailingAnchor,
+            padding: UIEdgeInsets(top: 100, left: 30, bottom: 0, right: 30)
+        )
     }
     
 }
-
