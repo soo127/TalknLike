@@ -26,6 +26,39 @@ final class PostViewController: UIViewController {
         setupNavigationBar()
     }
     
+    @objc private func didTapClose() {
+        dismiss(animated: true)
+    }
+    
+    @objc private func didTapPost() {
+        Task {
+            do {
+                let content = postView.textView.text ?? ""
+                try await FirestoreManager.post(content: content)
+                showToast(message: "게시 성공")
+                dismiss(animated: true)
+            } catch {
+                showToast(message: "게시 실패")
+            }
+        }
+    }
+
+}
+
+extension PostViewController {
+    
+    private func bindUser() {
+        CurrentUserStore.shared.userPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] user in
+                self?.postView.nicknameLabel.text = user.nickname
+                Task { @MainActor [weak self] in
+                    self?.postView.profileImageView.image = try? await ImageLoader.loadImage(from: user.photoURL)
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
     private func setupNavigationBar() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .close,
@@ -38,42 +71,6 @@ final class PostViewController: UIViewController {
             target: self,
             action: #selector(didTapPost)
         )
-    }
-    
-    @objc private func didTapClose() {
-        dismiss(animated: true)
-    }
-    
-    @objc private func didTapPost() {
-        guard let user = CurrentUserStore.shared.currentUser else { return }
-        let content = postView.textView.text ?? ""
-        
-        Task {
-            do {
-                try await Firestore.firestore()
-                    .collection("Posts")
-                    .addDocument(data: [
-                        "profile": user.asDictionary(),
-                        "content": content,
-                        "createdAt": Date()
-                    ])
-            } catch {
-                print("게시글 업로드 실패:", error)
-            }
-            dismiss(animated: true)
-        }
-    }
-    
-    private func bindUser() {
-        CurrentUserStore.shared.userPublisher
-            .receive(on: RunLoop.main)
-            .sink { [weak self] user in
-                self?.postView.nicknameLabel.text = user.nickname
-                Task { @MainActor [weak self] in
-                    self?.postView.profileImageView.image = try? await ImageLoader.loadImage(from: user.photoURL)
-                }
-            }
-            .store(in: &cancellables)
     }
     
 }

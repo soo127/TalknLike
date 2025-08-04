@@ -66,7 +66,7 @@ extension LoginViewController: LoginViewDelegate {
                     sceneDelegate.window?.rootViewController = MainViewController()
                 }
             } catch {
-                print("로그인 실패: \(error.localizedDescription)")
+                showToast(message: "로그인 실패")
             }
         }
     }

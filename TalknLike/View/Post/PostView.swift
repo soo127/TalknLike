@@ -45,6 +45,7 @@ extension PostView {
         setupProfileImageView()
         setupEditButton()
         setupNicknameLabel()
+        setupSeparator()
         
         let vStack = UIStackView.make(views: [nicknameLabel, editButton], axis: .vertical, spacing: 4)
         vStack.alignment = .leading
@@ -93,6 +94,11 @@ extension PostView {
         profileImageView.anchor(width: 60, height: 60)
     }
     
+    private func setupSeparator() {
+        separator.backgroundColor = .systemGray5
+        separator.anchor(height: 1)
+    }
+
     private func setupEditButton() {
         editButton.setTitle("편집", for: .normal)
     }
@@ -102,9 +108,4 @@ extension PostView {
         nicknameLabel.text = "닉네임"
     }
     
-    private func setupSeparator() {
-        separator.backgroundColor = .systemGray5
-        separator.anchor(height: 1)
-    }
-
 }

@@ -7,6 +7,7 @@
 
 struct UserProfile: Decodable {
     let uid: String
+    let email: String
     var nickname: String
     var bio: String
     var photoURL: String
@@ -16,6 +17,7 @@ extension UserProfile {
     func asDictionary() -> [String: Any] {
         return [
             "uid": uid,
+            "email": email,
             "nickname": nickname,
             "bio": bio,
             "photoURL": photoURL

@@ -55,13 +55,9 @@ final class SignUpViewController: UIViewController {
     private func checkEmailStatus(email: String) async -> EmailCheckResult {
         guard !email.isEmpty else { return .empty }
         do {
-            return try await Firestore.firestore().collection("Users")
-                .whereField("email", isEqualTo: email)
-                .getDocuments()
-                .documents
-                .isEmpty ? .available : .duplicate
+            return try await FirestoreManager.checkAvailable(email: email) ? .available : .duplicate
         } catch {
-            print("Firestore 에러: \(error)")
+            showToast(message: "이메일 상태 확인 중 에러 발생")
             return .error
         }
     }
@@ -85,43 +81,25 @@ extension SignUpViewController: SignUpViewDelegate {
             return
         }
         Task {
-            await self.createUser(email: email, password: pw)
-                .onSuccess { self.handleAuthResult($0) }
-                .onFailure { print("회원가입 실패: \($0.localizedDescription)") }
-        }
-    }
-
-    private func createUser(email: String, password: String) async -> Result<AuthDataResult, Error> {
-        await withCheckedContinuation { continuation in
-            Auth.auth().createUser(withEmail: email, password: password) { result, error in
-                if let result {
-                    continuation.resume(returning: .success(result))
-                } else {
-                    let error: Error = error ?? UnknownError()
-                    continuation.resume(returning: .failure(error))
-                }
+            do {
+                let result = try await createUser(email: email, password: pw)
+                try await FirestoreManager.registerUser(uid: result.user.uid, email: email)
+                showToast(message: "환영합니다.")
+            } catch {
+                showToast(message: "회원가입 실패")
             }
         }
     }
 
-    func handleAuthResult(_ result: AuthDataResult) {
-        let user = result.user
-        
-        let userData: [String: Any] = [
-            "uid": user.uid,
-            "nickname": "테스트 별명",
-            "bio": "테스트",
-            "photoURL": "person.fill"
-        ]
-        
-        Firestore.firestore().collection("Users").document(user.uid).setData(userData) { error in
-            if let error = error {
-                print("Firestore 저장 실패: \(error.localizedDescription)")
-            } else {
-                print("회원가입 완료, DB 저장")
-                let alert = UIAlertController(title: "가입 완료", message: "환영합니다!", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "확인", style: .default))
-                self.present(alert, animated: true)
+    private func createUser(email: String, password: String) async throws -> AuthDataResult {
+        try await withCheckedThrowingContinuation { continuation in
+            Auth.auth().createUser(withEmail: email, password: password) { result, error in
+                if let result {
+                    continuation.resume(returning: result)
+                } else {
+                    let error: Error = error ?? UnknownError()
+                    continuation.resume(throwing: error)
+                }
             }
         }
     }
