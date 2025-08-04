@@ -44,7 +44,7 @@ final class ProfileEditViewController: UIViewController, UITableViewDelegate, UI
                 self?.profileEditView.tableView.reloadData()
                 Task { @MainActor [weak self] in
                     let image = try await ImageLoader.loadImage(from: user.photoURL)
-                    let resizedImage = image?.resized(to: CGSize(width: 80, height: 80))
+                    let resizedImage = image.resized(to: CGSize(width: 80, height: 80))
                     self?.profileEditView.imageButton.setImage(resizedImage, for: .normal)
                 }
             }

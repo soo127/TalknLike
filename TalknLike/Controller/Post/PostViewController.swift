@@ -70,7 +70,7 @@ final class PostViewController: UIViewController {
             .sink { [weak self] user in
                 self?.postView.nicknameLabel.text = user.nickname
                 Task { @MainActor [weak self] in
-                    self?.postView.profileImageView.image = try? await ImageLoader.loadImage(from: user.photoURL) ?? UIImage(systemName: "person.circle")
+                    self?.postView.profileImageView.image = try? await ImageLoader.loadImage(from: user.photoURL)
                 }
             }
             .store(in: &cancellables)

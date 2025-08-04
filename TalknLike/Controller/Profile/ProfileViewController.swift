@@ -46,7 +46,7 @@ final class ProfileViewController: UIViewController {
                 self?.profileView.nicknameLabel.text = user.nickname
                 self?.profileView.introLabel.text = user.bio
                 Task { @MainActor [weak self] in
-                    self?.profileView.profileImageView.image = try? await ImageLoader.loadImage(from: user.photoURL) ?? UIImage(systemName: "person.circle")
+                    self?.profileView.profileImageView.image = try? await ImageLoader.loadImage(from: user.photoURL)
                 }
             }
             .store(in: &cancellables)
