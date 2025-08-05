@@ -7,11 +7,15 @@
 
 import UIKit
 import FirebaseFirestore
+import Combine
+import FirebaseAuth
 
 final class MyPostsViewController: UIViewController {
     
     private let myPostsView = MyPostsView()
     private var posts: [Post] = []
+    private var cancellables = Set<AnyCancellable>()
+    private let user = CurrentUserStore.shared.currentUser
     
     override func loadView() {
         view = myPostsView
@@ -21,7 +25,7 @@ final class MyPostsViewController: UIViewController {
         super.viewDidLoad()
         title = "내 게시글"
         setupTableView()
-        loadMyPosts()
+        bindPosts()
     }
     
     private func setupTableView() {
@@ -29,29 +33,14 @@ final class MyPostsViewController: UIViewController {
         myPostsView.tableView.delegate = self
     }
     
-    private func loadMyPosts() {
-        guard let userId = CurrentUserStore.shared.currentUser?.uid else { return }
-        
-        Task { @MainActor [weak self] in
-            do {
-                self?.posts = try await self?.fetchMyPosts(userId: userId) ?? []
+    private func bindPosts() {
+        PostStore.shared.postsPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] posts in
+                self?.posts = posts
                 self?.myPostsView.tableView.reloadData()
-            } catch {
-                print("게시글 가져오기 실패:", error)
             }
-        }
-    }
-    
-    private func fetchMyPosts(userId: String) async throws -> [Post] {
-        let snapshot = try await Firestore.firestore()
-            .collection("Posts")
-            .whereField("profile.uid", isEqualTo: userId)
-            .order(by: "createdAt", descending: true)
-            .getDocuments()
-
-        return try snapshot.documents.compactMap { document in
-            try Firestore.Decoder().decode(Post.self, from: document.data())
-        }
+            .store(in: &cancellables)
     }
 
 }
@@ -66,12 +55,14 @@ extension MyPostsViewController: UITableViewDataSource, UITableViewDelegate {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "MyPostsCell", for: indexPath) as? MyPostsCell else {
             return UITableViewCell()
         }
-        
-        let post = posts[indexPath.row]
-        cell.contentLabel.text = post.content
-        cell.profileImage.image = UIImage(systemName: "person")
-        cell.dateLabel.text = "\(post.createdAt)"
-        cell.nicknameLabel.text = post.profile.nickname
+        user
+            .handleSome {
+                cell.profileImage.image =  ImageLoader.cachedImage(from: $0.photoURL)
+                cell.nicknameLabel.text = $0.nickname
+                let post = posts[indexPath.row]
+                cell.contentLabel.text = post.content
+                cell.dateLabel.text = "\(post.createdAt)"
+            }
         return cell
     }
     

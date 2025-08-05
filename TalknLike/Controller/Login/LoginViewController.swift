@@ -61,7 +61,7 @@ extension LoginViewController: LoginViewDelegate {
         Task { @MainActor in
             do {
                 try await Auth.auth().signIn(withEmail: email, password: pw)
-                await CurrentUserStore.shared.fetchCurrentUser()
+                await onLoginSuccess()
                 if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
                     sceneDelegate.window?.rootViewController = MainViewController()
                 }
@@ -69,6 +69,14 @@ extension LoginViewController: LoginViewDelegate {
                 showToast(message: "로그인 실패")
             }
         }
+    }
+    
+    func onLoginSuccess() async {
+        await CurrentUserStore.shared.fetchCurrentUser()
+        await CurrentUserStore.shared.currentUser
+            .handleSome {
+                try? await PostStore.shared.fetchPosts(for: $0.uid)
+            }
     }
 
     private func didTapSignUpButton() {

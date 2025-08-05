@@ -27,7 +27,7 @@ enum FirestoreManager {
                 try await firestore
                     .collection("Posts")
                     .addDocument(data: [
-                        "profile": $0.asDictionary(),
+                        "uid": $0.uid,
                         "content": content,
                         "createdAt": Date()
                     ])

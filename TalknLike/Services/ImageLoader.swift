@@ -10,7 +10,11 @@ import UIKit
 enum ImageLoader {
 
     private static var cache = NSCache<NSString, UIImage>()
-
+    
+    static func cachedImage(from urlString: String) -> UIImage? {
+        return cache.object(forKey: urlString as NSString)
+    }
+    
     static func loadImage(from urlString: String) async throws -> UIImage {
         if let cachedImage = cache.object(forKey: urlString as NSString) {
             return cachedImage
