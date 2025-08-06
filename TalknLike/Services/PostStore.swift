@@ -30,4 +30,21 @@ final class PostStore {
         postsSubject.send(posts)
     }
     
+    func post(content: String) async throws {
+        guard let uid = CurrentUserStore.shared.currentUser?.uid else {
+            return
+        }
+        let newPost = Post(
+            uid: uid,
+            content: content,
+            createdAt: Date()
+        )
+        try Firestore.firestore()
+            .collection("Posts")
+            .addDocument(from: newPost)
+        
+        let updated = [newPost] + postsSubject.value
+        postsSubject.send(updated)
+    }
+    
 }

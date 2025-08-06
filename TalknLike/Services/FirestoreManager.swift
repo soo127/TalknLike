@@ -16,28 +16,16 @@ enum FirestoreManager {
             "uid": uid,
             "nickname": "닉네임",
             "bio": "자기소개를 작성해보세요.",
-            "photoURL": "person.fill",
+            "photoURL": NSNull(),
             "email": email
         ]
     }
-    
-    static func post(content: String) async throws {
-        try await CurrentUserStore.shared.currentUser
-            .handleSome {
-                try await firestore
-                    .collection("Posts")
-                    .addDocument(data: [
-                        "uid": $0.uid,
-                        "content": content,
-                        "createdAt": Date()
-                    ])
-            }
-    }
-    
+
     static func registerUser(uid: String, email: String) async throws {
-        try await firestore.collection("Users")
+        let newUser = UserProfile.initial(uid: uid, email: email)
+        try firestore.collection("Users")
             .document(uid)
-            .setData(initialUserData(uid: uid, email: email))
+            .setData(from: newUser)
     }
     
     static func checkAvailable(email: String) async throws -> Bool {

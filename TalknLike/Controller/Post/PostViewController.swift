@@ -34,7 +34,7 @@ final class PostViewController: UIViewController {
         Task {
             do {
                 let content = postView.textView.text ?? ""
-                try await FirestoreManager.post(content: content)
+                try await PostStore.shared.post(content: content)
                 showToast(message: "게시 성공")
                 dismiss(animated: true)
             } catch {
@@ -53,7 +53,7 @@ extension PostViewController {
             .sink { [weak self] user in
                 self?.postView.nicknameLabel.text = user.nickname
                 Task { @MainActor [weak self] in
-                    self?.postView.profileImageView.image = try? await ImageLoader.loadImage(from: user.photoURL)
+                    self?.postView.profileImageView.image = ImageLoader.cachedImage(from: user.photoURL) ?? UIImage(systemName: "person.fill")
                 }
             }
             .store(in: &cancellables)

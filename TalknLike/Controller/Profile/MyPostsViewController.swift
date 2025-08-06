@@ -55,13 +55,14 @@ extension MyPostsViewController: UITableViewDataSource, UITableViewDelegate {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "MyPostsCell", for: indexPath) as? MyPostsCell else {
             return UITableViewCell()
         }
+        
         user
             .handleSome {
-                cell.profileImage.image =  ImageLoader.cachedImage(from: $0.photoURL)
+                cell.profileImage.image = ImageLoader.cachedImage(from: $0.photoURL) ?? UIImage(systemName: "person.fill")
                 cell.nicknameLabel.text = $0.nickname
                 let post = posts[indexPath.row]
                 cell.contentLabel.text = post.content
-                cell.dateLabel.text = "\(post.createdAt)"
+                cell.dateLabel.text = "\(post.createdAt.formatted())"
             }
         return cell
     }

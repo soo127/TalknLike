@@ -11,23 +11,35 @@ enum ImageLoader {
 
     private static var cache = NSCache<NSString, UIImage>()
     
-    static func cachedImage(from urlString: String) -> UIImage? {
+    static func cachedImage(from urlString: String?) -> UIImage? {
+        guard let urlString else {
+            return nil
+        }
         return cache.object(forKey: urlString as NSString)
     }
     
-    static func loadImage(from urlString: String) async throws -> UIImage {
-        if let cachedImage = cache.object(forKey: urlString as NSString) {
-            return cachedImage
+    static func updateImageCache(from urlString: String?) async {
+        do {
+            guard let urlString, let url = URL(string: urlString) else {
+                throw LoadError.invalidURL
+            }
+            let (data, _) = try await URLSession.shared.data(from: url)
+            guard let image = UIImage(data: data) else {
+                throw LoadError.invalidData
+            }
+            cache.setObject(image, forKey: urlString as NSString)
+        } catch {
+            print("ImageLoader error: \(error)")
         }
-        guard let url = URL(string: urlString) else {
-            throw ImageLoaderError.invalidURL
-        }
-        let (data, _) = try await URLSession.shared.data(from: url)
-        guard let image = UIImage(data: data) else {
-            throw ImageLoaderError.invalidData
-        }
-        cache.setObject(image, forKey: urlString as NSString)
-        return image
     }
 
+}
+
+extension ImageLoader {
+    
+    enum LoadError: Error {
+        case invalidURL
+        case invalidData
+    }
+    
 }

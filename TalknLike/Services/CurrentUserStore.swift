@@ -40,22 +40,19 @@ final class CurrentUserStore {
             return
         }
         
-        if let nickname = nickname {
-            user.nickname = nickname
-        }
-        if let bio = bio {
-            user.bio = bio
-        }
-        if let photoURL = photoURL {
-            user.photoURL = photoURL
-        }
+        if let nickname { user.nickname = nickname }
+        if let bio { user.bio = bio }
+        if let photoURL { user.photoURL = photoURL }
 
-        try await Firestore.firestore()
+        try Firestore.firestore()
             .collection("Users")
             .document(uid)
-            .setData(user.asDictionary(), merge: true)
-
-        userSubject.send(user)
+            .setData(from: user, merge: true) { [weak self] error in
+                if error != nil {
+                    return
+                }
+                self?.userSubject.send(user)
+            }
     }
     
     var currentUser: UserProfile? {

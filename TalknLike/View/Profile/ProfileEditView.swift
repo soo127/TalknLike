@@ -10,7 +10,7 @@ import UIKit
 final class ProfileEditView: UIView {
 
     let cameraButton = UIButton()
-    let imageButton = UIButton()
+    let profileImageView = UIImageView()
     let tableView = UITableView(frame: .zero, style: .grouped)
     private let header = UIView()
 
@@ -35,7 +35,7 @@ extension ProfileEditView {
     private func setupHeader() {
         header.backgroundColor = .systemBackground
         header.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 180)
-        setupImageButton()
+        setupProfileImageView()
         setupCameraButton()
     }
     
@@ -54,30 +54,37 @@ extension ProfileEditView {
         )
     }
     
-    private func setupImageButton() {
-        let config = UIImage.SymbolConfiguration(pointSize: 80, weight: .regular)
-        let image = UIImage(systemName: "person.crop.circle", withConfiguration: config)
-        imageButton.setImage(image, for: .normal)
-        imageButton.imageView?.layer.cornerRadius = 40
+    private func setupProfileImageView() {
+        profileImageView.layer.cornerRadius = 40
+        profileImageView.clipsToBounds = true
         
-        header.addSubview(imageButton)
-        imageButton.anchor(
+        header.addSubview(profileImageView)
+        profileImageView.anchor(
             centerX: header.centerXAnchor,
             centerY: header.centerYAnchor
+        )
+        profileImageView.anchor(
+            width: 80,
+            height: 80
         )
     }
     
     private func setupCameraButton() {
-        let cameraConfig = UIImage.SymbolConfiguration(pointSize: 28, weight: .regular)
-        let cameraImage = UIImage(systemName: "camera.circle.fill", withConfiguration: cameraConfig)
+        let cameraConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
+        let cameraImage = UIImage(systemName: "camera", withConfiguration: cameraConfig)
         cameraButton.setImage(cameraImage, for: .normal)
-        cameraButton.tintColor = .black
+        cameraButton.tintColor = .white
+        cameraButton.backgroundColor = UIColor.gray.withAlphaComponent(0.3)
+        cameraButton.layer.cornerRadius = 40
         
         header.addSubview(cameraButton)
         cameraButton.anchor(
-            bottom: imageButton.bottomAnchor,
-            trailing: imageButton.trailingAnchor,
-            padding: UIEdgeInsets(top: 0, left: 0, bottom: -4, right: -4)
+            centerX: header.centerXAnchor,
+            centerY: header.centerYAnchor
+        )
+        cameraButton.anchor(
+            width: 80,
+            height: 80
         )
     }
     

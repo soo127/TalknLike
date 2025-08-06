@@ -34,7 +34,6 @@ final class ProfileEditViewController: UIViewController, UITableViewDelegate, UI
 
     private func setupActions() {
         profileEditView.cameraButton.addTarget(self, action: #selector(didTapProfile), for: .touchUpInside)
-        profileEditView.imageButton.addTarget(self, action: #selector(didTapProfile), for: .touchUpInside)
     }
 
     private func bindUser() {
@@ -43,9 +42,7 @@ final class ProfileEditViewController: UIViewController, UITableViewDelegate, UI
             .sink { [weak self] user in
                 self?.profileEditView.tableView.reloadData()
                 Task { @MainActor [weak self] in
-                    let image = try await ImageLoader.loadImage(from: user.photoURL)
-                    let resizedImage = image.resized(to: CGSize(width: 80, height: 80))
-                    self?.profileEditView.imageButton.setImage(resizedImage, for: .normal)
+                    self?.profileEditView.profileImageView.image = ImageLoader.cachedImage(from: user.photoURL) ?? UIImage(systemName: "person.fill")
                 }
             }
             .store(in: &cancellables)
@@ -117,9 +114,9 @@ extension ProfileEditViewController: PHPickerViewControllerDelegate {
                         fileName: fileName,
                         bucket: .profileImages
                     )
-                    try await CurrentUserStore.shared.update(
-                        photoURL: SupabaseManager.publicImageURL(fileName: fileName, bucket: .profileImages) + "?t=\(Int(Date().timeIntervalSince1970))"
-                    )
+                    let newPhotoURL = SupabaseManager.publicImageURL(fileName: fileName, bucket: .profileImages) + "?t=\(Int(Date().timeIntervalSince1970))"
+                    await ImageLoader.updateImageCache(from: newPhotoURL)
+                    try await CurrentUserStore.shared.update(photoURL: newPhotoURL)
                 } catch {
                     print("프로필 이미지 업로드 실패: \(error)")
                 }
