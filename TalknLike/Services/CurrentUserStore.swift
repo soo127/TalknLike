@@ -34,7 +34,7 @@ final class CurrentUserStore {
     
     func update(nickname: String? = nil,
                  bio: String? = nil,
-                 photoURL: String? = nil) async throws {
+                 photoURL: String? = nil) throws {
         guard let uid = Auth.auth().currentUser?.uid,
               var user = userSubject.value else {
             return

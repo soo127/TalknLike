@@ -42,12 +42,10 @@ final class SelfIntroductionViewController: UIViewController {
 
     @objc private func didTapSave() {
         let bio = selfIntroductionView.textView.text
-        Task {
-            do {
-                try await CurrentUserStore.shared.update(bio: bio)
-            } catch {
-                print("업데이트 실패: \(error.localizedDescription)")
-            }
+        do {
+            try CurrentUserStore.shared.update(bio: bio)
+        } catch {
+            showToast(message: "업데이트 실패")
         }
         navigationController?.popViewController(animated: true)
     }

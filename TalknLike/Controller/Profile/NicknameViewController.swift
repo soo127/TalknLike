@@ -42,12 +42,10 @@ final class NicknameViewController: UIViewController {
 
     @objc private func didTapSave() {
         let nickname = nicknameEditView.textField.text
-        Task {
-            do {
-                try await CurrentUserStore.shared.update(nickname: nickname)
-            } catch {
-                print("업데이트 실패: \(error.localizedDescription)")
-            }
+        do {
+            try CurrentUserStore.shared.update(nickname: nickname)
+        } catch {
+            showToast(message: "업데이트 실패")
         }
         navigationController?.popViewController(animated: true)
     }

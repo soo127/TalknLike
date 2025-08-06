@@ -116,11 +116,12 @@ extension ProfileEditViewController: PHPickerViewControllerDelegate {
                     )
                     let newPhotoURL = SupabaseManager.publicImageURL(fileName: fileName, bucket: .profileImages) + "?t=\(Int(Date().timeIntervalSince1970))"
                     await ImageLoader.updateImageCache(from: newPhotoURL)
-                    try await CurrentUserStore.shared.update(photoURL: newPhotoURL)
+                    try CurrentUserStore.shared.update(photoURL: newPhotoURL)
                 } catch {
                     print("프로필 이미지 업로드 실패: \(error)")
                 }
             }
         }
     }
+
 }
