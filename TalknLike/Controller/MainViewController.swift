@@ -19,7 +19,7 @@ final class MainViewController: UITabBarController {
         let feedVC = UINavigationController(rootViewController: SignUpViewController())
         feedVC.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), tag: 0)
 
-        let friendsVC = UINavigationController(rootViewController: SignUpViewController())
+        let friendsVC = UINavigationController(rootViewController: FollowViewController())
         friendsVC.tabBarItem = UITabBarItem(title: "친구", image: UIImage(systemName: "person.2"), tag: 1)
         
         let dummyUploadVC = UIViewController()

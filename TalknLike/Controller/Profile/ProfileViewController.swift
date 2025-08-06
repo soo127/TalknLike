@@ -75,7 +75,6 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        // TODO: 이동 처리
         navigationController?.pushViewController(MyPostsViewController(), animated: true)
     }
         
