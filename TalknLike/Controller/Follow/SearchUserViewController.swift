@@ -70,7 +70,6 @@ extension SearchUserViewController: UITableViewDataSource, UITableViewDelegate {
         
         Task { @MainActor in
             let image = await ImageLoader.loadImage(from: user.photoURL)
-            
             if tableView.indexPath(for: cell) == indexPath {
                 cell.profileImage.image = image
             }

@@ -12,6 +12,7 @@ final class SearchUserCell: UITableViewCell {
     let profileImage = UIImageView()
     let nicknameLabel = UILabel()
     let introLabel = UILabel()
+    let followButton = UIButton()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -26,6 +27,7 @@ final class SearchUserCell: UITableViewCell {
         setupProfileImage()
         setupNicknameLabel()
         setupIntroLabel()
+        setupFollowButton()
     }
     
 }
@@ -69,6 +71,24 @@ extension SearchUserCell {
         )
     }
     
+    private func setupFollowButton() {
+        var config = UIButton.Configuration.filled()
+        config.title = "팔로우"
+        config.attributedTitle?.font = UIFont.systemFont(ofSize: 14, weight: .bold)
+        config.baseBackgroundColor = .systemBlue
+        config.baseForegroundColor = .white
+        config.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 25, bottom: 8, trailing: 25)
+        followButton.configuration = config
+
+        contentView.addSubview(followButton)
+        followButton.anchor(
+            trailing: contentView.trailingAnchor
+        )
+        followButton.anchor(
+            centerY: contentView.centerYAnchor
+        )
+    }
+
 }
 
 extension SearchUserCell {
