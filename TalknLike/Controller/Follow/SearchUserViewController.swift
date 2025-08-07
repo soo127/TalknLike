@@ -6,10 +6,12 @@
 //
 
 import UIKit
+import FirebaseFirestore
 
 final class SearchUserViewController: UIViewController {
     
-    let searchUserView = SearchUserView()
+    private let searchUserView = SearchUserView()
+    private var searchedUsers: [UserProfile] = []
     
     override func loadView() {
         view = searchUserView
@@ -17,6 +19,81 @@ final class SearchUserViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupTableView()
+        setupSearchField()
+    }
+    
+    private func setupTableView() {
+        searchUserView.tableView.dataSource = self
+        searchUserView.tableView.delegate = self
+        searchUserView.tableView.register(SearchUserCell.self, forCellReuseIdentifier: "SearchUserCell")
+    }
+    
+    private func setupSearchField() {
+        searchUserView.searchTextField.delegate = self
+        searchUserView.searchTextField.returnKeyType = .search
+    }
+    
+    func searchUsers(matching keyword: String) async throws {
+        let users = try await Firestore.firestore()
+            .collection("Users")
+            .whereField("nickname", isGreaterThanOrEqualTo: keyword)
+            .whereField("nickname", isLessThan: keyword + "\u{f8ff}")
+            .limit(to: 20)
+            .getDocuments()
+            .documents
+            .compactMap { try? $0.data(as: UserProfile.self) }
+        
+        updateTableView(users: users)
+    }
+    
+
+    private func updateTableView(users: [UserProfile]) {
+        searchedUsers = users
+        searchUserView.tableView.reloadData()
+    }
+
+}
+
+extension SearchUserViewController: UITableViewDataSource, UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return searchedUsers.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "SearchUserCell", for: indexPath) as? SearchUserCell else {
+            return UITableViewCell()
+        }
+        let user = searchedUsers[indexPath.row]
+        cell.profileImage.image = UIImage(systemName: "person.fill")
+        cell.nicknameLabel.text = user.nickname
+        cell.introLabel.text = user.bio
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+}
+
+extension SearchUserViewController: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        guard let keyword = textField.text, !keyword.isEmpty else {
+            return true
+        }
+
+        Task {
+            do {
+                try await searchUsers(matching: keyword)
+            } catch {
+                print("검색 중 오류 발생:", error)
+            }
+        }
+        return true
     }
     
 }

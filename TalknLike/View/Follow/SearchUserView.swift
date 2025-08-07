@@ -48,7 +48,7 @@ final class SearchUserView: UIView {
             top: safeAreaLayoutGuide.topAnchor,
             leading: leadingAnchor,
             trailing: trailingAnchor,
-            padding: UIEdgeInsets(top: 12, left: 16, bottom: 0, right: 16),
+            padding: UIEdgeInsets(top: 12, left: 10, bottom: 0, right: 10),
             height: 40
         )
         tableView.anchor(
@@ -56,7 +56,7 @@ final class SearchUserView: UIView {
             leading: leadingAnchor,
             bottom: bottomAnchor,
             trailing: trailingAnchor,
-            padding: UIEdgeInsets(top: 12, left: 0, bottom: 0, right: 0),
+            padding: UIEdgeInsets(top: 12, left: 16, bottom: 0, right: 16),
         )
     }
     

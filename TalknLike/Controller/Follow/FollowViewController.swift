@@ -27,6 +27,7 @@ final class FollowViewController: UIViewController {
 
     private func setupTableView() {
         followView.tableView.dataSource = self
+        followView.tableView.delegate = self
         followView.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
 
@@ -63,7 +64,7 @@ final class FollowViewController: UIViewController {
     
 }
 
-extension FollowViewController: UITableViewDataSource {
+extension FollowViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         followView.selectedTab == 0 ? followers.count : followings.count
