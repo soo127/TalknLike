@@ -66,9 +66,15 @@ extension SearchUserViewController: UITableViewDataSource, UITableViewDelegate {
             return UITableViewCell()
         }
         let user = searchedUsers[indexPath.row]
-        cell.profileImage.image = UIImage(systemName: "person.fill")
-        cell.nicknameLabel.text = user.nickname
-        cell.introLabel.text = user.bio
+        cell.configure(user: user)
+        
+        Task { @MainActor in
+            let image = await ImageLoader.loadImage(from: user.photoURL)
+            
+            if tableView.indexPath(for: cell) == indexPath {
+                cell.profileImage.image = image
+            }
+        }
         return cell
     }
     

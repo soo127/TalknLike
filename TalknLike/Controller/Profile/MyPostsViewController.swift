@@ -58,7 +58,7 @@ extension MyPostsViewController: UITableViewDataSource, UITableViewDelegate {
         
         user
             .handleSome {
-                cell.profileImage.image = ImageLoader.cachedImage(from: $0.photoURL) ?? UIImage(systemName: "person.fill")
+                cell.profileImage.image = ImageLoader.cachedMyProfileImage(from: $0.photoURL) ?? UIImage(systemName: "person.fill")
                 cell.nicknameLabel.text = $0.nickname
                 let post = posts[indexPath.row]
                 cell.contentLabel.text = post.content

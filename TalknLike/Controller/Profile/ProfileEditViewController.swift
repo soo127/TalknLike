@@ -42,7 +42,7 @@ final class ProfileEditViewController: UIViewController, UITableViewDelegate, UI
             .sink { [weak self] user in
                 self?.profileEditView.tableView.reloadData()
                 Task { @MainActor [weak self] in
-                    self?.profileEditView.profileImageView.image = ImageLoader.cachedImage(from: user.photoURL) ?? UIImage(systemName: "person.fill")
+                    self?.profileEditView.profileImageView.image = ImageLoader.cachedMyProfileImage(from: user.photoURL) ?? UIImage(systemName: "person.fill")
                 }
             }
             .store(in: &cancellables)
@@ -115,7 +115,7 @@ extension ProfileEditViewController: PHPickerViewControllerDelegate {
                         bucket: .profileImages
                     )
                     let newPhotoURL = SupabaseManager.publicImageURL(fileName: fileName, bucket: .profileImages) + "?t=\(Int(Date().timeIntervalSince1970))"
-                    await ImageLoader.updateImageCache(from: newPhotoURL)
+                    await ImageLoader.updateMyProfileImageCache(from: newPhotoURL)
                     try CurrentUserStore.shared.update(photoURL: newPhotoURL)
                 } catch {
                     print("프로필 이미지 업로드 실패: \(error)")

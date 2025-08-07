@@ -75,7 +75,7 @@ extension LoginViewController: LoginViewDelegate {
         await CurrentUserStore.shared.fetchCurrentUser()
         await CurrentUserStore.shared.currentUser
             .handleSome {
-                await ImageLoader.updateImageCache(from: $0.photoURL)
+                await ImageLoader.updateMyProfileImageCache(from: $0.photoURL)
                 try? await PostStore.shared.fetchPosts(for: $0.uid)
             }
     }
