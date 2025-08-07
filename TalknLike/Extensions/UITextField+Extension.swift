@@ -26,4 +26,44 @@ extension UITextField {
         return field
     }
     
+    func setLeftIcon(
+        image: UIImage?,
+        leftPadding: CGFloat,
+        rightPadding: CGFloat,
+        iconSize: CGFloat = 23
+    ) {
+        let l = leftPadding, r = rightPadding
+        let size = min(iconSize, 23)
+        
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: l+r+size, height: size))
+        let imageView = UIImageView(image: image)
+        imageView.tintColor = .systemGray
+        imageView.frame = CGRect(x: l, y: 0, width: size, height: size)
+        imageView.center.y = container.center.y
+        container.addSubview(imageView)
+        
+        leftView = container
+        leftViewMode = .always
+    }
+    
+    func setRightIcon(
+        image: UIImage?,
+        leftPadding: CGFloat,
+        rightPadding: CGFloat,
+        iconSize: CGFloat = 23
+    ) {
+        let l = leftPadding, r = rightPadding
+        let size = min(iconSize, 23)
+        
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: l+r+size, height: size))
+        let imageView = UIImageView(image: image)
+        imageView.tintColor = .systemGray
+        imageView.frame = CGRect(x: l, y: 0, width: size, height: size)
+        imageView.center.y = container.center.y
+        container.addSubview(imageView)
+        
+        rightView = container
+        rightViewMode = .always
+    }
+    
 }

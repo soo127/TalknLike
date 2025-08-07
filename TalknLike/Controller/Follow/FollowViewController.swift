@@ -22,6 +22,7 @@ final class FollowViewController: UIViewController {
         setupTableView()
         setupSegmentHandler()
         loadData()
+        setupNavigationBar()
     }
 
     private func setupTableView() {
@@ -46,6 +47,20 @@ final class FollowViewController: UIViewController {
         ]
         followView.tableView.reloadData()
     }
+    
+    private func setupNavigationBar() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "magnifyingglass"),
+            style: .plain,
+            target: self,
+            action: #selector(didTapPlus)
+        )
+    }
+    
+    @objc func didTapPlus() {
+        navigationController?.pushViewController(SearchUserViewController(), animated: true)
+    }
+    
 }
 
 extension FollowViewController: UITableViewDataSource {
