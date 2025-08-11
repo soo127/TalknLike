@@ -9,6 +9,7 @@ import UIKit
 
 extension UIViewController {
     
+    @MainActor
     func showToast(message: String) {
         let toastLabel = setupToastLabel(message: message)
         let maxWidth = view.frame.width - 40

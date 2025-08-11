@@ -7,8 +7,13 @@
 
 import UIKit
 
+protocol FollowRequestCellDelegate: AnyObject {
+    func didTapAccept(_ cell: FollowRequestCell)
+}
+
 final class FollowRequestCell: UITableViewCell {
     
+    weak var delegate: FollowRequestCellDelegate?
     let profileImage = UIImageView()
     let nicknameLabel = UILabel()
     let dateLabel = UILabel()
@@ -29,8 +34,12 @@ final class FollowRequestCell: UITableViewCell {
         setupDateLabel()
         setupAcceptButton()
         setupLayout()
+        acceptButton.addTarget(self, action: #selector(acceptButtonTapped), for: .touchUpInside)
     }
     
+    @objc private func acceptButtonTapped() {
+        delegate?.didTapAccept(self)
+    }
 }
 
 extension FollowRequestCell {

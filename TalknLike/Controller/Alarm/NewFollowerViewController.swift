@@ -7,6 +7,7 @@
 
 import UIKit
 import Combine
+import FirebaseFirestore
 
 final class NewFollowerViewController: UIViewController {
     
@@ -31,9 +32,8 @@ final class NewFollowerViewController: UIViewController {
     }
     
     private func bindFollowRequests() {
-        FollowManager.shared
-            .followRequestsPublisher
-            .receive(on: DispatchQueue.main)
+        FollowManager.shared.followRequestsPublisher
+            .receive(on: RunLoop.main)
             .sink { [weak self] profiles in
                 self?.followRequests = profiles
                 self?.newFollowerView.tableView.reloadData()
@@ -55,6 +55,7 @@ extension NewFollowerViewController: UITableViewDataSource, UITableViewDelegate 
         }
         let user = followRequests[indexPath.row]
         cell.configure(user: user)
+        cell.delegate = self
         Task { @MainActor in
             let image = await ImageLoader.loadImage(from: user.photoURL)
             if tableView.indexPath(for: cell) == indexPath {
@@ -66,6 +67,21 @@ extension NewFollowerViewController: UITableViewDataSource, UITableViewDelegate 
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+}
+
+extension NewFollowerViewController: FollowRequestCellDelegate {
+    
+    func didTapAccept(_ cell: FollowRequestCell) {
+        guard let indexPath = newFollowerView.tableView.indexPath(for: cell) else {
+            return
+        }
+        let user = followRequests[indexPath.row]
+        Task {
+            try await FollowManager.shared.acceptFollowRequest(for: user)
+            showToast(message: "\(user.nickname)님과 친구가 되었어요!")
+        }
     }
     
 }

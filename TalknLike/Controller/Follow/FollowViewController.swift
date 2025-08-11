@@ -6,12 +6,14 @@
 //
 
 import UIKit
+import Combine
 
 final class FollowViewController: UIViewController {
 
     private let followView = FollowView()
     private var followers: [UserProfile] = []
     private var followings: [UserProfile] = []
+    private var cancellables = Set<AnyCancellable>()
 
     override func loadView() {
         view = followView
@@ -21,8 +23,8 @@ final class FollowViewController: UIViewController {
         super.viewDidLoad()
         setupTableView()
         setupSegmentHandler()
-        loadData()
         setupNavigationBar()
+        bindFollowData()
     }
 
     private func setupTableView() {
@@ -36,18 +38,6 @@ final class FollowViewController: UIViewController {
             self?.followView.tableView.reloadData()
         }
     }
-
-    private func loadData() {
-        followers = [
-            UserProfile(uid: "1", email: "a@example.com", nickname: "팔로워1", bio: nil, photoURL: nil),
-            UserProfile(uid: "2", email: "b@example.com", nickname: "팔로워2", bio: nil, photoURL: nil)
-        ]
-        followings = [
-            UserProfile(uid: "3", email: "c@example.com", nickname: "팔로잉1", bio: nil, photoURL: nil),
-            UserProfile(uid: "4", email: "d@example.com", nickname: "팔로잉2", bio: nil, photoURL: nil)
-        ]
-        followView.tableView.reloadData()
-    }
     
     private func setupNavigationBar() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(
@@ -56,6 +46,24 @@ final class FollowViewController: UIViewController {
             target: self,
             action: #selector(didTapPlus)
         )
+    }
+    
+    private func bindFollowData() {
+        FollowManager.shared.followersPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] profiles in
+                self?.followers = profiles
+                self?.followView.tableView.reloadData()
+            }
+            .store(in: &cancellables)
+        
+        FollowManager.shared.followingsPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] profiles in
+                self?.followings = profiles
+                self?.followView.tableView.reloadData()
+            }
+            .store(in: &cancellables)
     }
     
     @objc func didTapPlus() {
