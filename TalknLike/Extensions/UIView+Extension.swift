@@ -16,7 +16,9 @@ extension UIView {
         trailing: NSLayoutXAxisAnchor? = nil,
         padding: UIEdgeInsets = .zero,
         width: Double = .zero,
-        height: Double = .zero
+        height: Double = .zero,
+        centerX: NSLayoutXAxisAnchor? = nil,
+        centerY: NSLayoutYAxisAnchor? = nil
     ) {
         translatesAutoresizingMaskIntoConstraints = false
 
@@ -42,6 +44,14 @@ extension UIView {
 
         if height != 0 {
             heightAnchor.constraint(equalToConstant: height).isActive = true
+        }
+        
+        if let centerX {
+            centerXAnchor.constraint(equalTo: centerX).isActive = true
+        }
+
+        if let centerY {
+            centerYAnchor.constraint(equalTo: centerY).isActive = true
         }
     }
     

@@ -20,7 +20,7 @@ extension UserProfile {
             email: email,
             nickname: "임시용",
             bio: nil,
-            photoURL: nil,
+            photoURL: nil
         )
     }
 }

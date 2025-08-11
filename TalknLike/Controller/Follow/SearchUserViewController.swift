@@ -66,6 +66,7 @@ extension SearchUserViewController: UITableViewDataSource, UITableViewDelegate {
             return UITableViewCell()
         }
         let user = searchedUsers[indexPath.row]
+        cell.delegate = self
         cell.configure(user: user)
         
         Task { @MainActor in
@@ -90,7 +91,6 @@ extension SearchUserViewController: UITextFieldDelegate {
         guard let keyword = textField.text, !keyword.isEmpty else {
             return true
         }
-
         Task {
             do {
                 try await searchUsers(matching: keyword)
@@ -99,6 +99,24 @@ extension SearchUserViewController: UITextFieldDelegate {
             }
         }
         return true
+    }
+    
+}
+
+extension SearchUserViewController: SearchUserCellDelegate {
+    
+    func searchUserCellDidTapFollow(_ cell: SearchUserCell) {
+        guard let indexPath = searchUserView.tableView.indexPath(for: cell) else {
+            return
+        }
+        let user = searchedUsers[indexPath.row]
+        Task {
+            do {
+                try await FollowManager.shared.sendFollowRequest(to: user)
+            } catch {
+                print("dfd \(error)")
+            }
+        }
     }
     
 }

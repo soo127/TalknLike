@@ -7,19 +7,10 @@
 
 import FirebaseFirestore
 
+// Login Manager로 이름 변경 고려
 enum FirestoreManager {
     
     private static var firestore = Firestore.firestore()
-    
-    private static func initialUserData(uid: String, email: String) -> [String: Any] {
-        return [
-            "uid": uid,
-            "nickname": "닉네임",
-            "bio": "자기소개를 작성해보세요.",
-            "photoURL": NSNull(),
-            "email": email
-        ]
-    }
 
     static func registerUser(uid: String, email: String) async throws {
         let newUser = UserProfile.initial(uid: uid, email: email)

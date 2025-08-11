@@ -7,8 +7,13 @@
 
 import UIKit
 
+protocol SearchUserCellDelegate: AnyObject {
+    func searchUserCellDidTapFollow(_ cell: SearchUserCell)
+}
+
 final class SearchUserCell: UITableViewCell {
     
+    weak var delegate: SearchUserCellDelegate?
     let profileImage = UIImageView()
     let nicknameLabel = UILabel()
     let introLabel = UILabel()
@@ -17,6 +22,7 @@ final class SearchUserCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setup()
+        followButton.addTarget(self, action: #selector(followButtonTapped), for: .touchUpInside)  // ★ 여기 추가
     }
 
     required init?(coder: NSCoder) {
@@ -28,6 +34,10 @@ final class SearchUserCell: UITableViewCell {
         setupNicknameLabel()
         setupIntroLabel()
         setupFollowButton()
+    }
+    
+    @objc private func followButtonTapped() {
+        delegate?.searchUserCellDidTapFollow(self)
     }
     
 }
