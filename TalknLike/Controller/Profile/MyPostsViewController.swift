@@ -15,7 +15,6 @@ final class MyPostsViewController: UIViewController {
     private let myPostsView = MyPostsView()
     private var posts: [Post] = []
     private var cancellables = Set<AnyCancellable>()
-    private let user = CurrentUserStore.shared.currentUser
     
     override func loadView() {
         view = myPostsView
@@ -52,18 +51,15 @@ extension MyPostsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "MyPostsCell", for: indexPath) as? MyPostsCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "MyPostsCell", for: indexPath) as? MyPostsCell,
+              let user = CurrentUserStore.shared.currentUser else {
             return UITableViewCell()
         }
-        
-        user
-            .handleSome {
-                cell.profileImage.image = ImageLoader.cachedMyProfileImage(from: $0.photoURL) ?? UIImage(systemName: "person.fill")
-                cell.nicknameLabel.text = $0.nickname
-                let post = posts[indexPath.row]
-                cell.contentLabel.text = post.content
-                cell.dateLabel.text = "\(post.createdAt.formatted())"
-            }
+        let post = posts[indexPath.row]
+        cell.configure(nickname: user.nickname, post: post)
+        Task { @MainActor in
+            cell.profileImage.image = await ImageLoader.loadImage(from: user.photoURL)
+        }
         return cell
     }
     

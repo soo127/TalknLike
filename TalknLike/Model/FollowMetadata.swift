@@ -1,5 +1,5 @@
 //
-//  FollowRelation.swift
+//  FollowMetadata.swift
 //  TalknLike
 //
 //  Created by 이상수 on 8/12/25.
@@ -7,12 +7,12 @@
 
 import Foundation
 
-struct FollowRelation: Codable {
+struct FollowMetadata: Codable {
     let uid: String
     let date: Date
 }
 
-extension FollowRelation {
+extension FollowMetadata {
     static func make(uid: String) -> [String: Any] {
         return [
             "uid": uid,
