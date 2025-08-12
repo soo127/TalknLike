@@ -13,6 +13,8 @@ final class MyPostsCell: UITableViewCell {
     let nicknameLabel = UILabel()
     let dateLabel = UILabel()
     let contentLabel = UILabel()
+    let editButton = UIButton()
+    let removeButton = UIButton()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -28,6 +30,8 @@ final class MyPostsCell: UITableViewCell {
         setupNicknameLabel()
         setupDateLabel()
         setupContentLabel()
+        setupEditButton()
+        setupRemoveButton()
         setupLayout()
     }
 
@@ -48,6 +52,18 @@ extension MyPostsCell {
         dateLabel.textColor = .gray
     }
     
+    private func setupEditButton() {
+        editButton.setTitle("수정", for: .normal)
+        editButton.titleLabel?.font = .systemFont(ofSize: 14)
+        editButton.setTitleColor(.systemBlue, for: .normal)
+    }
+    
+    private func setupRemoveButton() {
+        removeButton.setTitle("삭제", for: .normal)
+        removeButton.titleLabel?.font = .systemFont(ofSize: 14)
+        removeButton.setTitleColor(.systemRed, for: .normal)
+    }
+    
     private func setupContentLabel() {
         contentLabel.numberOfLines = 0
         contentLabel.lineBreakMode = .byWordWrapping
@@ -57,6 +73,8 @@ extension MyPostsCell {
         contentView.addSubview(profileImage)
         contentView.addSubview(nicknameLabel)
         contentView.addSubview(dateLabel)
+        contentView.addSubview(editButton)
+        contentView.addSubview(removeButton)
         contentView.addSubview(contentLabel)
 
         profileImage.anchor(
@@ -75,6 +93,16 @@ extension MyPostsCell {
             top: nicknameLabel.bottomAnchor,
             leading: nicknameLabel.leadingAnchor,
             padding: UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
+        )
+        editButton.anchor(
+            top: profileImage.topAnchor,
+            trailing: removeButton.leadingAnchor,
+            padding: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 10)
+        )
+        removeButton.anchor(
+            top: profileImage.topAnchor,
+            trailing: contentView.trailingAnchor,
+            padding: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 10)
         )
         contentLabel.anchor(
             top: profileImage.bottomAnchor,

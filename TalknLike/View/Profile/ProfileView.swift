@@ -40,12 +40,6 @@ extension ProfileView {
         setupProfileImageView()
         setupTextStack()
         setupEditButton()
-
-        // tableHeaderView는 container의 내부 subviews의 Auto Layout에 기반해서 높이 계산
-        let width = UIScreen.main.bounds.width
-        let targetSize = CGSize(width: width, height: UIView.layoutFittingCompressedSize.height)
-        let height = header.systemLayoutSizeFitting(targetSize).height
-        header.frame = CGRect(x: 0, y: 0, width: width, height: height)
     }
     
     private func setupTableView() {
@@ -114,6 +108,12 @@ extension ProfileView {
             leading: profileImageView.trailingAnchor,
             padding: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
         )
+        
+        // tableHeaderView는 container의 내부 subviews의 Auto Layout에 기반해서 높이 계산
+        let width = UIScreen.main.bounds.width
+        let targetSize = CGSize(width: width, height: UIView.layoutFittingCompressedSize.height)
+        let height = header.systemLayoutSizeFitting(targetSize).height
+        header.frame = CGRect(x: 0, y: 0, width: width, height: height)
     }
     
 }
