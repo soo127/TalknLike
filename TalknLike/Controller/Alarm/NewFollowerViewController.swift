@@ -28,7 +28,7 @@ final class NewFollowerViewController: UIViewController {
     private func setupTableView() {
         newFollowerView.tableView.dataSource = self
         newFollowerView.tableView.delegate = self
-        newFollowerView.tableView.register(FollowRequestCell.self, forCellReuseIdentifier: "FollowRequestCell")
+        newFollowerView.tableView.register(UserListCell.self, forCellReuseIdentifier: "UserListCell")
     }
     
     private func bindFollowRequests() {
@@ -50,11 +50,11 @@ extension NewFollowerViewController: UITableViewDataSource, UITableViewDelegate 
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "FollowRequestCell", for: indexPath) as? FollowRequestCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "UserListCell", for: indexPath) as? UserListCell else {
             return UITableViewCell()
         }
         let user = followRequests[indexPath.row]
-        cell.configure(user: user)
+        cell.configure(user: user, showAcceptButton: true)
         cell.delegate = self
         Task { @MainActor in
             let image = await ImageLoader.loadImage(from: user.photoURL)
@@ -71,9 +71,9 @@ extension NewFollowerViewController: UITableViewDataSource, UITableViewDelegate 
     
 }
 
-extension NewFollowerViewController: FollowRequestCellDelegate {
+extension NewFollowerViewController: UserListCellDelegate {
     
-    func didTapAccept(_ cell: FollowRequestCell) {
+    func didTapAccept(_ cell: UserListCell) {
         guard let indexPath = newFollowerView.tableView.indexPath(for: cell) else {
             return
         }

@@ -115,7 +115,7 @@ extension SearchUserViewController: SearchUserCellDelegate {
                 try await FollowManager.shared.sendFollowRequest(to: user)
                 showToast(message: "친구 요청을 보냈어요.")
             } catch {
-                print("dfd \(error)")
+                print("searchUserCell error: \(error)")
             }
         }
     }

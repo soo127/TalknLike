@@ -29,7 +29,6 @@ final class FollowManager {
     
 }
 
-// Follow Request
 extension FollowManager {
     
     func sendFollowRequest(to user: UserProfile) async throws {

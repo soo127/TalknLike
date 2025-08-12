@@ -30,7 +30,7 @@ final class FollowViewController: UIViewController {
     private func setupTableView() {
         followView.tableView.dataSource = self
         followView.tableView.delegate = self
-        followView.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        followView.tableView.register(UserListCell.self, forCellReuseIdentifier: "UserListCell")
     }
 
     private func setupSegmentHandler() {
@@ -79,10 +79,17 @@ extension FollowViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "UserListCell", for: indexPath) as? UserListCell else {
+            return UITableViewCell()
+        }
         let user = followView.selectedTab == 0 ? followers[indexPath.row] : followings[indexPath.row]
-        cell.textLabel?.text = user.nickname
-        cell.accessoryType = .disclosureIndicator
+        cell.configure(user: user, showAcceptButton: false)
+        Task { @MainActor in
+            let image = await ImageLoader.loadImage(from: user.photoURL)
+            if tableView.indexPath(for: cell) == indexPath {
+                cell.profileImage.image = image
+            }
+        }
         return cell
     }
     
