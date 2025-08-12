@@ -1,5 +1,5 @@
 //
-//  FirestoreManager.swift
+//  LoginManager.swift
 //  TalknLike
 //
 //  Created by 이상수 on 8/4/25.
@@ -7,8 +7,7 @@
 
 import FirebaseFirestore
 
-// Login Manager로 이름 변경 고려
-enum FirestoreManager {
+enum LoginManager {
     
     private static var firestore = Firestore.firestore()
 

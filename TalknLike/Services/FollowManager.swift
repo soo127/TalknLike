@@ -35,11 +35,8 @@ extension FollowManager {
         guard let currentUser = CurrentUserStore.shared.currentUser else {
             return
         }
-        try await Firestore.firestore()
-            .collection("Users")
-            .document(user.uid)
-            .collection("followRequests")
-            .document(currentUser.uid)
+        try await FirestoreService
+            .getReference(for: .followRequests, userUid: user.uid, myUid: currentUser.uid)
             .setData(FollowMetadata.make(uid: currentUser.uid))
     }
     
@@ -47,30 +44,7 @@ extension FollowManager {
         guard let currentUser = CurrentUserStore.shared.currentUser else {
             return
         }
-        
-        let db = Firestore.firestore()
-        let batch = db.batch()
-        
-        let requestRef = db.collection("Users")
-            .document(currentUser.uid)
-            .collection("followRequests")
-            .document(user.uid)
-        
-        let followersRef = db.collection("Users")
-            .document(currentUser.uid)
-            .collection("followers")
-            .document(user.uid)
-        
-        let followingRef = db.collection("Users")
-            .document(user.uid)
-            .collection("following")
-            .document(currentUser.uid)
-        
-        batch.deleteDocument(requestRef)
-        batch.setData(FollowMetadata.make(uid: user.uid), forDocument: followersRef)
-        batch.setData(FollowMetadata.make(uid: currentUser.uid), forDocument: followingRef)
-        
-        try await batch.commit()
+        try await FirestoreService.acceptFollowRequest(userUid: user.uid, myUid: currentUser.uid)
         
         var currentRequests = followRequestsSubject.value
         currentRequests.removeAll { $0.uid == user.uid }
@@ -86,40 +60,34 @@ extension FollowManager {
 extension FollowManager {
 
     func fetchFollowRequests(for uid: String) async throws {
-        let metaDataList = try await Firestore.firestore()
-            .collection("Users")
-            .document(uid)
-            .collection("followRequests")
-            .getDocuments()
-            .documents
-            .compactMap { try? $0.data(as: FollowMetadata.self) }
-        
+        let metaDataList = try await FirestoreService
+            .fetchDocuments(
+                for: .followRequests,
+                uid: uid,
+                type: FollowMetadata.self
+            )
         let requests = try await fetchProfiles(metaDataList: metaDataList)
         followRequestsSubject.send(requests)
     }
     
     func fetchFollowers(for uid: String) async throws {
-        let metaDataList = try await Firestore.firestore()
-            .collection("Users")
-            .document(uid)
-            .collection("followers")
-            .getDocuments()
-            .documents
-            .compactMap { try? $0.data(as: FollowMetadata.self) }
-        
+        let metaDataList = try await FirestoreService
+            .fetchDocuments(
+                for: .followers,
+                uid: uid,
+                type: FollowMetadata.self
+            )
         let followers = try await fetchProfiles(metaDataList: metaDataList)
         followersSubject.send(followers)
     }
     
     func fetchFollowings(for uid: String) async throws {
-        let metaDataList = try await Firestore.firestore()
-            .collection("Users")
-            .document(uid)
-            .collection("following")
-            .getDocuments()
-            .documents
-            .compactMap { try? $0.data(as: FollowMetadata.self) }
-        
+        let metaDataList = try await FirestoreService
+            .fetchDocuments(
+                for: .following,
+                uid: uid,
+                type: FollowMetadata.self
+            )
         let followings = try await fetchProfiles(metaDataList: metaDataList)
         followingsSubject.send(followings)
     }

@@ -55,7 +55,7 @@ final class SignUpViewController: UIViewController {
     private func checkEmailStatus(email: String) async -> EmailCheckResult {
         guard !email.isEmpty else { return .empty }
         do {
-            return try await FirestoreManager.checkAvailable(email: email) ? .available : .duplicate
+            return try await LoginManager.checkAvailable(email: email) ? .available : .duplicate
         } catch {
             showToast(message: "이메일 상태 확인 중 에러 발생")
             return .error
@@ -83,7 +83,7 @@ extension SignUpViewController: SignUpViewDelegate {
         Task {
             do {
                 let result = try await createUser(email: email, password: pw)
-                try await FirestoreManager.registerUser(uid: result.user.uid, email: email)
+                try await LoginManager.registerUser(uid: result.user.uid, email: email)
                 showToast(message: "환영합니다.")
             } catch {
                 showToast(message: "회원가입 실패")
