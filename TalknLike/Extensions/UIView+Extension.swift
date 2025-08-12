@@ -55,19 +55,4 @@ extension UIView {
         }
     }
     
-    func anchor(
-        centerX: NSLayoutXAxisAnchor? = nil,
-        centerY: NSLayoutYAxisAnchor? = nil
-    ) {
-        translatesAutoresizingMaskIntoConstraints = false
-
-        if let centerX {
-            centerXAnchor.constraint(equalTo: centerX).isActive = true
-        }
-
-        if let centerY {
-            centerYAnchor.constraint(equalTo: centerY).isActive = true
-        }
-    }
-    
 }

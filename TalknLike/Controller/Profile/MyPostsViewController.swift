@@ -30,6 +30,7 @@ final class MyPostsViewController: UIViewController {
     private func setupTableView() {
         myPostsView.tableView.dataSource = self
         myPostsView.tableView.delegate = self
+        myPostsView.tableView.register(MyPostsCell.self, forCellReuseIdentifier: "MyPostsCell")
     }
     
     private func bindPosts() {

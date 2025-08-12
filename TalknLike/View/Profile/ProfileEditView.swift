@@ -26,6 +26,7 @@ final class ProfileEditView: UIView {
     private func setup() {
         setupHeader()
         setupTableView()
+        setupLayout()
     }
     
 }
@@ -40,33 +41,13 @@ extension ProfileEditView {
     }
     
     private func setupTableView() {
-        tableView.register(ProfileEditCell.self, forCellReuseIdentifier: "ProfileEditCell")
         tableView.tableHeaderView = header
         tableView.backgroundColor = .systemBackground
-        
-        addSubview(tableView)
-        tableView.anchor(
-            top: safeAreaLayoutGuide.topAnchor,
-            leading: leadingAnchor,
-            bottom: bottomAnchor,
-            trailing: trailingAnchor,
-            padding: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        )
     }
     
     private func setupProfileImageView() {
         profileImageView.layer.cornerRadius = 40
         profileImageView.clipsToBounds = true
-        
-        header.addSubview(profileImageView)
-        profileImageView.anchor(
-            centerX: header.centerXAnchor,
-            centerY: header.centerYAnchor
-        )
-        profileImageView.anchor(
-            width: 80,
-            height: 80
-        )
     }
     
     private func setupCameraButton() {
@@ -76,15 +57,31 @@ extension ProfileEditView {
         cameraButton.tintColor = .white
         cameraButton.backgroundColor = UIColor.gray.withAlphaComponent(0.3)
         cameraButton.layer.cornerRadius = 40
-        
+    }
+    
+    private func setupLayout() {
+        addSubview(tableView)
+        header.addSubview(profileImageView)
         header.addSubview(cameraButton)
-        cameraButton.anchor(
+
+        tableView.anchor(
+            top: safeAreaLayoutGuide.topAnchor,
+            leading: leadingAnchor,
+            bottom: bottomAnchor,
+            trailing: trailingAnchor,
+            padding: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        )
+        profileImageView.anchor(
+            width: 80,
+            height: 80,
             centerX: header.centerXAnchor,
             centerY: header.centerYAnchor
         )
         cameraButton.anchor(
             width: 80,
-            height: 80
+            height: 80,
+            centerX: header.centerXAnchor,
+            centerY: header.centerYAnchor
         )
     }
     

@@ -26,6 +26,7 @@ final class SelfIntroductionView: UIView, UITextViewDelegate {
         setupTextView()
         setupPlaceholder()
         setupSeparator()
+        setupLayout()
     }
 
     // Placeholder
@@ -42,8 +43,23 @@ extension SelfIntroductionView {
         textView.font = .systemFont(ofSize: 16)
         textView.layer.cornerRadius = 8
         textView.isScrollEnabled = false
-        
+    }
+    
+    private func setupPlaceholder() {
+        placeholderLabel.text = "자기소개를 입력하세요"
+        placeholderLabel.textColor = .placeholderText
+        placeholderLabel.font = .systemFont(ofSize: 16)
+    }
+    
+    private func setupSeparator() {
+        separator.backgroundColor = .systemGray
+    }
+    
+    private func setupLayout() {
         addSubview(textView)
+        addSubview(placeholderLabel)
+        addSubview(separator)
+
         textView.anchor(
             top: safeAreaLayoutGuide.topAnchor,
             leading: leadingAnchor,
@@ -51,25 +67,11 @@ extension SelfIntroductionView {
             padding: UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16),
             height: 150
         )
-    }
-    
-    private func setupPlaceholder() {
-        placeholderLabel.text = "자기소개를 입력하세요"
-        placeholderLabel.textColor = .placeholderText
-        placeholderLabel.font = .systemFont(ofSize: 16)
-        
-        addSubview(placeholderLabel)
         placeholderLabel.anchor(
             top: textView.topAnchor,
             leading: textView.leadingAnchor,
             padding: UIEdgeInsets(top: 8, left: 5, bottom: 0, right: 0),
         )
-    }
-    
-    private func setupSeparator() {
-        separator.backgroundColor = .systemGray
-        
-        addSubview(separator)
         separator.anchor(
             top: textView.bottomAnchor,
             leading: leadingAnchor,

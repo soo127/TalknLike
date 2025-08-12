@@ -31,8 +31,9 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupTableView() {
-        profileView.tableView.delegate = self
         profileView.tableView.dataSource = self
+        profileView.tableView.delegate = self
+        profileView.tableView.register(ProfileMenuCell.self, forCellReuseIdentifier: "ProfileMenuCell")
     }
 
     private func setupActions() {

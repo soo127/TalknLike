@@ -28,8 +28,9 @@ final class ProfileEditViewController: UIViewController, UITableViewDelegate, UI
     }
 
     private func setupTableView() {
-        profileEditView.tableView.delegate = self
         profileEditView.tableView.dataSource = self
+        profileEditView.tableView.delegate = self
+        profileEditView.tableView.register(ProfileEditCell.self, forCellReuseIdentifier: "ProfileEditCell")
     }
 
     private func setupActions() {

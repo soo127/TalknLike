@@ -30,27 +30,12 @@ final class ProfileMenuCell: UITableViewCell {
     private func setup() {
         setupIconView()
         setupTitleLabel()
-        setupCell()
+        setupLayout()
     }
     
 }
 
 extension ProfileMenuCell {
-    
-    private func setupCell() {
-        hStack = UIStackView.make(
-            views: [iconView, titleLabel],
-            axis: .horizontal,
-            spacing: 12,
-        )
-        
-        contentView.addSubview(hStack)
-        hStack.anchor(
-            top: contentView.topAnchor,
-            bottom: contentView.bottomAnchor,
-            padding: UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
-        )
-    }
     
     private func setupIconView() {
         iconView.contentMode = .scaleAspectFit
@@ -59,6 +44,21 @@ extension ProfileMenuCell {
     
     private func setupTitleLabel() {
         titleLabel.font = .systemFont(ofSize: 16)
+        titleLabel.textColor = .label
+    }
+    
+    private func setupLayout() {
+        hStack = UIStackView.make(
+            views: [iconView, titleLabel],
+            axis: .horizontal,
+            spacing: 12
+        )
+        contentView.addSubview(hStack)
+        hStack.anchor(
+            top: contentView.topAnchor,
+            bottom: contentView.bottomAnchor,
+            padding: UIEdgeInsets(top: 12, left: 16, bottom: 12, right: 16)
+        )
     }
     
 }

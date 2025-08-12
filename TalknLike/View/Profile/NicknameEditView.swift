@@ -15,6 +15,7 @@ final class NicknameEditView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
+        setupLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -33,20 +34,22 @@ extension NicknameEditView {
     private func setupTextField() {
         textField.placeholder = "닉네임 입력"
         textField.backgroundColor = .systemBackground
-        
+    }
+    
+    private func setupSeparator() {
+        separator.backgroundColor = .systemGray5
+    }
+    
+    private func setupLayout() {
         addSubview(textField)
+        addSubview(separator)
+
         textField.anchor(
             top: safeAreaLayoutGuide.topAnchor,
             leading: leadingAnchor,
             trailing: trailingAnchor,
             padding: UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16)
         )
-    }
-    
-    private func setupSeparator() {
-        separator.backgroundColor = .systemGray5
-
-        addSubview(separator)
         separator.anchor(
             top: textField.bottomAnchor,
             leading: leadingAnchor,

@@ -29,6 +29,7 @@ final class ProfileView: UIView {
     private func setup() {
         setupProfileHeader()
         setupTableView()
+        setupLayout()
     }
     
 }
@@ -48,51 +49,23 @@ extension ProfileView {
     }
     
     private func setupTableView() {
-        tableView.register(ProfileMenuCell.self, forCellReuseIdentifier: "ProfileMenuCell")
         tableView.tableHeaderView = header
         tableView.backgroundColor = .systemBackground
-        
-        addSubview(tableView)
-        tableView.anchor(
-            top: safeAreaLayoutGuide.topAnchor,
-            leading: leadingAnchor,
-            bottom: bottomAnchor,
-            trailing: trailingAnchor,
-            padding: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        )
     }
     
     private func setupProfileImageView() {
         profileImageView.backgroundColor = .lightGray
         profileImageView.layer.cornerRadius = 40
         profileImageView.clipsToBounds = true
-        
-        header.addSubview(profileImageView)
-        profileImageView.anchor(
-            top: header.topAnchor,
-            leading: header.leadingAnchor,
-            bottom: header.bottomAnchor,
-            padding: UIEdgeInsets(top: 0, left: 0, bottom: 16, right: 0),
-            width: 80,
-            height: 80,
-        )
     }
     
     private func setupTextStack() {
         setupNicknameLabel()
         setupIntroLabel()
-        
         textStack = UIStackView.make(
             views: [nicknameLabel, introLabel],
             axis: .vertical,
             spacing: 4
-        )
-        
-        header.addSubview(textStack)
-        textStack.anchor(
-            top: header.topAnchor,
-            leading: profileImageView.trailingAnchor,
-            padding: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
         )
     }
     
@@ -109,11 +82,37 @@ extension ProfileView {
     
     private func setupEditButton() {
         editButton.setTitle("편집", for: .normal)
-        
+    }
+    
+    private func setupLayout() {
+        addSubview(tableView)
+        header.addSubview(profileImageView)
         header.addSubview(editButton)
+        header.addSubview(textStack)
+       
+        tableView.anchor(
+            top: safeAreaLayoutGuide.topAnchor,
+            leading: leadingAnchor,
+            bottom: bottomAnchor,
+            trailing: trailingAnchor,
+            padding: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        )
+        profileImageView.anchor(
+            top: header.topAnchor,
+            leading: header.leadingAnchor,
+            bottom: header.bottomAnchor,
+            padding: UIEdgeInsets(top: 0, left: 0, bottom: 16, right: 0),
+            width: 80,
+            height: 80,
+        )
         editButton.anchor(
             top: header.topAnchor,
             trailing: header.trailingAnchor
+        )
+        textStack.anchor(
+            top: header.topAnchor,
+            leading: profileImageView.trailingAnchor,
+            padding: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
         )
     }
     

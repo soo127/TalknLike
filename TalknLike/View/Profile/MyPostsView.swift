@@ -20,9 +20,7 @@ final class MyPostsView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setupTableView() {
-        tableView.register(MyPostsCell.self, forCellReuseIdentifier: "MyPostsCell")
-        
+    private func setupTableView() {        
         addSubview(tableView)
         tableView.anchor(
             top: safeAreaLayoutGuide.topAnchor,
