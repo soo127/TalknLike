@@ -58,6 +58,7 @@ extension MyPostsViewController: UITableViewDataSource, UITableViewDelegate {
         }
         let post = posts[indexPath.row]
         cell.configure(nickname: user.nickname, post: post)
+        cell.delegate = self
         Task { @MainActor in
             cell.profileImage.image = await ImageLoader.loadImage(from: user.photoURL)
         }
@@ -66,6 +67,36 @@ extension MyPostsViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+}
+
+extension MyPostsViewController: MyPostsCellDelegate {
+    
+    func didTapEdit(_ cell: MyPostsCell) {
+        
+    }
+    
+    func didTapRemove(_ cell: MyPostsCell) {
+        guard let indexPath = myPostsView.tableView.indexPath(for: cell),
+              let documentID = posts[indexPath.row].documentID else {
+            return
+        }
+        let alert = UIAlertController(
+            title: "삭제",
+            message: "정말 삭제하시겠습니까?",
+            preferredStyle: .alert
+        )
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        let confirmAction = UIAlertAction(title: "확인", style: .destructive) { [weak self] _ in
+            Task {
+                try await PostStore.shared.deletePost(documentID: documentID)
+                self?.showToast(message: "게시글을 삭제했어요.")
+            }
+        }
+        alert.addAction(cancelAction)
+        alert.addAction(confirmAction)
+        present(alert, animated: true)
     }
     
 }

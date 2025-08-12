@@ -25,26 +25,40 @@ final class PostStore {
             .getDocuments()
             .documents
             .compactMap {
-                try? $0.data(as: Post.self)
+                var post = try $0.data(as: Post.self)
+                post.documentID = $0.documentID
+                return post
             }
         postsSubject.send(posts)
     }
-    
+
     func post(content: String) async throws {
         guard let uid = CurrentUserStore.shared.currentUser?.uid else {
             return
         }
-        let newPost = Post(
+        var newPost = Post(
             uid: uid,
             content: content,
             createdAt: Date()
         )
-        try Firestore.firestore()
+        let docRef = try Firestore.firestore()
             .collection("Posts")
             .addDocument(from: newPost)
         
+        newPost.documentID = docRef.documentID
         let updated = [newPost] + postsSubject.value
         postsSubject.send(updated)
+    }
+
+    func deletePost(documentID: String) async throws {
+        try await Firestore.firestore()
+            .collection("Posts")
+            .document(documentID)
+            .delete()
+        
+        var currentPosts = postsSubject.value
+        currentPosts.removeAll { $0.documentID == documentID }
+        postsSubject.send(currentPosts)
     }
     
 }

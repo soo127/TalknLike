@@ -7,8 +7,14 @@
 
 import UIKit
 
+protocol MyPostsCellDelegate: AnyObject {
+    func didTapEdit(_ cell: MyPostsCell)
+    func didTapRemove(_ cell: MyPostsCell)
+}
+
 final class MyPostsCell: UITableViewCell {
 
+    weak var delegate: MyPostsCellDelegate?
     let profileImage = UIImageView()
     let nicknameLabel = UILabel()
     let dateLabel = UILabel()
@@ -33,6 +39,7 @@ final class MyPostsCell: UITableViewCell {
         setupEditButton()
         setupRemoveButton()
         setupLayout()
+        setupButtonActions()
     }
 
 }
@@ -120,6 +127,23 @@ extension MyPostsCell {
         nicknameLabel.text = nickname
         contentLabel.text = post.content
         dateLabel.text = post.createdAt.formatted()
+    }
+    
+}
+
+extension MyPostsCell {
+    
+    func setupButtonActions() {
+        editButton.addTarget(self, action: #selector(editTapped), for: .touchUpInside)
+        removeButton.addTarget(self, action: #selector(removeTapped), for: .touchUpInside)
+    }
+    
+    @objc func editTapped() {
+        delegate?.didTapEdit(self)
+    }
+    
+    @objc func removeTapped() {
+        delegate?.didTapRemove(self)
     }
     
 }
