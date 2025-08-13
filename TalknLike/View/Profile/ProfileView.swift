@@ -66,16 +66,19 @@ extension ProfileView {
     private func setupNicknameLabel() {
         nicknameLabel.font = .boldSystemFont(ofSize: 20)
         nicknameLabel.text = "닉네임"
+        nicknameLabel.lineBreakMode = .byTruncatingTail
     }
 
     private func setupIntroLabel() {
         introLabel.font = .systemFont(ofSize: 14)
         introLabel.textColor = .secondaryLabel
         introLabel.text = "자기소개를 해보세요."
+        introLabel.numberOfLines = 0
     }
     
     private func setupEditButton() {
         editButton.setTitle("편집", for: .normal)
+        editButton.setContentHuggingPriority(.defaultHigh, for: .horizontal)
     }
     
     private func setupLayout() {
@@ -101,12 +104,15 @@ extension ProfileView {
         )
         editButton.anchor(
             top: header.topAnchor,
-            trailing: header.trailingAnchor
+            leading: textStack.trailingAnchor,
+            trailing: header.trailingAnchor,
+            padding: UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
         )
         textStack.anchor(
             top: header.topAnchor,
             leading: profileImageView.trailingAnchor,
-            padding: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
+            bottom: header.bottomAnchor,
+            padding: UIEdgeInsets(top: 0, left: 16, bottom: 10, right: 10)
         )
         
         // tableHeaderView는 container의 내부 subviews의 Auto Layout에 기반해서 높이 계산
