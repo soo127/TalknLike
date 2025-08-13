@@ -22,7 +22,7 @@ final class SearchUserCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setup()
-        followButton.addTarget(self, action: #selector(followButtonTapped), for: .touchUpInside)  // ★ 여기 추가
+        followButton.addTarget(self, action: #selector(followButtonTapped), for: .touchUpInside)
     }
 
     required init?(coder: NSCoder) {
