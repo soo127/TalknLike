@@ -10,7 +10,10 @@ import UIKit
 extension UIViewController {
     
     @MainActor
-    func showToast(message: String) {
+    func showToast(message: String?) {
+        guard let message else {
+            return
+        }
         let toastLabel = setupToastLabel(message: message)
         let maxWidth = view.frame.width - 40
         let textSize = toastLabel.sizeThatFits(CGSize(width: maxWidth, height: .greatestFiniteMagnitude))

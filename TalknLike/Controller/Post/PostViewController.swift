@@ -57,25 +57,31 @@ extension PostViewController {
         Task {
             do {
                 try await savePost()
+                showAlert(title: "알림", message: toastMessage())
             } catch {
-                showToast(message: "게시 실패")
+                showAlert(title: "알림", message: "게시 실패")
             }
-            dismiss(animated: true)
         }
     }
     
+    private func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+            self?.dismiss(animated: true)
+        })
+        present(alert, animated: true)
+    }
+
     private func savePost() async throws {
         let content = postView.textView.text
         switch mode {
         case .create:
             try await PostStore.shared.post(content: content)
-            showToast(message: "게시 성공")
         case .edit(let post):
             try await post.documentID
                 .handleSome {
                     try await PostStore.shared.updatePost(documentID: $0, newContent: content)
                 }
-            showToast(message: "수정 완료")
         }
     }
     
@@ -117,6 +123,15 @@ extension PostViewController {
             title = "게시글 수정"
             postView.textView.text = post.content
             postView.placeholderLabel.isHidden = true
+        }
+    }
+    
+    private func toastMessage() -> String {
+        switch mode {
+        case .create:
+            return "게시 성공"
+        case .edit:
+            return "수정 완료"
         }
     }
     
