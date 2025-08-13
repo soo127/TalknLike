@@ -86,3 +86,14 @@ extension FollowingFeedCell {
     }
     
 }
+
+extension FollowingFeedCell {
+    
+    func configure(post: Post, nickname: String) {
+        profileImage.image = UIImage(systemName: "person.crop.circle")
+        nicknameLabel.text = nickname
+        dateLabel.text = post.createdAt.formatted()
+        contentLabel.text = post.content
+    }
+    
+}

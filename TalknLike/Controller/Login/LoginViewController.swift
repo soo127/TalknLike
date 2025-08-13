@@ -75,7 +75,7 @@ extension LoginViewController: LoginViewDelegate {
         await CurrentUserStore.shared.fetchCurrentUser()
         await CurrentUserStore.shared.currentUser
             .handleSome {
-                try? await PostStore.shared.fetchPosts(for: $0.uid)
+                try? await PostStore.shared.loadPosts(for: $0.uid)
                 try? await FollowManager.shared.fetchFollowRequests(for: $0.uid)
                 try? await FollowManager.shared.fetchFollowers(for: $0.uid)
                 try? await FollowManager.shared.fetchFollowings(for: $0.uid)

@@ -17,7 +17,7 @@ final class PostStore {
         postsSubject.eraseToAnyPublisher()
     }
 
-    func fetchPosts(for uid: String) async throws {
+    func loadPosts(for uid: String) async throws {
         let posts = try await Firestore.firestore()
             .collection("Posts")
             .whereField("uid", isEqualTo: uid)
@@ -31,7 +31,7 @@ final class PostStore {
             }
         postsSubject.send(posts)
     }
-
+    
     func post(content: String?) async throws {
         guard let uid = CurrentUserStore.shared.currentUser?.uid,
               let content else {
@@ -90,4 +90,29 @@ final class PostStore {
             }
     }
     
+}
+
+extension PostStore {
+    
+    func getFollowingFeed(for profiles: [UserProfile]) async throws -> [FeedItem] {
+        guard !profiles.isEmpty else {
+            return []
+        }
+        let profileMap = Dictionary(uniqueKeysWithValues: profiles.map { ($0.uid, $0) })
+        
+        return try await Firestore.firestore()
+            .collection("Posts")
+            .whereField("uid", in: Array(profileMap.keys))
+            .order(by: "createdAt", descending: true)
+            .getDocuments()
+            .documents
+            .compactMap { document in
+                var post = try document.data(as: Post.self)
+                post.documentID = document.documentID
+                guard let profile = profileMap[post.uid] else { return nil }
+                return FeedItem(post: post, profile: profile)
+            }
+    }
+
+
 }

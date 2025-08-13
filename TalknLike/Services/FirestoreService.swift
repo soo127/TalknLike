@@ -24,18 +24,18 @@ class FirestoreService {
             .documents
             .compactMap { try? $0.data(as: type.self) }
     }
-    
+
     static func getReference(
         for collection: FollowCollection,
         userUid: String,
         myUid: String) -> DocumentReference {
             switch collection {
-            case .followRequests, .followers:
+            case .acceptFollowRequests, .followers:
                 return db.collection("Users")
                     .document(myUid)
                     .collection(collection.rawValue)
                     .document(userUid)
-            case .following:
+            case .followRequests, .following:
                 return db.collection("Users")
                     .document(userUid)
                     .collection(collection.rawValue)
@@ -49,10 +49,9 @@ class FirestoreService {
         let requestRef = getReference(for: .followRequests, userUid: userUid, myUid: myUid)
         let followersRef = getReference(for: .followers, userUid: userUid, myUid: myUid)
         let followingRef = getReference(for: .following, userUid: userUid, myUid: myUid)
-        
         batch.deleteDocument(requestRef)
         batch.setData(FollowMetadata.make(uid: userUid), forDocument: followersRef)
-        batch.setData(FollowMetadata.make(uid: userUid), forDocument: followingRef)
+        batch.setData(FollowMetadata.make(uid: myUid), forDocument: followingRef)
         
         try await batch.commit()
     }
@@ -63,6 +62,7 @@ extension FirestoreService {
     
     enum FollowCollection: String {
         case followRequests = "followRequests"
+        case acceptFollowRequests = "acceptFollowRequests"
         case followers = "followers"
         case following = "following"
     }

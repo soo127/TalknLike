@@ -16,7 +16,7 @@ final class MainViewController: UITabBarController {
     }
 
     private func setupTabs() {
-        let feedVC = UINavigationController(rootViewController: SignUpViewController())
+        let feedVC = UINavigationController(rootViewController: FollowingFeedViewController())
         feedVC.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), tag: 0)
 
         let friendsVC = UINavigationController(rootViewController: FollowViewController())
