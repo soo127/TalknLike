@@ -41,7 +41,7 @@ extension MainViewController: UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController,
                           shouldSelect viewController: UIViewController) -> Bool {
         if viewController.tabBarItem.tag == 2 {
-            let nav = UINavigationController(rootViewController: PostViewController())
+            let nav = UINavigationController(rootViewController: PostViewController(mode: .create))
             nav.modalPresentationStyle = .fullScreen
             present(nav, animated: true)
             return false

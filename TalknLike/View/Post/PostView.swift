@@ -9,7 +9,7 @@ import UIKit
 
 final class PostView: UIView, UITextViewDelegate {
     
-    private let placeholderLabel = UILabel()
+    let placeholderLabel = UILabel()
     let profileImageView = UIImageView()
     let editButton = UIButton(type: .system)
     let nicknameLabel = UILabel()

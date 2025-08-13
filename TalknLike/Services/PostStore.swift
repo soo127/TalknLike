@@ -32,8 +32,9 @@ final class PostStore {
         postsSubject.send(posts)
     }
 
-    func post(content: String) async throws {
-        guard let uid = CurrentUserStore.shared.currentUser?.uid else {
+    func post(content: String?) async throws {
+        guard let uid = CurrentUserStore.shared.currentUser?.uid,
+              let content else {
             return
         }
         var newPost = Post(
@@ -59,6 +60,34 @@ final class PostStore {
         var currentPosts = postsSubject.value
         currentPosts.removeAll { $0.documentID == documentID }
         postsSubject.send(currentPosts)
+    }
+    
+    func updatePost(documentID: String, newContent: String?) async throws {
+        guard let newContent else {
+            return
+        }
+        let date = Date()
+        try await Firestore.firestore()
+            .collection("Posts")
+            .document(documentID)
+            .updateData([
+                "content": newContent,
+                "createdAt": date
+            ])
+        
+        var currentPosts = postsSubject.value
+        currentPosts.firstIndex(where: { $0.documentID == documentID })
+            .handleSome {
+                let oldPost = currentPosts[$0]
+                let updatedPost = Post(
+                    documentID: oldPost.documentID,
+                    uid: oldPost.uid,
+                    content: newContent,
+                    createdAt: date
+                )
+                currentPosts[$0] = updatedPost
+                postsSubject.send(currentPosts)
+            }
     }
     
 }

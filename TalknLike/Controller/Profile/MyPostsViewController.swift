@@ -74,7 +74,13 @@ extension MyPostsViewController: UITableViewDataSource, UITableViewDelegate {
 extension MyPostsViewController: MyPostsCellDelegate {
     
     func didTapEdit(_ cell: MyPostsCell) {
-        
+        guard let indexPath = myPostsView.tableView.indexPath(for: cell) else {
+            return
+        }
+        let post = posts[indexPath.row]
+        let nav = UINavigationController(rootViewController: PostViewController(mode: .edit(post)))
+        nav.modalPresentationStyle = .fullScreen
+        present(nav, animated: true)
     }
     
     func didTapRemove(_ cell: MyPostsCell) {
