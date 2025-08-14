@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseFirestore
 
+// 1. 나갔다 들어와도 좋아요 클릭 유무가 저장되는지.
 class FirestoreService {
     
     static private let db = Firestore.firestore()
@@ -56,6 +57,10 @@ class FirestoreService {
         try await batch.commit()
     }
     
+}
+
+extension FirestoreService {
+    
     static func handleLike(postID: String, userID: String, isLiked: Bool) async throws {
         if isLiked {
             try await addLike(postID: postID, userID: userID)
@@ -88,9 +93,18 @@ class FirestoreService {
                 likesRef.document($0.documentID).delete()
             }
     }
+    
+    static func isLiked(postID: String, userID: String) async throws -> Bool {
+        return try await !db.collection("Posts")
+            .document(postID)
+            .collection("likes")
+            .whereField("uid", isEqualTo: userID)
+            .getDocuments()
+            .documents
+            .isEmpty
+    }
 
 }
-
 extension FirestoreService {
     
     enum FollowCollection: String {

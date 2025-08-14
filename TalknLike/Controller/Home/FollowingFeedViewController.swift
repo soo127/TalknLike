@@ -61,9 +61,12 @@ extension FollowingFeedViewController: UITableViewDataSource, UITableViewDelegat
         cell.delegate = self
         
         Task { @MainActor in
-            let image = await ImageLoader.loadImage(from: profile.photoURL)
             if tableView.indexPath(for: cell) == indexPath {
-                cell.profileImage.image = image
+                cell.profileImage.image = await ImageLoader.loadImage(from: profile.photoURL)
+                guard let documentID = post.documentID else {
+                    return
+                }
+                cell.likeButton.isSelected = try await FirestoreService.isLiked(postID: documentID, userID: post.uid)
             }
         }
         return cell
