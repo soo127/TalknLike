@@ -9,6 +9,7 @@ import UIKit
 
 protocol FollowingFeedCellDelegate: AnyObject {
     func didTapLikeButton(_ cell: FollowingFeedCell)
+    func didTapCommentButton(_ cell: FollowingFeedCell)
 }
 
 final class FollowingFeedCell: UITableViewCell {
@@ -19,6 +20,8 @@ final class FollowingFeedCell: UITableViewCell {
     let dateLabel = UILabel()
     let contentLabel = UILabel()
     let likeButton = UIButton()
+    let commentButton = UIButton()
+    let buttonsStackView = UIStackView()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -35,6 +38,7 @@ final class FollowingFeedCell: UITableViewCell {
         setupDateLabel()
         setupContentLabel()
         setupLikeButton()
+        setupCommentButton()
         setupButtonActions()
         setupLayout()
     }
@@ -63,15 +67,42 @@ extension FollowingFeedCell {
     }
     
     private func setupLikeButton() {
-        likeButton.setImage(UIImage(systemName: "hand.thumbsup"), for: .normal)
-        likeButton.setImage(UIImage(systemName: "hand.thumbsup.fill"), for: .selected)
-        likeButton.setTitle("Like", for: .normal)
-        likeButton.setTitleColor(.gray, for: .normal)
-        likeButton.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+        var configuration = UIButton.Configuration.plain()
+        configuration.image = UIImage(systemName: "hand.thumbsup")
+        configuration.title = "Like"
+        configuration.imagePadding = 10
+        configuration.buttonSize = .small
+        likeButton.configuration = configuration
+
+        likeButton.configurationUpdateHandler = { button in
+            var config = button.configuration
+            config?.image = button.isSelected ? UIImage(systemName: "hand.thumbsup.fill") : UIImage(systemName: "hand.thumbsup")
+            config?.baseForegroundColor = button.isSelected ? .systemBlue : .gray
+            //config?.baseForegroundColor =  button.isSelected ? .systemBlue : .gray
+            button.configuration = config
+        }
+    }
+    
+    private func setupCommentButton() {
+        var configuration = UIButton.Configuration.plain()
+        configuration.image = UIImage(systemName: "text.bubble")
+        configuration.title = "Comment"
+        configuration.imagePadding = 10
+        configuration.buttonSize = .small
+        commentButton.configuration = configuration
+        commentButton.configuration?.baseForegroundColor = .gray
+    }
+    
+    private func setupButtonsStackView() {
+        buttonsStackView.axis = .horizontal
+        buttonsStackView.distribution = .fillEqually
+        buttonsStackView.alignment = .center
+        buttonsStackView.spacing = 10
     }
     
     private func setupButtonActions() {
         likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
+        commentButton.addTarget(self, action: #selector(commentButtonTapped), for: .touchUpInside)
     }
 
     private func setupLayout() {
@@ -79,7 +110,9 @@ extension FollowingFeedCell {
         contentView.addSubview(nicknameLabel)
         contentView.addSubview(dateLabel)
         contentView.addSubview(contentLabel)
-        contentView.addSubview(likeButton)
+        buttonsStackView.addArrangedSubview(likeButton)
+        buttonsStackView.addArrangedSubview(commentButton)
+        contentView.addSubview(buttonsStackView)
 
         profileImage.anchor(
             top: contentView.topAnchor,
@@ -104,11 +137,12 @@ extension FollowingFeedCell {
             trailing: contentView.trailingAnchor,
             padding: UIEdgeInsets(top: 10, left: 10, bottom: 0, right: 10)
         )
-        likeButton.anchor(
+        buttonsStackView.anchor(
             top: contentLabel.bottomAnchor,
             leading: contentView.leadingAnchor,
             bottom: contentView.bottomAnchor,
-            padding: UIEdgeInsets(top: 10, left: 10, bottom: 12, right: 0)
+            trailing: contentView.trailingAnchor,
+            padding: UIEdgeInsets(top: 10, left: 10, bottom: 12, right: 10)
         )
     }
     
@@ -119,6 +153,10 @@ extension FollowingFeedCell {
     @objc private func likeButtonTapped() {
         likeButton.isSelected.toggle()
         delegate?.didTapLikeButton(self)
+    }
+    
+    @objc private func commentButtonTapped() {
+        delegate?.didTapCommentButton(self)
     }
 
     func configure(post: Post, nickname: String) {

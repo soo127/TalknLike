@@ -12,11 +12,15 @@ enum LikeManager {
     
     private static let db = Firestore.firestore()
     
-    static func handleLike(postID: String, userID: String, isLiked: Bool) async throws {
-        if isLiked {
-            try await addLike(postID: postID, userID: userID)
-        } else {
-            try await removeLike(postID: postID, userID: userID)
+    static func handleLike(postID: String, userID: String, isLiked: Bool) async {
+        do {
+            if isLiked {
+                try await addLike(postID: postID, userID: userID)
+            } else {
+                try await removeLike(postID: postID, userID: userID)
+            }
+        } catch {
+            print("error in LikeManager: \(error)")
         }
     }
     

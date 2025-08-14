@@ -16,7 +16,7 @@ final class FollowingFeedViewController: UIViewController {
 
     override func loadView() {
         view = followingFeedView
-        title = "TalknLike"
+        navigationItem.title = "TalknLike"
     }
 
     override func viewDidLoad() {
@@ -89,12 +89,18 @@ extension FollowingFeedViewController: FollowingFeedCellDelegate {
             return
         }
         Task {
-            do {
-                try await LikeManager.handleLike(postID: documentID, userID: post.uid, isLiked: cell.likeButton.isSelected)
-            } catch {
-                print("error z \(error)")
-            }
+            await LikeManager.handleLike(
+                postID: documentID,
+                userID: post.uid,
+                isLiked: cell.likeButton.isSelected
+            )
         }
+    }
+    
+    func didTapCommentButton(_ cell: FollowingFeedCell) {
+        let nav = UINavigationController(rootViewController: PostViewController(mode: .create))
+        nav.modalPresentationStyle = .fullScreen
+        present(nav, animated: true)
     }
     
 }
