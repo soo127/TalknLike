@@ -98,8 +98,8 @@ extension FollowingFeedViewController: FollowingFeedCellDelegate {
     }
     
     func didTapCommentButton(_ cell: FollowingFeedCell) {
-        let nav = UINavigationController(rootViewController: PostViewController(mode: .create))
-        nav.modalPresentationStyle = .fullScreen
+        let nav = UINavigationController(rootViewController: CommentViewController())
+        nav.modalPresentationStyle = .currentContext
         present(nav, animated: true)
     }
     
