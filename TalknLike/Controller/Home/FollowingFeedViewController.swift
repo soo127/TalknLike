@@ -16,6 +16,7 @@ final class FollowingFeedViewController: UIViewController {
 
     override func loadView() {
         view = followingFeedView
+        title = "TalknLike"
     }
 
     override func viewDidLoad() {

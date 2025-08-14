@@ -9,7 +9,7 @@ import UIKit
 
 final class FollowingFeedView: UIView {
 
-    let tableView = UITableView()
+    let tableView = UITableView(frame: .zero, style:.grouped)
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -27,7 +27,7 @@ final class FollowingFeedView: UIView {
             leading: leadingAnchor,
             bottom: bottomAnchor,
             trailing: trailingAnchor,
-            padding: UIEdgeInsets(top: 12, left: 16, bottom: 0, right: 16),
+            padding: UIEdgeInsets(top: 12, left: 0, bottom: 0, right: 0),
         )
     }
     
