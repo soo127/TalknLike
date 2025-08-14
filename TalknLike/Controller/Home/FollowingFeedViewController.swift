@@ -66,7 +66,7 @@ extension FollowingFeedViewController: UITableViewDataSource, UITableViewDelegat
                 guard let documentID = post.documentID else {
                     return
                 }
-                cell.likeButton.isSelected = try await FirestoreService.isLiked(postID: documentID, userID: post.uid)
+                cell.likeButton.isSelected = try await LikeManager.isLiked(postID: documentID, userID: post.uid)
             }
         }
         return cell
@@ -90,7 +90,7 @@ extension FollowingFeedViewController: FollowingFeedCellDelegate {
         }
         Task {
             do {
-                try await FirestoreService.handleLike(postID: documentID, userID: post.uid, isLiked: cell.likeButton.isSelected)
+                try await LikeManager.handleLike(postID: documentID, userID: post.uid, isLiked: cell.likeButton.isSelected)
             } catch {
                 print("error z \(error)")
             }
