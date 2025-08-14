@@ -8,7 +8,6 @@
 import Foundation
 
 struct Like: Codable {
-    let postID: String
     let uid: String
     let date: Date
 }

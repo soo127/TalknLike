@@ -58,6 +58,8 @@ extension FollowingFeedViewController: UITableViewDataSource, UITableViewDelegat
         let post = followingPosts[indexPath.row].post
         let profile = followingPosts[indexPath.row].profile
         cell.configure(post: post, nickname: profile.nickname)
+        cell.delegate = self
+        
         Task { @MainActor in
             let image = await ImageLoader.loadImage(from: profile.photoURL)
             if tableView.indexPath(for: cell) == indexPath {
@@ -69,6 +71,27 @@ extension FollowingFeedViewController: UITableViewDataSource, UITableViewDelegat
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+}
+
+extension FollowingFeedViewController: FollowingFeedCellDelegate {
+    
+    func didTapLikeButton(_ cell: FollowingFeedCell) {
+        guard let indexPath = followingFeedView.tableView.indexPath(for: cell) else {
+            return
+        }
+        let post = followingPosts[indexPath.row].post
+        guard let documentID = post.documentID else {
+            return
+        }
+        Task {
+            do {
+                try await FirestoreService.handleLike(postID: documentID, userID: post.uid, isLiked: cell.likeButton.isSelected)
+            } catch {
+                print("error z \(error)")
+            }
+        }
     }
     
 }

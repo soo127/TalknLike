@@ -7,8 +7,13 @@
 
 import UIKit
 
+protocol FollowingFeedCellDelegate: AnyObject {
+    func didTapLikeButton(_ cell: FollowingFeedCell)
+}
+
 final class FollowingFeedCell: UITableViewCell {
 
+    weak var delegate: FollowingFeedCellDelegate?
     let profileImage = UIImageView()
     let nicknameLabel = UILabel()
     let dateLabel = UILabel()
@@ -60,7 +65,7 @@ extension FollowingFeedCell {
     private func setupLikeButton() {
         likeButton.setImage(UIImage(systemName: "hand.thumbsup"), for: .normal)
         likeButton.setImage(UIImage(systemName: "hand.thumbsup.fill"), for: .selected)
-        likeButton.setTitle("좋아요", for: .normal)
+        likeButton.setTitle("Like", for: .normal)
         likeButton.setTitleColor(.gray, for: .normal)
         likeButton.titleLabel?.font = UIFont.systemFont(ofSize: 15)
     }
@@ -112,9 +117,8 @@ extension FollowingFeedCell {
 extension FollowingFeedCell {
     
     @objc private func likeButtonTapped() {
-        // 좋아요 상태를 서버에 전송하는 함수 호출
-        // UI 업데이트 (좋아요 수 등)
         likeButton.isSelected.toggle()
+        delegate?.didTapLikeButton(self)
     }
 
     func configure(post: Post, nickname: String) {
