@@ -98,9 +98,21 @@ extension FollowingFeedViewController: FollowingFeedCellDelegate {
     }
     
     func didTapCommentButton(_ cell: FollowingFeedCell) {
-        let nav = UINavigationController(rootViewController: CommentViewController())
-        nav.modalPresentationStyle = .currentContext
-        present(nav, animated: true)
+        guard let indexPath = followingFeedView.tableView.indexPath(for: cell),
+        let postID = followingPosts[indexPath.row].post.documentID else {
+            return
+        }
+        Task { @MainActor in
+            try await CommentManager.shared.fetchComments(postID: postID)
+            let nav = UINavigationController(rootViewController: CommentViewController())
+            if let sheet = nav.sheetPresentationController {
+                sheet.detents = [.medium(), .large()]
+                sheet.prefersGrabberVisible = true
+                sheet.preferredCornerRadius = 20
+            }
+            nav.modalPresentationStyle = .automatic
+            present(nav, animated: true)
+        }
     }
     
 }

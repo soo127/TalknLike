@@ -16,11 +16,13 @@ final class CommentViewController: UIViewController {
     
     override func loadView() {
         view = commentView
+        view.backgroundColor = .systemBackground
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
+        setupNavigationBar()
         bindComments()
     }
     
@@ -28,6 +30,18 @@ final class CommentViewController: UIViewController {
         commentView.tableView.dataSource = self
         commentView.tableView.delegate = self
         commentView.tableView.register(CommentCell.self, forCellReuseIdentifier: "CommentCell")
+    }
+    
+    private func setupNavigationBar() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: .close,
+            target: self,
+            action: #selector(didTapClose)
+        )
+    }
+
+    @objc private func didTapClose() {
+        dismiss(animated: true)
     }
     
     private func bindComments() {
