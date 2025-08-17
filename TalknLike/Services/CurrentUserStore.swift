@@ -12,8 +12,8 @@ import FirebaseFirestore
 final class CurrentUserStore {
 
     static let shared = CurrentUserStore()
+    
     private let userSubject = CurrentValueSubject<UserProfile?, Never>(nil)
-
     var userPublisher: AnyPublisher<UserProfile, Never> {
         userSubject
             .compactMap { $0 }

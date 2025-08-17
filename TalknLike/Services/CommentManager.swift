@@ -1,0 +1,105 @@
+//
+//  CommentManager.swift
+//  TalknLike
+//
+//  Created by 이상수 on 8/15/25.
+//
+
+import Combine
+import FirebaseFirestore
+
+final class CommentManager {
+    
+    static let shared = CommentManager()
+    
+    private let commentsSubject = CurrentValueSubject<[Comment], Never>([])
+    var commentsPublisher: AnyPublisher<[Comment], Never> {
+        commentsSubject.eraseToAnyPublisher()
+    }
+    
+    func fetchComments(postID: String) async throws {
+        let comments = try await Firestore.firestore()
+            .collection("Posts")
+            .document(postID)
+            .collection("comments")
+            .order(by: "createdAt", descending: false)
+            .getDocuments()
+            .documents
+            .compactMap {
+                var data = try $0.data(as: Comment.self)
+                data.documentID = $0.documentID
+                return data
+            }
+        commentsSubject.send(comments)
+    }
+    
+    func addComment(postID: String, content: String) async throws {
+        guard let uid = CurrentUserStore.shared.currentUser?.uid else {
+            return
+        }
+        var newComment = Comment(
+            postID: postID,
+            uid: uid,
+            content: content,
+            createdAt: Date()
+        )
+        
+        let ref = try Firestore.firestore()
+            .collection("Posts")
+            .document(postID)
+            .collection("comments")
+            .addDocument(from: newComment)
+        newComment.documentID = ref.documentID
+        
+        try ref.setData(from: newComment)
+        
+        var current = commentsSubject.value
+        current.append(newComment)
+        commentsSubject.send(current)
+    }
+    
+    func deleteComment(comment: Comment) async throws {
+        guard let docID = comment.documentID else {
+            return
+        }
+        try await Firestore.firestore()
+            .collection("Posts")
+            .document(comment.postID)
+            .collection("comments")
+            .document(docID)
+            .delete()
+ 
+        var current = commentsSubject.value
+        current.removeAll { $0.documentID == docID }
+        commentsSubject.send(current)
+    }
+    
+}
+
+extension CommentManager {
+    
+    func mergeWithProfiles(comments: [Comment]) async throws -> [CommentDisplayModel] {
+        guard !comments.isEmpty else {
+            return []
+        }
+        let profiles = try await Firestore.firestore()
+            .collection("Users")
+            .whereField("uid", in: comments.map { $0.uid })
+            .getDocuments()
+            .documents
+            .compactMap { document in
+                try? document.data(as: UserProfile.self)
+            }
+
+        let profileMap = Dictionary(uniqueKeysWithValues: profiles.map { ($0.uid, $0) })
+
+        let result = comments.compactMap { comment -> CommentDisplayModel? in
+            guard let profile = profileMap[comment.uid] else {
+                return nil
+            }
+            return CommentDisplayModel(comment: comment, profile: profile)
+        }
+        return result
+    }
+    
+}

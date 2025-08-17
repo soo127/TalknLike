@@ -6,10 +6,13 @@
 //
 
 import UIKit
+import Combine
 
 final class CommentViewController: UIViewController {
     
     private let commentView = CommentView()
+    private var displayComments: [CommentDisplayModel] = []
+    private var cancellables = Set<AnyCancellable>()
     
     override func loadView() {
         view = commentView
@@ -18,6 +21,7 @@ final class CommentViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
+        bindComments()
     }
     
     private func setupTableView() {
@@ -26,21 +30,40 @@ final class CommentViewController: UIViewController {
         commentView.tableView.register(CommentCell.self, forCellReuseIdentifier: "CommentCell")
     }
     
+    private func bindComments() {
+        CommentManager.shared.commentsPublisher
+            .receive(on: RunLoop.main)
+            .sink{ [weak self] comments in
+                Task {
+                    self?.displayComments = try await CommentManager.shared.mergeWithProfiles(comments: comments)
+                    self?.commentView.tableView.reloadData()
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
 }
 
 extension CommentViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return displayComments.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "CommentCell", for: indexPath) as? CommentCell else {
             return UITableViewCell()
         }
-        cell.commentLabel.text = "Hello, World!"
-        cell.profileImage.image = UIImage(systemName: "person.circle")
-        cell.dateLabel.text = "2025-08-14"
+        let displayComment = displayComments[indexPath.row]
+        let comment = displayComment.comment, profile = displayComment.profile
+        
+        cell.configure(comment: comment, profile: profile)
+        Task { @MainActor in
+            let image = await ImageLoader.loadImage(from: profile.photoURL)
+            if tableView.indexPath(for: cell) == indexPath {
+                cell.profileImage.image = image
+            }
+        }
         return cell
     }
 

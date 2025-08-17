@@ -32,6 +32,7 @@ final class CommentCell: UITableViewCell {
         setupReplyButton()
         setupLayout()
     }
+    
 }
 
 extension CommentCell {
@@ -101,6 +102,17 @@ extension CommentCell {
             bottom: contentView.bottomAnchor,
             padding: UIEdgeInsets(top: 4, left: 16, bottom: 8, right: 0)
         )
+    }
+    
+}
+
+extension CommentCell {
+    
+    func configure(comment: Comment, profile: UserProfile) {
+        nicknameLabel.text = profile.nickname
+        commentLabel.text = comment.content
+        dateLabel.text = comment.createdAt.formatted()
+        profileImage.image = UIImage(systemName: "person.circle")
     }
     
 }
