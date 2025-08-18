@@ -39,16 +39,6 @@ final class CommentViewController: UIViewController {
         setupDismissKeyboardGesture()
     }
     
-    private func setupDismissKeyboardGesture() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tapGesture.cancelsTouchesInView = true
-        view.addGestureRecognizer(tapGesture)
-    }
-
-    @objc private func dismissKeyboard() {
-        view.endEditing(true)
-    }
-    
     private func setupTableView() {
         commentView.tableView.dataSource = self
         commentView.tableView.delegate = self
@@ -154,6 +144,22 @@ extension CommentViewController {
         }
     }
     
+    private func setupDismissKeyboardGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = true
+        view.addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func dismissKeyboard(_ gesture: UITapGestureRecognizer) {
+        if commentView.commentInputView.textField.isFirstResponder {
+            commentView.commentInputView.clearReply()
+            view.endEditing(true)
+            return
+        }
+        // 키보드가 없을 때는 여기에 다른 터치 로직 실행
+        // 예: 테이블 뷰 셀 선택 처리
+    }
+    
 }
 
 extension CommentViewController: CommentInputViewDelegate {
@@ -174,7 +180,11 @@ extension CommentViewController: CommentInputViewDelegate {
 extension CommentViewController: CommentCellDelegate {
     
     func didTapReply(_ cell: CommentCell) {
-        
+        guard let indexPath = commentView.tableView.indexPath(for: cell) else {
+            return
+        }
+        let nickname = displayComments[indexPath.row].profile.nickname
+        commentView.commentInputView.setupReply(nickname: nickname)
     }
     
 }

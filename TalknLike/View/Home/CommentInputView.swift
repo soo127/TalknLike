@@ -16,6 +16,7 @@ final class CommentInputView: UIView {
     weak var delegate: CommentInputViewDelegate?
     let profileImageView = UIImageView()
     let textField = UITextField()
+    private let defaultPlaceHolder = "댓글 추가..."
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -43,7 +44,7 @@ extension CommentInputView {
     }
     
     private func setupTextField() {
-        textField.placeholder = "댓글 추가..."
+        textField.placeholder = defaultPlaceHolder
         textField.borderStyle = .roundedRect
         textField.returnKeyType = .done
         textField.autocorrectionType = .no
@@ -81,6 +82,19 @@ extension CommentInputView: UITextFieldDelegate {
     
     func clearText() {
         textField.text = ""
+    }
+    
+}
+
+extension CommentInputView {
+    
+    func setupReply(nickname: String) {
+        textField.placeholder = "@\(nickname) 님에게 회신"
+        textField.becomeFirstResponder()
+    }
+    
+    func clearReply() {
+        textField.placeholder = defaultPlaceHolder
     }
     
 }
