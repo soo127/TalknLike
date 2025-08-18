@@ -13,6 +13,16 @@ final class CommentViewController: UIViewController {
     private let commentView = CommentView()
     private var displayComments: [CommentDisplayModel] = []
     private var cancellables = Set<AnyCancellable>()
+    let postID: String
+    
+    init(postID: String) {
+        self.postID = postID
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func loadView() {
         view = commentView
@@ -24,6 +34,8 @@ final class CommentViewController: UIViewController {
         setupTableView()
         setupNavigationBar()
         bindComments()
+        commentView.commentInputView.profileImageView.image = UIImage(systemName: "person.circle")
+        commentView.commentInputView.delegate = self
     }
     
     private func setupTableView() {
@@ -83,6 +95,20 @@ extension CommentViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+}
+
+extension CommentViewController: CommentInputViewDelegate {
+    
+    func commentInputView(_ inputView: CommentInputView, didSubmit text: String?) {
+        guard let text, !text.isEmpty else {
+            return
+        }
+        Task {
+            try await CommentManager.shared.addComment(postID: postID, content: text)
+            inputView.clearText()
+        }
     }
     
 }

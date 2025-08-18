@@ -10,7 +10,8 @@ import UIKit
 final class CommentView: UIView {
 
     let tableView = UITableView()
-   
+    let commentInputView = CommentInputView()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -22,14 +23,20 @@ final class CommentView: UIView {
     
     private func setup() {
         addSubview(tableView)
-
+        addSubview(commentInputView)
+        
         tableView.anchor(
             top: safeAreaLayoutGuide.topAnchor,
             leading: leadingAnchor,
-            bottom: bottomAnchor,
+            bottom: commentInputView.topAnchor,
+            trailing: trailingAnchor
+        )
+        commentInputView.anchor(
+            leading: leadingAnchor,
+            bottom: safeAreaLayoutGuide.bottomAnchor,
             trailing: trailingAnchor,
-            padding: UIEdgeInsets(top: 8, left: 16, bottom: 0, right: 16)
+            height: 40
         )
     }
-
+    
 }

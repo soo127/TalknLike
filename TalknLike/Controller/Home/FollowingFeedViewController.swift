@@ -99,12 +99,12 @@ extension FollowingFeedViewController: FollowingFeedCellDelegate {
     
     func didTapCommentButton(_ cell: FollowingFeedCell) {
         guard let indexPath = followingFeedView.tableView.indexPath(for: cell),
-        let postID = followingPosts[indexPath.row].post.documentID else {
+              let postID = followingPosts[indexPath.row].post.documentID else {
             return
         }
         Task { @MainActor in
             try await CommentManager.shared.fetchComments(postID: postID)
-            let nav = UINavigationController(rootViewController: CommentViewController())
+            let nav = UINavigationController(rootViewController: CommentViewController(postID: postID))
             if let sheet = nav.sheetPresentationController {
                 sheet.detents = [.medium(), .large()]
                 sheet.prefersGrabberVisible = true

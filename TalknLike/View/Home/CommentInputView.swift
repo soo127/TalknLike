@@ -7,8 +7,13 @@
 
 import UIKit
 
+protocol CommentInputViewDelegate: AnyObject {
+    func commentInputView(_ inputView: CommentInputView, didSubmit text: String?)
+}
+
 final class CommentInputView: UIView {
     
+    weak var delegate: CommentInputViewDelegate?
     let profileImageView = UIImageView()
     let textField = UITextField()
     
@@ -39,6 +44,8 @@ extension CommentInputView {
     private func setupTextField() {
         textField.placeholder = "댓글 추가..."
         textField.borderStyle = .roundedRect
+        textField.returnKeyType = .done
+        textField.delegate = self
     }
     
     private func setupLayout() {
@@ -58,6 +65,19 @@ extension CommentInputView {
             padding: UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8),
             centerY: centerYAnchor,
         )
+    }
+    
+}
+
+extension CommentInputView: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        delegate?.commentInputView(self, didSubmit: textField.text)
+        return true
+    }
+    
+    func clearText() {
+        textField.text = ""
     }
     
 }
