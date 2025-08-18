@@ -169,8 +169,13 @@ extension CommentViewController: CommentInputViewDelegate {
             return
         }
         Task {
-            try await CommentManager.shared.addComment(postID: postID, content: text)
+            try await CommentManager.shared.addComment(
+                postID: postID,
+                content: text,
+                replyTo: inputView.replyingID
+            )
             inputView.clearText()
+            inputView.clearReply()
             inputView.endEditing(true)
         }
     }
@@ -184,7 +189,8 @@ extension CommentViewController: CommentCellDelegate {
             return
         }
         let nickname = displayComments[indexPath.row].profile.nickname
-        commentView.commentInputView.setupReply(nickname: nickname)
+        let commentID = displayComments[indexPath.row].comment.documentID
+        commentView.commentInputView.setupReply(nickname: nickname, commentID: commentID)
     }
     
 }

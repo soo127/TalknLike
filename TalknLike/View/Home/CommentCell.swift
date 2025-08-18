@@ -123,6 +123,8 @@ extension CommentCell {
         commentLabel.text = comment.content
         dateLabel.text = comment.createdAt.formatted()
         profileImage.image = UIImage(systemName: "person.circle")
+        let leftInset: CGFloat = comment.replyingID != nil ? 40 : 0
+        contentView.layoutMargins = UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: 0)
     }
-    
+
 }
