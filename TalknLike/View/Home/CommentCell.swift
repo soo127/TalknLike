@@ -7,8 +7,13 @@
 
 import UIKit
 
+protocol CommentCellDelegate: AnyObject {
+    func didTapReply(_ cell: CommentCell)
+}
+
 final class CommentCell: UITableViewCell {
     
+    weak var delegate: CommentCellDelegate?
     let profileImage = UIImageView()
     let nicknameLabel = UILabel()
     let commentLabel = UILabel()
@@ -62,6 +67,11 @@ extension CommentCell {
     func setupReplyButton() {
         replyButton.setTitle("답글", for: .normal)
         replyButton.titleLabel?.font = .systemFont(ofSize: 12)
+        replyButton.addTarget(self, action: #selector(didTapReply), for: .touchUpInside)
+    }
+    
+    @objc private func didTapReply() {
+        delegate?.didTapReply(self)
     }
     
     func setupLayout() {

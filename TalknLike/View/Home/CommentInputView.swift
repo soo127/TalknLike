@@ -37,6 +37,7 @@ final class CommentInputView: UIView {
 extension CommentInputView {
     
     private func setupProfileImageView() {
+        profileImageView.image = UIImage(systemName: "person.circle")
         profileImageView.layer.cornerRadius = 18
         profileImageView.clipsToBounds = true
     }

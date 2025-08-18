@@ -34,7 +34,6 @@ final class CommentViewController: UIViewController {
         setupTableView()
         setupNavigationBar()
         bindComments()
-        commentView.commentInputView.profileImageView.image = UIImage(systemName: "person.circle")
         commentView.commentInputView.delegate = self
     }
     
@@ -84,6 +83,7 @@ extension CommentViewController: UITableViewDataSource, UITableViewDelegate {
         let comment = displayComment.comment, profile = displayComment.profile
         
         cell.configure(comment: comment, profile: profile)
+        cell.delegate = self
         Task { @MainActor in
             let image = await ImageLoader.loadImage(from: profile.photoURL)
             if tableView.indexPath(for: cell) == indexPath {
@@ -112,3 +112,12 @@ extension CommentViewController: CommentInputViewDelegate {
     }
     
 }
+
+extension CommentViewController: CommentCellDelegate {
+    
+    func didTapReply(_ cell: CommentCell) {
+        
+    }
+    
+}
+
