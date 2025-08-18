@@ -11,7 +11,10 @@ final class CommentView: UIView {
 
     let tableView = UITableView()
     let commentInputView = CommentInputView()
-
+    private lazy var inputViewBottomConstraint: NSLayoutConstraint = {
+        commentInputView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -33,10 +36,14 @@ final class CommentView: UIView {
         )
         commentInputView.anchor(
             leading: leadingAnchor,
-            bottom: safeAreaLayoutGuide.bottomAnchor,
             trailing: trailingAnchor,
             height: 40
         )
+        inputViewBottomConstraint.isActive = true
+    }
+    
+    func updateInputViewBottomInset(_ inset: CGFloat) {
+        inputViewBottomConstraint.constant = -inset
     }
     
 }

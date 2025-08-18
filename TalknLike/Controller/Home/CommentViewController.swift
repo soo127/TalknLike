@@ -35,16 +35,29 @@ final class CommentViewController: UIViewController {
         setupNavigationBar()
         bindComments()
         commentView.commentInputView.delegate = self
+        setupKeyboardObservers()
+        setupDismissKeyboardGesture()
+    }
+    
+    private func setupDismissKeyboardGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = true
+        view.addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     private func setupTableView() {
         commentView.tableView.dataSource = self
         commentView.tableView.delegate = self
         commentView.tableView.register(CommentCell.self, forCellReuseIdentifier: "CommentCell")
+        commentView.tableView.contentInsetAdjustmentBehavior = .never
     }
     
     private func setupNavigationBar() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .close,
             target: self,
             action: #selector(didTapClose)
@@ -99,6 +112,50 @@ extension CommentViewController: UITableViewDataSource, UITableViewDelegate {
     
 }
 
+extension CommentViewController {
+    
+    private func setupKeyboardObservers() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+    }
+    
+    @objc private func keyboardWillShow(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+              let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double else {
+            return
+        }
+        
+        UIView.animate(withDuration: duration) {
+            self.commentView.updateInputViewBottomInset(keyboardFrame.height)
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    @objc private func keyboardWillHide(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double else {
+            return
+        }
+        
+        UIView.animate(withDuration: duration) {
+            self.commentView.updateInputViewBottomInset(0)
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+}
+
 extension CommentViewController: CommentInputViewDelegate {
     
     func commentInputView(_ inputView: CommentInputView, didSubmit text: String?) {
@@ -108,6 +165,7 @@ extension CommentViewController: CommentInputViewDelegate {
         Task {
             try await CommentManager.shared.addComment(postID: postID, content: text)
             inputView.clearText()
+            inputView.endEditing(true)
         }
     }
     

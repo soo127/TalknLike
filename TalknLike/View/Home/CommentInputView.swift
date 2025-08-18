@@ -46,6 +46,8 @@ extension CommentInputView {
         textField.placeholder = "댓글 추가..."
         textField.borderStyle = .roundedRect
         textField.returnKeyType = .done
+        textField.autocorrectionType = .no
+        textField.spellCheckingType = .no
         textField.delegate = self
     }
     
