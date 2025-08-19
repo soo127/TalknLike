@@ -14,4 +14,5 @@ struct Comment: Codable {
     let content: String
     let createdAt: Date
     let parentID: String?
+    let replyingToID: String?
 }

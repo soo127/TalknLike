@@ -16,9 +16,7 @@ final class CommentInputView: UIView {
     weak var delegate: CommentInputViewDelegate?
     let profileImageView = UIImageView()
     let textField = UITextField()
-    
     private let defaultPlaceHolder = "댓글 추가..."
-    var parentID: String?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -92,12 +90,10 @@ extension CommentInputView {
 
     func setupReply(nickname: String, commentID: String?) {
         textField.placeholder = "@\(nickname) 님에게 회신"
-        parentID = commentID
         textField.becomeFirstResponder()
     }
     
     func clearReply() {
-        parentID = nil
         textField.placeholder = defaultPlaceHolder
     }
     

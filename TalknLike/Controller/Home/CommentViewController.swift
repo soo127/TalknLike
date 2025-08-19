@@ -13,10 +13,14 @@ final class CommentViewController: UIViewController {
     private let commentView = CommentView()
     private var displayComments: [CommentDisplayModel] = []
     private var cancellables = Set<AnyCancellable>()
+    private var replyToCommentID: String?
+    private var parentCommentID: String?
     let postID: String
     
     init(postID: String) {
         self.postID = postID
+        parentCommentID = nil
+        replyToCommentID = nil
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -154,6 +158,8 @@ extension CommentViewController {
     @objc private func dismissKeyboard(_ gesture: UITapGestureRecognizer) {
         if commentView.commentInputView.textField.isFirstResponder {
             commentView.commentInputView.clearReply()
+            parentCommentID = nil
+            replyToCommentID = nil
             view.endEditing(true)
             return
         }
@@ -173,7 +179,8 @@ extension CommentViewController: CommentInputViewDelegate {
             try await CommentManager.shared.addComment(
                 postID: postID,
                 content: text,
-                parentID: inputView.parentID
+                parentID: parentCommentID,
+                replyTo: replyToCommentID
             )
             inputView.clearText()
             inputView.clearReply()
@@ -189,9 +196,15 @@ extension CommentViewController: CommentCellDelegate {
         guard let indexPath = commentView.tableView.indexPath(for: cell) else {
             return
         }
-        let nickname = displayComments[indexPath.row].profile.nickname
-        let commentID = displayComments[indexPath.row].comment.documentID
-        commentView.commentInputView.setupReply(nickname: nickname, commentID: commentID)
+        let displayComment = displayComments[indexPath.row]
+        let parentID = displayComment.comment.parentID
+        let documentID = displayComment.comment.documentID
+        
+        parentCommentID = parentID ?? documentID
+        replyToCommentID = documentID
+        let nickname = displayComment.profile.nickname
+        
+        commentView.commentInputView.setupReply(nickname: nickname, commentID: replyToCommentID)
     }
     
 }
