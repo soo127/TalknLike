@@ -14,11 +14,17 @@ protocol CommentCellDelegate: AnyObject {
 final class CommentCell: UITableViewCell {
     
     weak var delegate: CommentCellDelegate?
+    
+    let containerView = UIView()
     let profileImage = UIImageView()
     let nicknameLabel = UILabel()
     let commentLabel = UILabel()
     let dateLabel = UILabel()
     let replyButton = UIButton(type: .system)
+    
+    private lazy var containerLeadingConstraint: NSLayoutConstraint = {
+        containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8)
+    }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -75,42 +81,51 @@ extension CommentCell {
     }
     
     func setupLayout() {
-        contentView.addSubview(profileImage)
-        contentView.addSubview(nicknameLabel)
-        contentView.addSubview(commentLabel)
-        contentView.addSubview(dateLabel)
-        contentView.addSubview(replyButton)
+        contentView.addSubview(containerView)
         
-        profileImage.anchor(
+        containerView.addSubview(profileImage)
+        containerView.addSubview(nicknameLabel)
+        containerView.addSubview(commentLabel)
+        containerView.addSubview(dateLabel)
+        containerView.addSubview(replyButton)
+        
+        containerLeadingConstraint.isActive = true
+        containerView.anchor(
             top: contentView.topAnchor,
-            leading: contentView.leadingAnchor,
-            padding: UIEdgeInsets(top: 8, left: 8, bottom: 0, right: 0),
+            bottom: contentView.bottomAnchor,
+            trailing: contentView.trailingAnchor,
+            padding: UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 8)
+        )
+        profileImage.anchor(
+            top: containerView.topAnchor,
+            leading: containerView.leadingAnchor,
+            padding: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0),
             width: 40,
             height: 40
         )
         nicknameLabel.anchor(
-            top: contentView.topAnchor,
+            top: containerView.topAnchor,
             leading: profileImage.trailingAnchor,
-            trailing: contentView.trailingAnchor,
-            padding: UIEdgeInsets(top: 8, left: 8, bottom: 0, right: 8)
+            trailing: containerView.trailingAnchor,
+            padding: UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0)
         )
         commentLabel.anchor(
             top: nicknameLabel.bottomAnchor,
             leading: nicknameLabel.leadingAnchor,
-            trailing: contentView.trailingAnchor,
-            padding: UIEdgeInsets(top: 4, left: 0, bottom: 0, right: 8)
+            trailing: containerView.trailingAnchor,
+            padding: UIEdgeInsets(top: 4, left: 0, bottom: 0, right: 0)
         )
         dateLabel.anchor(
             top: commentLabel.bottomAnchor,
             leading: nicknameLabel.leadingAnchor,
-            bottom: contentView.bottomAnchor,
-            padding: UIEdgeInsets(top: 4, left: 0, bottom: 8, right: 0)
+            bottom: containerView.bottomAnchor,
+            padding: UIEdgeInsets(top: 4, left: 0, bottom: 0, right: 0)
         )
         replyButton.anchor(
             top: commentLabel.bottomAnchor,
             leading: dateLabel.trailingAnchor,
-            bottom: contentView.bottomAnchor,
-            padding: UIEdgeInsets(top: 4, left: 16, bottom: 8, right: 0)
+            bottom: containerView.bottomAnchor,
+            padding: UIEdgeInsets(top: 4, left: 16, bottom: 0, right: 0)
         )
     }
     
@@ -123,8 +138,7 @@ extension CommentCell {
         commentLabel.text = comment.content
         dateLabel.text = comment.createdAt.formatted()
         profileImage.image = UIImage(systemName: "person.circle")
-        let leftInset: CGFloat = comment.replyingID != nil ? 40 : 0
-        contentView.layoutMargins = UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: 0)
+        containerLeadingConstraint.constant = comment.parentID != nil ? 48 : 8
     }
-
+    
 }

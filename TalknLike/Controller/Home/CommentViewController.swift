@@ -172,7 +172,7 @@ extension CommentViewController: CommentInputViewDelegate {
             try await CommentManager.shared.addComment(
                 postID: postID,
                 content: text,
-                replyTo: inputView.replyingID
+                parentID: inputView.parentID
             )
             inputView.clearText()
             inputView.clearReply()

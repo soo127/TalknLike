@@ -33,7 +33,7 @@ final class CommentManager {
         commentsSubject.send(comments)
     }
     
-    func addComment(postID: String, content: String, replyTo replyingID: String?) async throws {
+    func addComment(postID: String, content: String, parentID: String?) async throws {
         guard let uid = CurrentUserStore.shared.currentUser?.uid else {
             return
         }
@@ -42,7 +42,7 @@ final class CommentManager {
             uid: uid,
             content: content,
             createdAt: Date(),
-            replyingID: replyingID
+            parentID: parentID
         )
         
         let ref = try Firestore.firestore()
