@@ -45,13 +45,13 @@ final class CommentManager {
             parentID: parentID
         )
         
-        let ref = try Firestore.firestore()
+        let ref = Firestore.firestore()
             .collection("Posts")
             .document(postID)
             .collection("comments")
-            .addDocument(from: newComment)
-        newComment.documentID = ref.documentID
+            .document()
         
+        newComment.documentID = ref.documentID
         try ref.setData(from: newComment)
         
         var current = commentsSubject.value
@@ -73,6 +73,21 @@ final class CommentManager {
         var current = commentsSubject.value
         current.removeAll { $0.documentID == docID }
         commentsSubject.send(current)
+    }
+    
+    func makeDisplayOrder(comments: [Comment]) -> [Comment] {
+        let roots = comments.filter { $0.parentID == nil }
+        let replies = comments.filter { $0.parentID != nil }
+        let repliesByParent = Dictionary(grouping: replies, by: { $0.parentID! })
+        
+        var display: [Comment] = []
+        for root in roots.sorted(by: { $0.createdAt < $1.createdAt }) {
+            display.append(root)
+            if let children = repliesByParent[root.documentID ?? ""] {
+                display.append(contentsOf: children.sorted(by: { $0.createdAt < $1.createdAt }))
+            }
+        }
+        return display
     }
     
 }

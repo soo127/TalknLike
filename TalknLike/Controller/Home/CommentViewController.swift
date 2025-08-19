@@ -63,7 +63,8 @@ final class CommentViewController: UIViewController {
             .receive(on: RunLoop.main)
             .sink{ [weak self] comments in
                 Task {
-                    self?.displayComments = try await CommentManager.shared.mergeWithProfiles(comments: comments)
+                    let orderedComments = CommentManager.shared.makeDisplayOrder(comments: comments)
+                    self?.displayComments = try await CommentManager.shared.mergeWithProfiles(comments: orderedComments)
                     self?.commentView.tableView.reloadData()
                 }
             }
