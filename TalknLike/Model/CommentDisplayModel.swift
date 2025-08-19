@@ -8,4 +8,5 @@
 struct CommentDisplayModel {
     let comment: Comment
     let profile: UserProfile
+    let replyNickname: String?
 }

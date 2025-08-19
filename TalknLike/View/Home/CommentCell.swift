@@ -18,6 +18,8 @@ final class CommentCell: UITableViewCell {
     let containerView = UIView()
     let profileImage = UIImageView()
     let nicknameLabel = UILabel()
+    private let arrowImageView = UIImageView()
+    let replyingLabel = UILabel()
     let commentLabel = UILabel()
     let dateLabel = UILabel()
     let replyButton = UIButton(type: .system)
@@ -39,6 +41,8 @@ final class CommentCell: UITableViewCell {
         setupProfileImage()
         setupNicknameLabel()
         setupCommentLabel()
+        setuparrowImageView()
+        setupReplyingLabel()
         setupDateLabel()
         setupReplyButton()
         setupLayout()
@@ -57,6 +61,18 @@ extension CommentCell {
     func setupNicknameLabel() {
         nicknameLabel.font = .boldSystemFont(ofSize: 14)
         nicknameLabel.textColor = .label
+    }
+    
+    func setupReplyingLabel() {
+        replyingLabel.font = .boldSystemFont(ofSize: 14)
+        replyingLabel.textColor = .label
+    }
+    
+    func setuparrowImageView() {
+        arrowImageView.image = UIImage(systemName: "arrowtriangle.forward.fill")
+        arrowImageView.contentMode = .scaleAspectFit
+        arrowImageView.tintColor = .secondaryLabel
+        arrowImageView.isHidden = true
     }
     
     func setupCommentLabel() {
@@ -85,6 +101,8 @@ extension CommentCell {
         
         containerView.addSubview(profileImage)
         containerView.addSubview(nicknameLabel)
+        containerView.addSubview(arrowImageView)
+        containerView.addSubview(replyingLabel)
         containerView.addSubview(commentLabel)
         containerView.addSubview(dateLabel)
         containerView.addSubview(replyButton)
@@ -106,8 +124,19 @@ extension CommentCell {
         nicknameLabel.anchor(
             top: containerView.topAnchor,
             leading: profileImage.trailingAnchor,
-            trailing: containerView.trailingAnchor,
             padding: UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0)
+        )
+        arrowImageView.anchor(
+            top: containerView.topAnchor,
+            leading: nicknameLabel.trailingAnchor,
+            padding: UIEdgeInsets(top: 0, left: 3, bottom: 0, right: 0),
+            width: 14,
+            height: 14,
+        )
+        replyingLabel.anchor(
+            top: containerView.topAnchor,
+            leading: arrowImageView.trailingAnchor,
+            padding: UIEdgeInsets(top: 0, left: 3, bottom: 0, right: 0)
         )
         commentLabel.anchor(
             top: nicknameLabel.bottomAnchor,
@@ -133,12 +162,14 @@ extension CommentCell {
 
 extension CommentCell {
     
-    func configure(comment: Comment, profile: UserProfile) {
-        nicknameLabel.text = profile.nickname
+    func configure(comment: Comment, nickname: String, replyTo replyNickname: String?) {
+        nicknameLabel.text = nickname
+        arrowImageView.isHidden = replyNickname == nil
+        replyingLabel.text = replyNickname
         commentLabel.text = comment.content
         dateLabel.text = comment.createdAt.formatted()
         profileImage.image = UIImage(systemName: "person.circle")
-        containerLeadingConstraint.constant = comment.parentID != nil ? 48 : 8
+        containerLeadingConstraint.constant = comment.parentID != nil ? 40 : 8
     }
     
 }

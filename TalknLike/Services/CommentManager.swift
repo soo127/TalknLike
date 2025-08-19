@@ -110,12 +110,18 @@ extension CommentManager {
 
         let profileMap = Dictionary(uniqueKeysWithValues: profiles.map { ($0.uid, $0) })
 
+        let commentIDToNickname = Dictionary(uniqueKeysWithValues: comments.compactMap { comment in
+            profileMap[comment.uid].map { (comment.documentID, $0.nickname) }
+        })
+
         let result = comments.compactMap { comment -> CommentDisplayModel? in
             guard let profile = profileMap[comment.uid] else {
                 return nil
             }
-            return CommentDisplayModel(comment: comment, profile: profile)
+            let replyNickname = comment.replyingToID.flatMap { commentIDToNickname[$0] }
+            return CommentDisplayModel(comment: comment, profile: profile, replyNickname: replyNickname)
         }
+
         return result
     }
     

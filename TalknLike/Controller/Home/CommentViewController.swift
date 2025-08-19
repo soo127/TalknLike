@@ -88,12 +88,14 @@ extension CommentViewController: UITableViewDataSource, UITableViewDelegate {
             return UITableViewCell()
         }
         let displayComment = displayComments[indexPath.row]
-        let comment = displayComment.comment, profile = displayComment.profile
-        
-        cell.configure(comment: comment, profile: profile)
+        cell.configure(
+            comment: displayComment.comment,
+            nickname: displayComment.profile.nickname,
+            replyTo: displayComment.replyNickname
+        )
         cell.delegate = self
         Task { @MainActor in
-            let image = await ImageLoader.loadImage(from: profile.photoURL)
+            let image = await ImageLoader.loadImage(from: displayComment.profile.photoURL)
             if tableView.indexPath(for: cell) == indexPath {
                 cell.profileImage.image = image
             }
@@ -184,6 +186,8 @@ extension CommentViewController: CommentInputViewDelegate {
             )
             inputView.clearText()
             inputView.clearReply()
+            parentCommentID = nil
+            replyToCommentID = nil
             inputView.endEditing(true)
         }
     }
