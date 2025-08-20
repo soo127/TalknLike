@@ -8,7 +8,7 @@
 import UIKit
 
 protocol CommentInputViewDelegate: AnyObject {
-    func commentInputView(_ inputView: CommentInputView, didSubmit text: String?)
+    func commentInputView(didSubmit text: String?)
 }
 
 final class CommentInputView: UIView {
@@ -76,7 +76,7 @@ extension CommentInputView {
 extension CommentInputView: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        delegate?.commentInputView(self, didSubmit: textField.text)
+        delegate?.commentInputView(didSubmit: textField.text)
         return true
     }
     
@@ -88,6 +88,10 @@ extension CommentInputView: UITextFieldDelegate {
 
 extension CommentInputView {
 
+    var isClicked: Bool {
+        textField.isFirstResponder
+    }
+    
     func setupReply(nickname: String, commentID: String?) {
         textField.placeholder = "@\(nickname) 님에게 회신"
         textField.becomeFirstResponder()

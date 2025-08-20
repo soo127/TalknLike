@@ -158,10 +158,9 @@ extension CommentViewController {
     }
 
     @objc private func dismissKeyboard(_ gesture: UITapGestureRecognizer) {
-        if commentView.commentInputView.textField.isFirstResponder {
+        if commentView.commentInputView.isClicked {
             commentView.commentInputView.clearReply()
-            parentCommentID = nil
-            replyToCommentID = nil
+            resetReplyState()
             view.endEditing(true)
             return
         }
@@ -173,7 +172,7 @@ extension CommentViewController {
 
 extension CommentViewController: CommentInputViewDelegate {
     
-    func commentInputView(_ inputView: CommentInputView, didSubmit text: String?) {
+    func commentInputView(didSubmit text: String?) {
         guard let text, !text.isEmpty else {
             return
         }
@@ -184,12 +183,16 @@ extension CommentViewController: CommentInputViewDelegate {
                 parentID: parentCommentID,
                 replyTo: replyToCommentID
             )
-            inputView.clearText()
-            inputView.clearReply()
-            parentCommentID = nil
-            replyToCommentID = nil
-            inputView.endEditing(true)
+            commentView.commentInputView.clearText()
+            commentView.commentInputView.clearReply()
+            resetReplyState()
+            commentView.endEditing(true)
         }
+    }
+    
+    func resetReplyState() {
+        parentCommentID = nil
+        replyToCommentID = nil
     }
     
 }
