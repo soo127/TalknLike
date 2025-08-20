@@ -40,7 +40,8 @@ final class PostStore {
         var newPost = Post(
             uid: uid,
             content: content,
-            createdAt: Date()
+            createdAt: Date(),
+            likeCount: 0
         )
         let docRef = try Firestore.firestore()
             .collection("Posts")
@@ -83,7 +84,8 @@ final class PostStore {
                     documentID: oldPost.documentID,
                     uid: oldPost.uid,
                     content: newContent,
-                    createdAt: date
+                    createdAt: date,
+                    likeCount: oldPost.likeCount
                 )
                 currentPosts[$0] = updatedPost
                 postsSubject.send(currentPosts)

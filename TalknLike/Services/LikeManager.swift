@@ -25,28 +25,35 @@ enum LikeManager {
     }
     
     private static func addLike(postID: String, userID: String) async throws {
+        let batch = db.batch()
         let newLikeData: [String: Any] = [
             "uid": userID,
             "date": Date()
         ]
-        try await db.collection("Posts")
-            .document(postID)
-            .collection("likes")
-            .addDocument(data: newLikeData)
+        let postRef = db.collection("Posts").document(postID)
+        let likeRef = postRef.collection("likes").document()
+        
+        batch.setData(newLikeData, forDocument: likeRef)
+        batch.updateData(["likeCount": FieldValue.increment(Int64(1))], forDocument: postRef)
+        try await batch.commit()
     }
     
     private static func removeLike(postID: String, userID: String) async throws {
-        let likesRef = db.collection("Posts")
+        let batch = db.batch()
+
+        try await db.collection("Posts")
             .document(postID)
             .collection("likes")
-        
-        try await likesRef
             .whereField("uid", isEqualTo: userID)
             .getDocuments()
             .documents.first
             .handleSome {
-                likesRef.document($0.documentID).delete()
+                batch.deleteDocument($0.reference)
             }
+
+        let postRef = db.collection("Posts").document(postID)
+        batch.updateData(["likeCount": FieldValue.increment(Int64(-1))], forDocument: postRef)
+        try await batch.commit()
     }
     
     static func isLiked(postID: String, userID: String) async throws -> Bool {

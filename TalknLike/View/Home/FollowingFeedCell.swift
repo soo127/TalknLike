@@ -20,6 +20,7 @@ final class FollowingFeedCell: UITableViewCell {
     let dateLabel = UILabel()
     let contentLabel = UILabel()
     let likeButton = UIButton()
+    var likeCount: Int = 0
     let commentButton = UIButton()
     let buttonsStackView = UIStackView()
 
@@ -69,20 +70,18 @@ extension FollowingFeedCell {
     private func setupLikeButton() {
         var configuration = UIButton.Configuration.plain()
         configuration.image = UIImage(systemName: "hand.thumbsup")
-        configuration.title = "Like"
+        configuration.title = "\(likeCount) Like"
         configuration.imagePadding = 10
         configuration.buttonSize = .small
         likeButton.configuration = configuration
-
         likeButton.configurationUpdateHandler = { button in
             var config = button.configuration
             config?.image = button.isSelected ? UIImage(systemName: "hand.thumbsup.fill") : UIImage(systemName: "hand.thumbsup")
             config?.baseForegroundColor = button.isSelected ? .systemBlue : .gray
-            //config?.baseForegroundColor =  button.isSelected ? .systemBlue : .gray
             button.configuration = config
         }
     }
-    
+
     private func setupCommentButton() {
         var configuration = UIButton.Configuration.plain()
         configuration.image = UIImage(systemName: "text.bubble")
@@ -152,7 +151,14 @@ extension FollowingFeedCell {
     
     @objc private func likeButtonTapped() {
         likeButton.isSelected.toggle()
+        likeCount = newCount()
+        likeButton.configuration?.title = "\(likeCount) Like"
         delegate?.didTapLikeButton(self)
+    }
+    
+    private func newCount() -> Int {
+        let newCount = likeButton.isSelected ? likeCount + 1 : max(0, likeCount - 1)
+        return newCount
     }
     
     @objc private func commentButtonTapped() {
@@ -164,6 +170,8 @@ extension FollowingFeedCell {
         nicknameLabel.text = nickname
         dateLabel.text = post.createdAt.formatted()
         contentLabel.text = post.content
+        likeCount = post.likeCount
+        likeButton.configuration?.title = "\(likeCount) Like"
     }
     
 }
