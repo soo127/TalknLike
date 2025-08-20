@@ -42,8 +42,13 @@ final class NicknameViewController: UIViewController {
 
     @objc private func didTapSave() {
         let nickname = nicknameEditView.textField.text
+        if !nicknameEditView.isAvailableNickname(nickname) {
+            showToast(message: "닉네임 글자 수를 확인해주세요.")
+            return
+        }
         do {
             try CurrentUserStore.shared.update(nickname: nickname)
+            showToast(message: "업데이트 성공")
         } catch {
             showToast(message: "업데이트 실패")
         }

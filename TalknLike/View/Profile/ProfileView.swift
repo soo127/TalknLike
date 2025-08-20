@@ -14,7 +14,6 @@ final class ProfileView: UIView {
     let profileImageView = UIImageView()
     let nicknameLabel = UILabel()
     let introLabel = UILabel()
-    private var textStack = UIStackView()
     private let header = UIView()
 
     override init(frame: CGRect) {
@@ -38,7 +37,8 @@ extension ProfileView {
     
     private func setupProfileHeader() {
         setupProfileImageView()
-        setupTextStack()
+        setupNicknameLabel()
+        setupIntroLabel()
         setupEditButton()
     }
     
@@ -51,16 +51,6 @@ extension ProfileView {
         profileImageView.backgroundColor = .lightGray
         profileImageView.layer.cornerRadius = 40
         profileImageView.clipsToBounds = true
-    }
-    
-    private func setupTextStack() {
-        setupNicknameLabel()
-        setupIntroLabel()
-        textStack = UIStackView.make(
-            views: [nicknameLabel, introLabel],
-            axis: .vertical,
-            spacing: 4
-        )
     }
     
     private func setupNicknameLabel() {
@@ -85,7 +75,8 @@ extension ProfileView {
         addSubview(tableView)
         header.addSubview(profileImageView)
         header.addSubview(editButton)
-        header.addSubview(textStack)
+        header.addSubview(nicknameLabel)
+        header.addSubview(introLabel)
        
         tableView.anchor(
             top: safeAreaLayoutGuide.topAnchor,
@@ -104,15 +95,19 @@ extension ProfileView {
         )
         editButton.anchor(
             top: header.topAnchor,
-            leading: textStack.trailingAnchor,
             trailing: header.trailingAnchor,
-            padding: UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
+            padding: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0),
+            width: 35
         )
-        textStack.anchor(
+        nicknameLabel.anchor(
             top: header.topAnchor,
             leading: profileImageView.trailingAnchor,
-            bottom: header.bottomAnchor,
-            padding: UIEdgeInsets(top: 0, left: 16, bottom: 10, right: 10)
+            padding: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0),
+        )
+        introLabel.anchor(
+            top: nicknameLabel.bottomAnchor,
+            leading: profileImageView.trailingAnchor,
+            padding: UIEdgeInsets(top: 10, left: 16, bottom: 0, right: 0),
         )
         
         // tableHeaderView는 container의 내부 subviews의 Auto Layout에 기반해서 높이 계산
