@@ -101,4 +101,10 @@ extension CommentInputView {
         textField.placeholder = defaultPlaceHolder
     }
     
+    func configure(profileImageURL: String?) {
+        Task { @MainActor [weak self] in
+            self?.profileImageView.image = await ImageLoader.loadImage(from: profileImageURL)
+        }
+    }
+    
 }

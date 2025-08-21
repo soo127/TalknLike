@@ -13,14 +13,12 @@ final class CommentViewController: UIViewController {
     private let commentView = CommentView()
     private var displayComments: [CommentDisplayModel] = []
     private var cancellables = Set<AnyCancellable>()
-    private var replyToCommentID: String?
-    private var parentCommentID: String?
+    private var replyToCommentID: String? = nil
+    private var parentCommentID: String? = nil
     let postID: String
     
     init(postID: String) {
         self.postID = postID
-        parentCommentID = nil
-        replyToCommentID = nil
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -38,7 +36,7 @@ final class CommentViewController: UIViewController {
         setupTableView()
         setupNavigationBar()
         bindComments()
-        commentView.commentInputView.delegate = self
+        setupCommentInputView()
         setupKeyboardObservers()
         setupDismissKeyboardGesture()
     }
@@ -75,6 +73,14 @@ final class CommentViewController: UIViewController {
                 }
             }
             .store(in: &cancellables)
+    }
+    
+    private func setupCommentInputView() {
+        commentView.commentInputView.delegate = self
+        CurrentUserStore.shared.currentUser
+            .handleSome {
+                commentView.commentInputView.configure(profileImageURL: $0.photoURL)
+            }
     }
     
 }
