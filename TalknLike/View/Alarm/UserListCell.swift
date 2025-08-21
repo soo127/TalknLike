@@ -45,6 +45,7 @@ final class UserListCell: UITableViewCell {
 extension UserListCell {
     
     private func setupProfileImage() {
+        profileImage.image = UIImage(systemName: "person.crop.circle")
         profileImage.layer.cornerRadius = 25
         profileImage.clipsToBounds = true
     }
@@ -105,8 +106,6 @@ extension UserListCell {
         nicknameLabel.text = user.nickname
         dateLabel.text = Date().formatted()
         acceptButton.isHidden = !showAcceptButton
-        // 셀 재사용을 위해 이미지 초기화
-        profileImage.image = UIImage(systemName: "person.crop.circle")
     }
     
 }

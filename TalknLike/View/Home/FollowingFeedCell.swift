@@ -49,6 +49,7 @@ final class FollowingFeedCell: UITableViewCell {
 extension FollowingFeedCell {
 
     private func setupProfileImage() {
+        profileImage.image = UIImage(systemName: "person.crop.circle")
         profileImage.layer.cornerRadius = 25
         profileImage.clipsToBounds = true
     }
@@ -166,7 +167,6 @@ extension FollowingFeedCell {
     }
 
     func configure(post: Post, nickname: String) {
-        profileImage.image = UIImage(systemName: "person.crop.circle")
         nicknameLabel.text = nickname
         dateLabel.text = post.createdAt.formatted()
         contentLabel.text = post.content

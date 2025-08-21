@@ -47,6 +47,7 @@ final class MyPostsCell: UITableViewCell {
 extension MyPostsCell {
     
     private func setupProfileImage() {
+        profileImage.image = UIImage(systemName: "person.fill")
         profileImage.layer.cornerRadius = 30
         profileImage.clipsToBounds = true
     }
@@ -123,7 +124,6 @@ extension MyPostsCell {
 extension MyPostsCell {
     
     func configure(nickname: String, post: Post) {
-        profileImage.image = UIImage(systemName: "person.fill")
         nicknameLabel.text = nickname
         contentLabel.text = post.content
         dateLabel.text = post.createdAt.formatted()

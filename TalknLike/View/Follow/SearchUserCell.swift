@@ -45,6 +45,7 @@ final class SearchUserCell: UITableViewCell {
 extension SearchUserCell {
     
     private func setupProfileImage() {
+        profileImage.image = UIImage(systemName: "person.crop.circle")
         profileImage.layer.cornerRadius = 20
         profileImage.clipsToBounds = true
         
@@ -106,8 +107,6 @@ extension SearchUserCell {
     func configure(user: UserProfile) {
         nicknameLabel.text = user.nickname
         introLabel.text = user.bio
-        // 셀 재사용을 위해 이미지 초기화
-        profileImage.image = UIImage(systemName: "person.crop.circle")
     }
     
 }

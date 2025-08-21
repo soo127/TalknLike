@@ -53,6 +53,7 @@ final class CommentCell: UITableViewCell {
 extension CommentCell {
     
     func setupProfileImage() {
+        profileImage.image = UIImage(systemName: "person.circle")
         profileImage.contentMode = .scaleAspectFill
         profileImage.layer.cornerRadius = 20
         profileImage.clipsToBounds = true
@@ -168,7 +169,6 @@ extension CommentCell {
         replyingLabel.text = replyNickname
         commentLabel.text = comment.content
         dateLabel.text = comment.createdAt.formatted()
-        profileImage.image = UIImage(systemName: "person.circle")
         containerLeadingConstraint.constant = comment.parentID != nil ? 40 : 8
     }
     
