@@ -67,8 +67,10 @@ final class CommentViewController: UIViewController {
             .receive(on: RunLoop.main)
             .sink{ [weak self] comments in
                 Task {
+                    let count = comments.count
                     let orderedComments = CommentManager.shared.makeDisplayOrder(comments: comments)
                     self?.displayComments = try await CommentManager.shared.mergeWithProfiles(comments: orderedComments)
+                    self?.title = "댓글 \(count)개"
                     self?.commentView.tableView.reloadData()
                 }
             }
