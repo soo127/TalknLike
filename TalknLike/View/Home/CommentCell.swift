@@ -9,6 +9,7 @@ import UIKit
 
 protocol CommentCellDelegate: AnyObject {
     func didTapReply(_ cell: CommentCell)
+    func didTapMenu(_ cell: CommentCell)
 }
 
 final class CommentCell: UITableViewCell {
@@ -23,6 +24,7 @@ final class CommentCell: UITableViewCell {
     let commentLabel = UILabel()
     let dateLabel = UILabel()
     let replyButton = UIButton(type: .system)
+    let menuButton = UIButton(type: .system)
     
     private lazy var containerLeadingConstraint: NSLayoutConstraint = {
         containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8)
@@ -45,6 +47,7 @@ final class CommentCell: UITableViewCell {
         setupReplyingLabel()
         setupDateLabel()
         setupReplyButton()
+        setupMenuButton()
         setupLayout()
     }
     
@@ -97,6 +100,16 @@ extension CommentCell {
         delegate?.didTapReply(self)
     }
     
+    func setupMenuButton() {
+        menuButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        menuButton.tintColor = .secondaryLabel
+        menuButton.addTarget(self, action: #selector(didTapMenu), for: .touchUpInside)
+    }
+    
+    @objc private func didTapMenu() {
+        delegate?.didTapMenu(self)
+    }
+    
     func setupLayout() {
         contentView.addSubview(containerView)
         
@@ -107,6 +120,7 @@ extension CommentCell {
         containerView.addSubview(commentLabel)
         containerView.addSubview(dateLabel)
         containerView.addSubview(replyButton)
+        containerView.addSubview(menuButton)
         
         containerLeadingConstraint.isActive = true
         containerView.anchor(
@@ -127,6 +141,13 @@ extension CommentCell {
             leading: profileImage.trailingAnchor,
             padding: UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0)
         )
+        menuButton.anchor(
+            top: containerView.topAnchor,
+            trailing: containerView.trailingAnchor,
+            padding: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8),
+            width: 18,
+            height: 18
+        )
         arrowImageView.anchor(
             top: containerView.topAnchor,
             leading: nicknameLabel.trailingAnchor,
@@ -137,7 +158,7 @@ extension CommentCell {
         replyingLabel.anchor(
             top: containerView.topAnchor,
             leading: arrowImageView.trailingAnchor,
-            padding: UIEdgeInsets(top: 0, left: 3, bottom: 0, right: 0)
+            padding: UIEdgeInsets(top: 0, left: 3, bottom: 0, right: 8)
         )
         commentLabel.anchor(
             top: nicknameLabel.bottomAnchor,

@@ -64,15 +64,36 @@ final class CommentManager {
         guard let docID = comment.documentID else {
             return
         }
-        try await Firestore.firestore()
-            .collection("Posts")
-            .document(comment.postID)
-            .collection("comments")
-            .document(docID)
-            .delete()
- 
+        
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            group.addTask {
+                try await Firestore.firestore()
+                    .collection("Posts")
+                    .document(comment.postID)
+                    .collection("comments")
+                    .document(docID)
+                    .delete()
+            }
+            
+            let replies = commentsSubject.value.filter { $0.parentID == docID }
+            for reply in replies {
+                if let replyDocID = reply.documentID {
+                    group.addTask {
+                        try await Firestore.firestore()
+                            .collection("Posts")
+                            .document(comment.postID)
+                            .collection("comments")
+                            .document(replyDocID)
+                            .delete()
+                    }
+                }
+            }
+            
+            try await group.waitForAll()
+        }
+        
         var current = commentsSubject.value
-        current.removeAll { $0.documentID == docID }
+        current.removeAll { $0.documentID == docID || $0.parentID == docID }
         commentsSubject.send(current)
     }
     

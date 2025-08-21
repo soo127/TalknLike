@@ -216,5 +216,45 @@ extension CommentViewController: CommentCellDelegate {
         commentView.commentInputView.setupReply(nickname: nickname, commentID: replyToCommentID)
     }
     
+    func didTapMenu(_ cell: CommentCell) {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        alert.addAction(UIAlertAction(title: "답글", style: .default) { [weak self] _ in
+            self?.didTapReply(cell)
+        })
+        alert.addAction(UIAlertAction(title: "삭제", style: .destructive) { [weak self] _ in
+            self?.didTapDelete(cell)
+        })
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        
+        present(alert, animated: true)
+    }
+    
+    private func didTapDelete(_ cell: CommentCell) {
+        guard let indexPath = commentView.tableView.indexPath(for: cell) else {
+            return
+        }
+        let comment = displayComments[indexPath.row].comment
+        let confirm = UIAlertController(
+            title: "삭제",
+            message: deleteMessage(parentID: comment.parentID),
+            preferredStyle: .alert
+        )
+        confirm.addAction(UIAlertAction(title: "삭제", style: .destructive) { _ in
+            Task {
+                try await CommentManager.shared.deleteComment(comment: comment)
+            }
+        })
+        confirm.addAction(UIAlertAction(title: "취소", style: .cancel))
+        present(confirm, animated: true)
+    }
+
+    private func deleteMessage(parentID: String?) -> String {
+        guard parentID != nil else {
+            return "댓글을 삭제할까요? 연결된 답글까지 모두 삭제됩니다."
+        }
+        return "답글을 삭제할까요?"
+    }
+    
 }
 
