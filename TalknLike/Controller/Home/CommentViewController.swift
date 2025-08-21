@@ -217,24 +217,26 @@ extension CommentViewController: CommentCellDelegate {
     }
     
     func didTapMenu(_ cell: CommentCell) {
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        guard let indexPath = commentView.tableView.indexPath(for: cell) else {
+            return
+        }
+        let comment = displayComments[indexPath.row].comment
         
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "답글", style: .default) { [weak self] _ in
             self?.didTapReply(cell)
         })
-        alert.addAction(UIAlertAction(title: "삭제", style: .destructive) { [weak self] _ in
-            self?.didTapDelete(cell)
-        })
+        if CommentManager.shared.isMyComment(uid: comment.uid) {
+            alert.addAction(UIAlertAction(title: "삭제", style: .destructive) { [weak self] _ in
+                self?.didTapDelete(comment: comment)
+            })
+        }
         alert.addAction(UIAlertAction(title: "취소", style: .cancel))
         
         present(alert, animated: true)
     }
     
-    private func didTapDelete(_ cell: CommentCell) {
-        guard let indexPath = commentView.tableView.indexPath(for: cell) else {
-            return
-        }
-        let comment = displayComments[indexPath.row].comment
+    private func didTapDelete(comment: Comment) {
         let confirm = UIAlertController(
             title: "삭제",
             message: deleteMessage(parentID: comment.parentID),

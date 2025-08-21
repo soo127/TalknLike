@@ -112,6 +112,13 @@ final class CommentManager {
         return display
     }
     
+    func isMyComment(uid: String) -> Bool {
+        guard let currentUser = CurrentUserStore.shared.currentUser else {
+            return false
+        }
+        return currentUser.uid == uid
+    }
+    
 }
 
 extension CommentManager {

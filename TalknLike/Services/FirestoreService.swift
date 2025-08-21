@@ -19,7 +19,7 @@ class FirestoreService {
     ) async throws -> [T] {
         return try await db.collection("Users")
             .document(uid)
-            .collection(collection.rawValue)
+            .collection(collection.name)
             .getDocuments()
             .documents
             .compactMap { try? $0.data(as: type.self) }
@@ -33,12 +33,12 @@ class FirestoreService {
             case .acceptFollowRequests, .followers:
                 return db.collection("Users")
                     .document(myUid)
-                    .collection(collection.rawValue)
+                    .collection(collection.name)
                     .document(userUid)
             case .followRequests, .following:
                 return db.collection("Users")
                     .document(userUid)
-                    .collection(collection.rawValue)
+                    .collection(collection.name)
                     .document(myUid)
             }
         }
@@ -46,7 +46,7 @@ class FirestoreService {
     static func acceptFollowRequest(userUid: String, myUid: String) async throws {
         let batch = db.batch()
         
-        let requestRef = getReference(for: .followRequests, userUid: userUid, myUid: myUid)
+        let requestRef = getReference(for: .acceptFollowRequests, userUid: userUid, myUid: myUid)
         let followersRef = getReference(for: .followers, userUid: userUid, myUid: myUid)
         let followingRef = getReference(for: .following, userUid: userUid, myUid: myUid)
         batch.deleteDocument(requestRef)
@@ -60,11 +60,22 @@ class FirestoreService {
 
 extension FirestoreService {
     
-    enum FollowCollection: String {
-        case followRequests = "followRequests"
-        case acceptFollowRequests = "acceptFollowRequests"
-        case followers = "followers"
-        case following = "following"
+    enum FollowCollection {
+        case followRequests
+        case acceptFollowRequests
+        case followers
+        case following
+        
+        var name: String {
+            switch self {
+            case .followRequests, .acceptFollowRequests:
+                return "followRequests"
+            case .followers:
+                return "followers"
+            case .following:
+                return "following"
+            }
+        }
     }
     
 }
