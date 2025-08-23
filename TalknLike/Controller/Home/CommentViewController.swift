@@ -242,6 +242,11 @@ extension CommentViewController: CommentCellDelegate {
         present(alert, animated: true)
     }
     
+    private func didTapUpdate(comment: Comment) {
+        commentView.commentInputView.textField.becomeFirstResponder()
+        commentView.commentInputView.textField.text = comment.content
+    }
+    
     private func didTapDelete(comment: Comment) {
         let confirm = UIAlertController(
             title: "삭제",

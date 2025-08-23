@@ -11,7 +11,7 @@ struct Comment: Codable {
     var documentID: String?
     let postID: String
     let uid: String
-    let content: String
+    var content: String
     let createdAt: Date
     let parentID: String?
     let replyingToID: String?

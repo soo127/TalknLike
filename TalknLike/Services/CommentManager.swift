@@ -60,6 +60,24 @@ final class CommentManager {
         commentsSubject.send(current)
     }
     
+    func updateComment(comment: Comment, newContent: String) async throws {
+        guard let docID = comment.documentID else {
+            return
+        }
+        try await Firestore.firestore()
+            .collection("Posts")
+            .document(comment.postID)
+            .collection("comments")
+            .document(docID)
+            .updateData(["content": newContent])
+        
+        var current = commentsSubject.value
+        if let index = current.firstIndex(where: { $0.documentID == docID }) {
+            current[index].content = newContent
+            commentsSubject.send(current)
+        }
+    }
+    
     func deleteComment(comment: Comment) async throws {
         guard let docID = comment.documentID else {
             return

@@ -55,4 +55,9 @@ extension UIView {
         }
     }
     
+    func debugBorder(color: UIColor = .red, width: CGFloat = 1.0) {
+        layer.borderColor = color.cgColor
+        layer.borderWidth = width
+    }
+    
 }
