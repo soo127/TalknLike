@@ -12,6 +12,13 @@ class FirestoreService {
     
     static private let db = Firestore.firestore()
     
+    static func fetchProfile(uid: String) async throws -> UserProfile {
+        return try await Firestore.firestore()
+            .collection("Users")
+            .document(uid)
+            .getDocument(as: UserProfile.self)
+    }
+    
     static func fetchDocuments<T: Decodable>(
         for collection: FollowCollection,
         uid: String,

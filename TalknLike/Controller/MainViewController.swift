@@ -25,7 +25,7 @@ final class MainViewController: UITabBarController {
         let dummyUploadVC = UIViewController()
         dummyUploadVC.tabBarItem = UITabBarItem(title: "게시", image: UIImage(systemName: "plus.square"), tag: 2)
 
-        let alarmVC = UINavigationController(rootViewController: NewFollowerViewController())
+        let alarmVC = UINavigationController(rootViewController: NotificationViewController())
         alarmVC.tabBarItem = UITabBarItem(title: "알림", image: UIImage(systemName: "bell"), tag: 3)
 
         let profileVC = UINavigationController(rootViewController: ProfileViewController())

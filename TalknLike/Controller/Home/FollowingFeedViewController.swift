@@ -81,7 +81,8 @@ extension FollowingFeedViewController: UITableViewDataSource, UITableViewDelegat
 extension FollowingFeedViewController: FollowingFeedCellDelegate {
     
     func didTapLikeButton(_ cell: FollowingFeedCell) {
-        guard let indexPath = followingFeedView.tableView.indexPath(for: cell) else {
+        guard let indexPath = followingFeedView.tableView.indexPath(for: cell),
+              let currentUser = CurrentUserStore.shared.currentUser else {
             return
         }
         let post = followingPosts[indexPath.row].post
@@ -93,6 +94,13 @@ extension FollowingFeedViewController: FollowingFeedCellDelegate {
                 postID: documentID,
                 userID: post.uid,
                 isLiked: cell.likeButton.isSelected
+            )
+            let myUid = currentUser.uid, myNickname = currentUser.nickname
+            await NotificationManager.sendLikeNotification(
+                receiverID: post.uid,
+                nickname: myNickname,
+                senderID: myUid,
+                postID: documentID
             )
         }
     }
