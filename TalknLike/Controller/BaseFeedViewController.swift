@@ -30,8 +30,7 @@ class BaseFeedViewController: UIViewController {
 extension BaseFeedViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print(posts.count)
-        return posts.count
+        posts.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -68,10 +67,13 @@ extension BaseFeedViewController: UITableViewDataSource, UITableViewDelegate {
 extension BaseFeedViewController: FollowingFeedCellDelegate  {
     
     func didTapLikeButton(_ cell: FollowingFeedCell) {
-        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        guard let indexPath = tableView.indexPath(for: cell) else {
+            return
+        }
         let post = posts[indexPath.row].post
-        print(post)
-        guard let documentID = post.documentID else { return }
+        guard let documentID = post.documentID else {
+            return
+        }
 
         Task {
             await LikeManager.handleLike(

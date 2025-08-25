@@ -18,7 +18,7 @@ enum NotificationManager {
             return
         }
         let noti = NotificationItem(
-            type: .like,
+            type: type,
             senderID: senderID,
             receiverID: receiverID,
             postID: postID,

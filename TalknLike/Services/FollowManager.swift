@@ -66,6 +66,7 @@ extension FollowManager {
                 uid: uid,
                 type: FollowMetadata.self
             )
+        // uid, date
         let requests = try await fetchProfiles(metaDataList: metaDataList)
         followRequestsSubject.send(requests)
     }
