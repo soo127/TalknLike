@@ -17,6 +17,7 @@ final class FollowingFeedCell: UITableViewCell {
     weak var delegate: FollowingFeedCellDelegate?
     let profileImage = UIImageView()
     let nicknameLabel = UILabel()
+    let titleLabel = UILabel()
     let dateLabel = UILabel()
     let contentLabel = UILabel()
     let likeButton = UIButton()
@@ -36,6 +37,7 @@ final class FollowingFeedCell: UITableViewCell {
     private func setup() {
         setupProfileImage()
         setupNicknameLabel()
+        setupTitleLabel()
         setupDateLabel()
         setupContentLabel()
         setupLikeButton()
@@ -58,6 +60,10 @@ extension FollowingFeedCell {
         nicknameLabel.font = UIFont.boldSystemFont(ofSize: 14)
     }
 
+    private func setupTitleLabel() {
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 18)
+    }
+    
     private func setupDateLabel() {
         dateLabel.textColor = .gray
         dateLabel.font = UIFont.systemFont(ofSize: 12)
@@ -108,6 +114,7 @@ extension FollowingFeedCell {
     private func setupLayout() {
         contentView.addSubview(profileImage)
         contentView.addSubview(nicknameLabel)
+        contentView.addSubview(titleLabel)
         contentView.addSubview(dateLabel)
         contentView.addSubview(contentLabel)
         buttonsStackView.addArrangedSubview(likeButton)
@@ -131,8 +138,14 @@ extension FollowingFeedCell {
             leading: profileImage.trailingAnchor,
             padding: UIEdgeInsets(top: 5, left: 10, bottom: 0, right: 10)
         )
-        contentLabel.anchor(
+        titleLabel.anchor(
             top: profileImage.bottomAnchor,
+            leading: contentView.leadingAnchor,
+            trailing: contentView.trailingAnchor,
+            padding: UIEdgeInsets(top: 10, left: 10, bottom: 0, right: 10)
+        )
+        contentLabel.anchor(
+            top: titleLabel.bottomAnchor,
             leading: contentView.leadingAnchor,
             trailing: contentView.trailingAnchor,
             padding: UIEdgeInsets(top: 10, left: 10, bottom: 0, right: 10)
@@ -169,6 +182,7 @@ extension FollowingFeedCell {
     func configure(post: Post, nickname: String) {
         nicknameLabel.text = nickname
         dateLabel.text = post.createdAt.formatted()
+        titleLabel.text = post.title
         contentLabel.text = post.content
         likeCount = post.likeCount
         likeButton.configuration?.title = "\(likeCount) Like"
