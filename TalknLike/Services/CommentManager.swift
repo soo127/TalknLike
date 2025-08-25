@@ -22,7 +22,6 @@ final class CommentManager {
             .collection("Posts")
             .document(postID)
             .collection("comments")
-            .order(by: "createdAt", descending: false)
             .getDocuments()
             .documents
             .compactMap {
@@ -121,7 +120,7 @@ final class CommentManager {
         let repliesByParent = Dictionary(grouping: replies, by: { $0.parentID! })
         
         var display: [Comment] = []
-        for root in roots.sorted(by: { $0.createdAt < $1.createdAt }) {
+        for root in roots.sorted(by: { $0.createdAt > $1.createdAt }) {
             display.append(root)
             if let children = repliesByParent[root.documentID ?? ""] {
                 display.append(contentsOf: children.sorted(by: { $0.createdAt < $1.createdAt }))

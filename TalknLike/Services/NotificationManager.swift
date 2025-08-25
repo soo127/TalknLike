@@ -40,7 +40,6 @@ enum NotificationManager {
             .whereField("receiverID", isEqualTo: receiverID)
             .order(by: "createdAt", descending: true)
             .getDocuments()
-        print(snapshot.documents)
         return snapshot.documents.compactMap { doc in
             try? doc.data(as: NotificationItem.self)
         }
