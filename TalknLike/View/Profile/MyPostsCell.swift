@@ -17,6 +17,7 @@ final class MyPostsCell: UITableViewCell {
     weak var delegate: MyPostsCellDelegate?
     let profileImage = UIImageView()
     let nicknameLabel = UILabel()
+    let titleLabel = UILabel()
     let dateLabel = UILabel()
     let contentLabel = UILabel()
     let editButton = UIButton()
@@ -34,6 +35,7 @@ final class MyPostsCell: UITableViewCell {
     private func setup() {
         setupProfileImage()
         setupNicknameLabel()
+        setupTitleLabel()
         setupDateLabel()
         setupContentLabel()
         setupEditButton()
@@ -54,6 +56,12 @@ extension MyPostsCell {
     
     private func setupNicknameLabel() {
         nicknameLabel.font = UIFont.boldSystemFont(ofSize: 14)
+    }
+    
+    private func setupTitleLabel() {
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        titleLabel.numberOfLines = 2
+        titleLabel.lineBreakMode = .byTruncatingTail
     }
 
     private func setupDateLabel() {
@@ -80,6 +88,7 @@ extension MyPostsCell {
     private func setupLayout() {
         contentView.addSubview(profileImage)
         contentView.addSubview(nicknameLabel)
+        contentView.addSubview(titleLabel)
         contentView.addSubview(dateLabel)
         contentView.addSubview(editButton)
         contentView.addSubview(removeButton)
@@ -112,10 +121,16 @@ extension MyPostsCell {
             trailing: contentView.trailingAnchor,
             padding: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 10)
         )
-        contentLabel.anchor(
+        titleLabel.anchor(
             top: profileImage.bottomAnchor,
+            leading: contentView.leadingAnchor,
+            padding: UIEdgeInsets(top: 16, left: 0, bottom: 0, right: 0)
+        )
+        contentLabel.anchor(
+            top: titleLabel.bottomAnchor,
+            leading: contentView.leadingAnchor,
             bottom: contentView.bottomAnchor,
-            padding: UIEdgeInsets(top: 16, left: 0, bottom: 16, right: 0)
+            padding: UIEdgeInsets(top: 12, left: 0, bottom: 16, right: 0)
         )
     }
     
@@ -123,7 +138,8 @@ extension MyPostsCell {
 
 extension MyPostsCell {
     
-    func configure(nickname: String, post: Post) {
+    func configure(title: String, nickname: String, post: Post) {
+        titleLabel.text = title
         nicknameLabel.text = nickname
         contentLabel.text = post.content
         dateLabel.text = post.createdAt.formatted()

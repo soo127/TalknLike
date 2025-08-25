@@ -57,7 +57,7 @@ extension MyPostsViewController: UITableViewDataSource, UITableViewDelegate {
             return UITableViewCell()
         }
         let post = posts[indexPath.row]
-        cell.configure(nickname: user.nickname, post: post)
+        cell.configure(title: post.title, nickname: user.nickname, post: post)
         cell.delegate = self
         Task { @MainActor in
             cell.profileImage.image = await ImageLoader.loadImage(from: user.photoURL)

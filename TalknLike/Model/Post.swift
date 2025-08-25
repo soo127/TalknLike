@@ -10,6 +10,7 @@ import Foundation
 struct Post: Codable {
     var documentID: String?
     let uid: String
+    let title: String
     let content: String
     let createdAt: Date
     let likeCount: Int

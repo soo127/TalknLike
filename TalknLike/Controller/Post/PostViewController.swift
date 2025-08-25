@@ -73,14 +73,15 @@ extension PostViewController {
     }
 
     private func savePost() async throws {
+        let title = postView.titleTextField.text
         let content = postView.textView.text
         switch mode {
         case .create:
-            try await PostStore.shared.post(content: content)
+            try await PostStore.shared.post(title: title, content: content)
         case .edit(let post):
             try await post.documentID
                 .handleSome {
-                    try await PostStore.shared.updatePost(documentID: $0, newContent: content)
+                    try await PostStore.shared.updatePost(documentID: $0, newTitle: title, newContent: content)
                 }
         }
     }
@@ -122,6 +123,7 @@ extension PostViewController {
         case .edit(let post):
             title = "게시글 수정"
             postView.textView.text = post.content
+            postView.titleTextField.text = post.title
             postView.placeholderLabel.isHidden = true
         }
     }

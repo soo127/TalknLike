@@ -32,13 +32,14 @@ final class PostStore {
         postsSubject.send(posts)
     }
     
-    func post(content: String?) async throws {
+    func post(title: String?, content: String?) async throws {
         guard let uid = CurrentUserStore.shared.currentUser?.uid,
-              let content else {
+              let title, let content else {
             return
         }
         var newPost = Post(
             uid: uid,
+            title: title,
             content: content,
             createdAt: Date(),
             likeCount: 0
@@ -63,8 +64,8 @@ final class PostStore {
         postsSubject.send(currentPosts)
     }
     
-    func updatePost(documentID: String, newContent: String?) async throws {
-        guard let newContent else {
+    func updatePost(documentID: String, newTitle: String?, newContent: String?) async throws {
+        guard let newTitle, let newContent else {
             return
         }
         let date = Date()
@@ -72,6 +73,7 @@ final class PostStore {
             .collection("Posts")
             .document(documentID)
             .updateData([
+                "title": newTitle,
                 "content": newContent,
                 "createdAt": date
             ])
@@ -83,6 +85,7 @@ final class PostStore {
                 let updatedPost = Post(
                     documentID: oldPost.documentID,
                     uid: oldPost.uid,
+                    title: newTitle,
                     content: newContent,
                     createdAt: date,
                     likeCount: oldPost.likeCount
