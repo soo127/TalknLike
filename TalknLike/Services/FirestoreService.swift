@@ -34,7 +34,20 @@ class FirestoreService {
         }
         return result
     }
-
+    
+    static func fetchFeedItem(postID: String) async throws -> FeedItem {
+        guard let user = CurrentUserStore.shared.currentUser else {
+            throw FeedError.noCurrentUser
+        }
+        let ref = Firestore.firestore()
+            .collection("Posts")
+            .document(postID)
+        
+        var post = try await ref.getDocument(as: Post.self)
+        post.documentID = ref.documentID
+        
+        return FeedItem(post: post, profile: user)
+    }
     
     static func fetchDocuments<T: Decodable>(
         for collection: FollowCollection,
@@ -48,7 +61,7 @@ class FirestoreService {
             .documents
             .compactMap { try? $0.data(as: type.self) }
     }
-
+    
     static func getReference(
         for collection: FollowCollection,
         userUid: String,
@@ -100,6 +113,11 @@ extension FirestoreService {
                 return "following"
             }
         }
+    }
+    
+    enum FeedError: Error {
+        case noCurrentUser
+        case postNotFound
     }
     
 }

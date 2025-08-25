@@ -8,124 +8,26 @@
 import UIKit
 import Combine
 
-final class FollowingFeedViewController: UIViewController {
+final class FollowingFeedViewController: BaseFeedViewController {
     
-    private let followingFeedView = FollowingFeedView()
-    private var followingPosts: [FeedItem] = []
     private var cancellables = Set<AnyCancellable>()
-
-    override func loadView() {
-        view = followingFeedView
-        navigationItem.title = "TalknLike"
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupTableView()
+        navigationItem.title = "TalknLike"
         bindFollowings()
     }
-    
-    private func setupTableView() {
-        followingFeedView.tableView.dataSource = self
-        followingFeedView.tableView.delegate = self
-        followingFeedView.tableView.register(FollowingFeedCell.self, forCellReuseIdentifier: "FollowingFeedCell")
-    }
-    
+
     private func bindFollowings() {
         FollowManager.shared.followingsPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] profiles in
                 Task {
-                    self?.followingPosts = try await PostStore.shared.getFollowingFeed(for: profiles)
-                    self?.followingFeedView.tableView.reloadData()
+                    self?.posts = try await PostStore.shared.getFollowingFeed(for: profiles)
+                    self?.tableView.reloadData()
                 }
             }
             .store(in: &cancellables)
-    }
-    
-}
-
-extension FollowingFeedViewController: UITableViewDataSource, UITableViewDelegate {
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return followingPosts.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "FollowingFeedCell", for: indexPath) as? FollowingFeedCell else {
-            return UITableViewCell()
-        }
-        let post = followingPosts[indexPath.row].post
-        let profile = followingPosts[indexPath.row].profile
-        cell.configure(post: post, nickname: profile.nickname)
-        cell.delegate = self
-        
-        Task { @MainActor in
-            if tableView.indexPath(for: cell) == indexPath {
-                cell.profileImage.image = await ImageLoader.loadImage(from: profile.photoURL)
-                guard let documentID = post.documentID else {
-                    return
-                }
-                cell.likeButton.isSelected = try await LikeManager.isLiked(postID: documentID, userID: post.uid)
-            }
-        }
-        return cell
-    }
-
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-    
-}
-
-extension FollowingFeedViewController: FollowingFeedCellDelegate {
-    
-    func didTapLikeButton(_ cell: FollowingFeedCell) {
-        guard let indexPath = followingFeedView.tableView.indexPath(for: cell) else {
-            return
-        }
-        let post = followingPosts[indexPath.row].post
-        guard let documentID = post.documentID else {
-            return
-        }
-        Task {
-            await LikeManager.handleLike(
-                postID: documentID,
-                userID: post.uid,
-                isLiked: cell.likeButton.isSelected
-            )
-            await NotificationManager.sendNotification(
-                type: .like,
-                receiverID: post.uid,
-                postID: documentID
-            )
-        }
-    }
-    
-    func didTapCommentButton(_ cell: FollowingFeedCell) {
-        guard let indexPath = followingFeedView.tableView.indexPath(for: cell) else {
-            return
-        }
-        let feedItem = followingPosts[indexPath.row]
-        let uid = feedItem.profile.uid, postID = feedItem.post.documentID
-        Task { @MainActor in
-            guard let postID else {
-                return
-            }
-            try await CommentManager.shared.fetchComments(postID: postID)
-            presentCommentSheet(uid: uid, postID: postID)
-        }
-    }
-    
-    private func presentCommentSheet(uid: String, postID: String) {
-        let nav = UINavigationController(rootViewController: CommentViewController(uid: uid, postID: postID))
-        if let sheet = nav.sheetPresentationController {
-            sheet.detents = [.medium(), .large()]
-            sheet.prefersGrabberVisible = true
-            sheet.preferredCornerRadius = 20
-        }
-        nav.modalPresentationStyle = .automatic
-        present(nav, animated: true)
     }
     
 }

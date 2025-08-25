@@ -74,6 +74,11 @@ extension ActivityViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let postID = notifications[indexPath.row].item.postID else {
+            showToast(message: "해당 게시글을 불러오는데 실패했어요.")
+            return
+        }
+        navigationController?.pushViewController(NotificationPostViewController(postID: postID), animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
