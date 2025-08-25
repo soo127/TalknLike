@@ -61,6 +61,7 @@ extension LoginViewController: LoginViewDelegate {
         Task { @MainActor in
             do {
                 try await Auth.auth().signIn(withEmail: email, password: pw)
+                showToast(message: "로그인 성공")
                 await onLoginSuccess()
                 if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
                     sceneDelegate.window?.rootViewController = MainViewController()

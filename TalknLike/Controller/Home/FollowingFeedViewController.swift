@@ -81,8 +81,7 @@ extension FollowingFeedViewController: UITableViewDataSource, UITableViewDelegat
 extension FollowingFeedViewController: FollowingFeedCellDelegate {
     
     func didTapLikeButton(_ cell: FollowingFeedCell) {
-        guard let indexPath = followingFeedView.tableView.indexPath(for: cell),
-              let currentUser = CurrentUserStore.shared.currentUser else {
+        guard let indexPath = followingFeedView.tableView.indexPath(for: cell) else {
             return
         }
         let post = followingPosts[indexPath.row].post
@@ -95,32 +94,38 @@ extension FollowingFeedViewController: FollowingFeedCellDelegate {
                 userID: post.uid,
                 isLiked: cell.likeButton.isSelected
             )
-            let myUid = currentUser.uid, myNickname = currentUser.nickname
-            await NotificationManager.sendLikeNotification(
+            await NotificationManager.sendNotification(
+                type: .like,
                 receiverID: post.uid,
-                nickname: myNickname,
-                senderID: myUid,
                 postID: documentID
             )
         }
     }
     
     func didTapCommentButton(_ cell: FollowingFeedCell) {
-        guard let indexPath = followingFeedView.tableView.indexPath(for: cell),
-              let postID = followingPosts[indexPath.row].post.documentID else {
+        guard let indexPath = followingFeedView.tableView.indexPath(for: cell) else {
             return
         }
+        let feedItem = followingPosts[indexPath.row]
+        let uid = feedItem.profile.uid, postID = feedItem.post.documentID
         Task { @MainActor in
-            try await CommentManager.shared.fetchComments(postID: postID)
-            let nav = UINavigationController(rootViewController: CommentViewController(postID: postID))
-            if let sheet = nav.sheetPresentationController {
-                sheet.detents = [.medium(), .large()]
-                sheet.prefersGrabberVisible = true
-                sheet.preferredCornerRadius = 20
+            guard let postID else {
+                return
             }
-            nav.modalPresentationStyle = .automatic
-            present(nav, animated: true)
+            try await CommentManager.shared.fetchComments(postID: postID)
+            presentCommentSheet(uid: uid, postID: postID)
         }
+    }
+    
+    private func presentCommentSheet(uid: String, postID: String) {
+        let nav = UINavigationController(rootViewController: CommentViewController(uid: uid, postID: postID))
+        if let sheet = nav.sheetPresentationController {
+            sheet.detents = [.medium(), .large()]
+            sheet.prefersGrabberVisible = true
+            sheet.preferredCornerRadius = 20
+        }
+        nav.modalPresentationStyle = .automatic
+        present(nav, animated: true)
     }
     
 }

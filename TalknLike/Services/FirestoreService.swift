@@ -19,6 +19,23 @@ class FirestoreService {
             .getDocument(as: UserProfile.self)
     }
     
+    static func fetchProfiles(uids: [String]) async throws -> [String: UserProfile] {
+        var result: [String: UserProfile] = [:]
+        try await withThrowingTaskGroup(of: (String, UserProfile).self) { group in
+            for uid in uids {
+                group.addTask {
+                    let profile = try await fetchProfile(uid: uid)
+                    return (uid, profile)
+                }
+            }
+            for try await (uid, profile) in group {
+                result[uid] = profile
+            }
+        }
+        return result
+    }
+
+    
     static func fetchDocuments<T: Decodable>(
         for collection: FollowCollection,
         uid: String,

@@ -10,62 +10,52 @@ import UIKit
 final class NotificationViewController: UIViewController {
 
     private let tableView = UITableView(frame: .zero, style: .plain)
-    private var notifications: [NotificationItem] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         title = "알림"
-
         setupTableView()
-        Task {
-            do {
-                self.notifications = try await NotificationManager.fetchNotifications(
-                    receiverID: CurrentUserStore.shared.currentUser!.uid
-                )
-                self.tableView.reloadData()
-            } catch {
-                print("Failed to fetch notifications: \(error)")
-            }
-        }
-                
+        layoutTableView()
     }
 
     private func setupTableView() {
         view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-
         tableView.dataSource = self
         tableView.delegate = self
-
-        tableView.register(NotificationCell.self, forCellReuseIdentifier: "NotificationCell")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
 
+    private func layoutTableView() {
+        tableView.anchor(
+            top: view.topAnchor,
+            leading: view.leadingAnchor,
+            bottom: view.bottomAnchor,
+            trailing: view.trailingAnchor
+        )
+    }
+    
 }
 
 extension NotificationViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        notifications.count
+        2
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationCell", for: indexPath) as? NotificationCell else {
-            return UITableViewCell()
-        }
-        let notification = notifications[indexPath.row]
-
-        cell.configure(with: notification)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        cell.textLabel?.text = indexPath.row == 0 ? "새 팔로우 요청" : "활동"
         return cell
     }
 
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.row == 0 {
+            navigationController?.pushViewController(NewFollowerViewController(), animated: true)
+        } else {
+            navigationController?.pushViewController(ActivityViewController(), animated: true)
+        }
         tableView.deselectRow(at: indexPath, animated: true)
     }
     

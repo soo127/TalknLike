@@ -9,16 +9,17 @@ import FirebaseFirestore
 
 enum NotificationManager {
     
-    static func sendLikeNotification(
+    static func sendNotification(
+        type: NotificationType,
         receiverID: String,
-        nickname: String,
-        senderID: String,
-        postID: String,
+        postID: String
     ) async {
+        guard let senderID = CurrentUserStore.shared.currentUser?.uid else {
+            return
+        }
         let noti = NotificationItem(
             type: .like,
             senderID: senderID,
-            senderNickname: nickname,
             receiverID: receiverID,
             postID: postID,
             createdAt: Date()
@@ -30,7 +31,10 @@ enum NotificationManager {
             .setData(from: noti)
     }
     
-    static func fetchNotifications(receiverID: String) async throws -> [NotificationItem] {
+    static func fetchNotifications() async throws -> [NotificationItem] {
+        guard let receiverID = CurrentUserStore.shared.currentUser?.uid else {
+            return []
+        }
         let snapshot = try await Firestore.firestore()
             .collection("Notifications")
             .whereField("receiverID", isEqualTo: receiverID)

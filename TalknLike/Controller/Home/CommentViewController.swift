@@ -13,11 +13,14 @@ final class CommentViewController: UIViewController {
     private let commentView = CommentView()
     private var displayComments: [CommentDisplayModel] = []
     private var cancellables = Set<AnyCancellable>()
+    
     private var replyToCommentID: String? = nil
     private var parentCommentID: String? = nil
+    let uid: String
     let postID: String
     
-    init(postID: String) {
+    init(uid: String, postID: String) {
+        self.uid = uid
         self.postID = postID
         super.init(nibName: nil, bundle: nil)
     }
@@ -191,6 +194,7 @@ extension CommentViewController: CommentInputViewDelegate {
                 parentID: parentCommentID,
                 replyTo: replyToCommentID
             )
+            await NotificationManager.sendNotification(type: .comment, receiverID: uid, postID: postID)
             commentView.commentInputView.clearText()
             commentView.commentInputView.clearReply()
             resetReplyState()

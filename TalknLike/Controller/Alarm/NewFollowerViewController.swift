@@ -21,6 +21,7 @@ final class NewFollowerViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = "새 팔로워"
         setupTableView()
         bindFollowRequests()
     }

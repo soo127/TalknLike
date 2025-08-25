@@ -9,7 +9,7 @@ import UIKit
 
 final class NotificationCell: UITableViewCell {
 
-    private let iconView = UIImageView()
+    let profileImageView = UIImageView()
     private let messageLabel = UILabel()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -22,19 +22,19 @@ final class NotificationCell: UITableViewCell {
     }
 
     private func setupViews() {
-        contentView.addSubview(iconView)
+        contentView.addSubview(profileImageView)
         contentView.addSubview(messageLabel)
-        iconView.image = UIImage(systemName: "heart.fill")
-        iconView.translatesAutoresizingMaskIntoConstraints = false
+        profileImageView.image = UIImage(systemName: "person.fill")
+        profileImageView.translatesAutoresizingMaskIntoConstraints = false
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            iconView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            iconView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            iconView.widthAnchor.constraint(equalToConstant: 24),
-            iconView.heightAnchor.constraint(equalToConstant: 24),
+            profileImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            profileImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            profileImageView.widthAnchor.constraint(equalToConstant: 24),
+            profileImageView.heightAnchor.constraint(equalToConstant: 24),
 
-            messageLabel.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 12),
+            messageLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 12),
             messageLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             messageLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
             messageLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12)
@@ -44,15 +44,13 @@ final class NotificationCell: UITableViewCell {
         messageLabel.font = .systemFont(ofSize: 15)
     }
 
-    func configure(with item: NotificationItem) {
-        let nickname = item.senderNickname
+    func configure(item: NotificationItem, profile: UserProfile) {
+        let nickname = profile.nickname
         switch item.type {
         case .like:
             messageLabel.text = "\(nickname)님이 당신의 게시글을 좋아합니다."
         case .comment:
             messageLabel.text = "\(nickname)님이 당신의 게시글에 댓글을 남겼습니다."
-        case .followPost:
-            messageLabel.text = "\(nickname)님이 새 글을 올렸습니다."
         }
     }
     

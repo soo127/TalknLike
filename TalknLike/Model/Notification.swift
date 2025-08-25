@@ -10,15 +10,17 @@ import Foundation
 enum NotificationType: String, Codable {
     case like
     case comment
-    case followPost
 }
 
 struct NotificationItem: Codable {
     let type: NotificationType
     let senderID: String
-    let senderNickname: String
     let receiverID: String
     let postID: String?
     let createdAt: Date
 }
 
+struct NotificationDisplayModel {
+    let item: NotificationItem
+    let profile: UserProfile
+}
