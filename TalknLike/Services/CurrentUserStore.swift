@@ -19,7 +19,7 @@ final class CurrentUserStore {
             .compactMap { $0 }
             .eraseToAnyPublisher()
     }
-
+    
     func fetchCurrentUser() async {
         guard let uid = Auth.auth().currentUser?.uid else {
             return
@@ -59,4 +59,12 @@ final class CurrentUserStore {
         userSubject.value
     }
 
+}
+
+extension CurrentUserStore {
+    
+    func reset() {
+        userSubject.send(nil)
+    }
+    
 }

@@ -148,3 +148,13 @@ extension FollowManager {
     }
     
 }
+
+extension FollowManager {
+    
+    func reset() {
+        followersSubject.send([])
+        followingsSubject.send([])
+        followRequestsSubject.send([])
+    }
+    
+}

@@ -9,7 +9,6 @@ import UIKit
 
 final class ProfileHeaderView: UIView {
 
-    let editButton = UIButton(type: .system)
     let profileImageView = UIImageView()
     let nicknameLabel = UILabel()
     let introLabel = UILabel()
@@ -35,10 +34,9 @@ extension ProfileHeaderView {
     private func setupSubviews() {
         setupProfileImageView()
         setupNicknameLabel()
-        setupEditButton()
         setupIntroLabel()
         
-        [profileImageView, nicknameLabel, editButton, introLabel].forEach { $0.debugBorder() }
+        [profileImageView, nicknameLabel, introLabel].forEach { $0.debugBorder() }
     }
     
     private func setupProfileImageView() {
@@ -53,12 +51,6 @@ extension ProfileHeaderView {
         nicknameLabel.font = .boldSystemFont(ofSize: 20)
         nicknameLabel.text = "닉네임"
         nicknameLabel.lineBreakMode = .byTruncatingTail
-    }
-    
-    private func setupEditButton() {
-        addSubview(editButton)
-        editButton.setTitle("편집", for: .normal)
-        editButton.setContentHuggingPriority(.defaultHigh, for: .horizontal)
     }
     
     private func setupIntroLabel() {
@@ -76,7 +68,6 @@ extension ProfileHeaderView {
     private func setupLayout() {
         layoutProfileImageView()
         layoutNicknameLabel()
-        layoutEditButton()
         layoutIntroLabel()
     }
     
@@ -85,7 +76,7 @@ extension ProfileHeaderView {
             top: topAnchor,
             leading: leadingAnchor,
             bottom: bottomAnchor,
-            padding: UIEdgeInsets(top: 0, left: 0, bottom: Paddings.bottom, right: 0),
+            padding: UIEdgeInsets(top: 0, left: Paddings.left, bottom: Paddings.bottom, right: 0),
             width: Sizes.profileImage.width,
             height: Sizes.profileImage.height,
         )
@@ -95,17 +86,8 @@ extension ProfileHeaderView {
         nicknameLabel.anchor(
             top: topAnchor,
             leading: profileImageView.trailingAnchor,
-            trailing: editButton.leadingAnchor,
-            padding: UIEdgeInsets(top: 0, left: Paddings.left, bottom: 0, right: 0),
-        )
-    }
-    
-    private func layoutEditButton() {
-        editButton.anchor(
-            top: topAnchor,
             trailing: trailingAnchor,
-            padding: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0),
-            width: 35
+            padding: UIEdgeInsets(top: 0, left: Paddings.left, bottom: 0, right: 16),
         )
     }
 
@@ -114,8 +96,8 @@ extension ProfileHeaderView {
             top: nicknameLabel.bottomAnchor,
             leading: profileImageView.trailingAnchor,
             bottom: bottomAnchor,
-            trailing: editButton.leadingAnchor,
-            padding: UIEdgeInsets(top: 10, left: Paddings.left, bottom: Paddings.bottom, right: 0),
+            trailing: trailingAnchor,
+            padding: UIEdgeInsets(top: 10, left: Paddings.left, bottom: Paddings.bottom, right: 16),
         )
     }
     

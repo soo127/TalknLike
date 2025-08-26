@@ -118,6 +118,9 @@ extension PostStore {
                 return FeedItem(post: post, profile: profile)
             }
     }
-
+    
+    func reset() {
+        postsSubject.send([])
+    }
 
 }

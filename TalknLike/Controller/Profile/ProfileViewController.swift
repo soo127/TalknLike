@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 import Combine
 
 final class ProfileViewController: UIViewController {
@@ -13,10 +14,9 @@ final class ProfileViewController: UIViewController {
     private let tableView = UITableView(frame: .zero, style: .grouped)
     private let header = ProfileHeaderView()
     private let menuItems: [(String, UIImage?)] = [
-        ("내 프로필", UIImage(systemName: "person")),
         ("내가 쓴 글", UIImage(systemName: "doc.text")),
-        ("설정", UIImage(systemName: "gearshape")),
-        ("친구 목록", UIImage(systemName: "person.2")),
+        ("편집", UIImage(systemName: "pencil")),
+        ("로그아웃", UIImage(systemName: "rectangle.portrait.and.arrow.right")),
     ]
     private var cancellables = Set<AnyCancellable>()
 
@@ -25,7 +25,6 @@ final class ProfileViewController: UIViewController {
         setupTableView()
         setupHeaderView()
         layoutTableView()
-        setupActions()
         bindUser()
     }
 
@@ -44,7 +43,6 @@ final class ProfileViewController: UIViewController {
         let targetSize = CGSize(width: width, height: UIView.layoutFittingCompressedSize.height)
         let height = header.systemLayoutSizeFitting(targetSize).height
         header.frame = CGRect(x: 0, y: 0, width: width, height: height)
-        print(header.frame)
     }
 
     private func layoutTableView() {
@@ -54,10 +52,6 @@ final class ProfileViewController: UIViewController {
             bottom: view.bottomAnchor,
             trailing: view.trailingAnchor
         )
-    }
-
-    private func setupActions() {
-        header.editButton.addTarget(self, action: #selector(editProfile), for: .touchUpInside)
     }
 
     private func bindUser() {
@@ -72,11 +66,7 @@ final class ProfileViewController: UIViewController {
             }
             .store(in: &cancellables)
     }
-    
-    @objc private func editProfile() {
-        navigationController?.pushViewController(ProfileEditViewController(), animated: true)
-    }
-    
+
 }
 
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
@@ -96,7 +86,32 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        navigationController?.pushViewController(MyPostsViewController(), animated: true)
+        switch indexPath.row {
+        case 0:
+            navigationController?.pushViewController(MyPostsViewController(), animated: true)
+        case 1:
+            navigationController?.pushViewController(ProfileEditViewController(), animated: true)
+        default:
+            logOut()
+        }
+    }
+    
+    private func logOut() {
+        do {
+            try Auth.auth().signOut()
+            reset()
+            if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                sceneDelegate.window?.rootViewController = LoginViewController()
+            }
+        } catch {
+            showToast(message: "로그아웃 실패: \(error.localizedDescription)")
+        }
+    }
+    
+    private func reset() {
+        CurrentUserStore.shared.reset()
+        PostStore.shared.reset()
+        FollowManager.shared.reset()
     }
 
 }
