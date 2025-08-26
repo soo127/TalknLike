@@ -12,7 +12,7 @@ import FirebaseFirestore
 final class NewFollowerViewController: UIViewController {
     
     let newFollowerView = NewFollowerView()
-    var followRequests : [UserProfile] = []
+    var followRelations : [FollowRequest] = []
     private var cancellables = Set<AnyCancellable>()
     
     override func loadView() {
@@ -29,14 +29,14 @@ final class NewFollowerViewController: UIViewController {
     private func setupTableView() {
         newFollowerView.tableView.dataSource = self
         newFollowerView.tableView.delegate = self
-        newFollowerView.tableView.register(UserListCell.self, forCellReuseIdentifier: "UserListCell")
+        newFollowerView.tableView.register(FollowRequestCell.self, forCellReuseIdentifier: "FollowRequestCell")
     }
     
     private func bindFollowRequests() {
         FollowManager.shared.followRequestsPublisher
             .receive(on: RunLoop.main)
-            .sink { [weak self] profiles in
-                self?.followRequests = profiles
+            .sink { [weak self] followRelations in
+                self?.followRelations = followRelations
                 self?.newFollowerView.tableView.reloadData()
             }
             .store(in: &cancellables)
@@ -47,18 +47,20 @@ final class NewFollowerViewController: UIViewController {
 extension NewFollowerViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return followRequests.count
+        return followRelations.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "UserListCell", for: indexPath) as? UserListCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "FollowRequestCell", for: indexPath) as? FollowRequestCell else {
             return UITableViewCell()
         }
-        let user = followRequests[indexPath.row]
-        cell.configure(user: user, showAcceptButton: true)
+        let profile = followRelations[indexPath.row].profile
+        let date = followRelations[indexPath.row].date
+
+        cell.configure(user: profile, date: date, showAcceptButton: true)
         cell.delegate = self
         Task { @MainActor in
-            let image = await ImageLoader.loadImage(from: user.photoURL)
+            let image = await ImageLoader.loadImage(from: profile.photoURL)
             if tableView.indexPath(for: cell) == indexPath {
                 cell.profileImage.image = image
             }
@@ -72,13 +74,13 @@ extension NewFollowerViewController: UITableViewDataSource, UITableViewDelegate 
     
 }
 
-extension NewFollowerViewController: UserListCellDelegate {
+extension NewFollowerViewController: FollowRequestCellDelegate {
     
-    func didTapAccept(_ cell: UserListCell) {
+    func didTapAccept(_ cell: FollowRequestCell) {
         guard let indexPath = newFollowerView.tableView.indexPath(for: cell) else {
             return
         }
-        let user = followRequests[indexPath.row]
+        let user = followRelations[indexPath.row].profile
         Task {
             try await FollowManager.shared.acceptFollowRequest(for: user)
             showToast(message: "\(user.nickname)님과 친구가 되었어요!")

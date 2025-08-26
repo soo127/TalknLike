@@ -30,7 +30,7 @@ final class FollowViewController: UIViewController {
     private func setupTableView() {
         followView.tableView.dataSource = self
         followView.tableView.delegate = self
-        followView.tableView.register(UserListCell.self, forCellReuseIdentifier: "UserListCell")
+        followView.tableView.register(SearchUserCell.self, forCellReuseIdentifier: "SearchUserCell")
     }
 
     private func setupSegmentHandler() {
@@ -79,11 +79,19 @@ extension FollowViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "UserListCell", for: indexPath) as? UserListCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "SearchUserCell", for: indexPath) as? SearchUserCell else {
             return UITableViewCell()
         }
-        let user = followView.selectedTab == 0 ? followers[indexPath.row] : followings[indexPath.row]
-        cell.configure(user: user, showAcceptButton: false)
+        cell.delegate = self
+        let user: UserProfile
+        if followView.selectedTab == 0 {
+            user = followers[indexPath.row]
+            cell.configureFollower(user: followers[indexPath.row])
+        } else {
+            user = followings[indexPath.row]
+            cell.configureFollowing(user: followings[indexPath.row])
+        }
+        
         Task { @MainActor in
             let image = await ImageLoader.loadImage(from: user.photoURL)
             if tableView.indexPath(for: cell) == indexPath {
@@ -96,6 +104,23 @@ extension FollowViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
+    }
+    
+}
+
+extension FollowViewController: SearchUserCellDelegate {
+    
+    func didTapButton(_ cell: SearchUserCell) {
+//        guard let indexPath = followView.tableView.indexPath(for: cell) else {
+//            return
+//        }
+        if followView.selectedTab == 0 {
+            // 팔로워 제거
+            print("팔로워 제거")
+        } else {
+            // 팔로우 취소
+            print("팔로우 취소")
+        }
     }
     
 }

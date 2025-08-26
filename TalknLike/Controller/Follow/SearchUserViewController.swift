@@ -67,7 +67,7 @@ extension SearchUserViewController: UITableViewDataSource, UITableViewDelegate {
         }
         let user = searchedUsers[indexPath.row]
         cell.delegate = self
-        cell.configure(user: user)
+        cell.configureSearch(user: user)
         
         Task { @MainActor in
             let image = await ImageLoader.loadImage(from: user.photoURL)
@@ -105,7 +105,7 @@ extension SearchUserViewController: UITextFieldDelegate {
 
 extension SearchUserViewController: SearchUserCellDelegate {
     
-    func searchUserCellDidTapFollow(_ cell: SearchUserCell) {
+    func didTapButton(_ cell: SearchUserCell) {
         guard let indexPath = searchUserView.tableView.indexPath(for: cell) else {
             return
         }

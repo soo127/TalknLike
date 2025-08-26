@@ -8,7 +8,7 @@
 import UIKit
 
 protocol SearchUserCellDelegate: AnyObject {
-    func searchUserCellDidTapFollow(_ cell: SearchUserCell)
+    func didTapButton(_ cell: SearchUserCell)
 }
 
 final class SearchUserCell: UITableViewCell {
@@ -37,7 +37,7 @@ final class SearchUserCell: UITableViewCell {
     }
     
     @objc private func followButtonTapped() {
-        delegate?.searchUserCellDidTapFollow(self)
+        delegate?.didTapButton(self)
     }
     
 }
@@ -83,14 +83,10 @@ extension SearchUserCell {
     }
     
     private func setupFollowButton() {
-        var config = UIButton.Configuration.filled()
-        config.title = "팔로우"
-        config.attributedTitle?.font = UIFont.systemFont(ofSize: 14, weight: .bold)
-        config.baseBackgroundColor = .systemBlue
-        config.baseForegroundColor = .white
-        config.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 25, bottom: 8, trailing: 25)
-        followButton.configuration = config
-
+//        followButton.configure(
+//            title: "팔로우",
+//            backgroundColor: .systemBlue
+//        )
         contentView.addSubview(followButton)
         followButton.anchor(
             trailing: contentView.trailingAnchor
@@ -104,7 +100,30 @@ extension SearchUserCell {
 
 extension SearchUserCell {
     
-    func configure(user: UserProfile) {
+    func configureSearch(user: UserProfile) {
+        followButton.isHidden = false
+        followButton.configure(
+            title: "팔로우",
+            backgroundColor: .systemBlue
+        )
+        configure(user: user)
+    }
+    
+    func configureFollower(user: UserProfile) {
+        followButton.isHidden = true
+        configure(user: user)
+    }
+    
+    func configureFollowing(user: UserProfile) {
+        followButton.isHidden = false
+        followButton.configure(
+            title: "해제",
+            backgroundColor: .systemRed,
+        )
+        configure(user: user)
+    }
+    
+    private func configure(user: UserProfile) {
         nicknameLabel.text = user.nickname
         introLabel.text = user.bio
     }

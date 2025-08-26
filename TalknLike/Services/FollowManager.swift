@@ -8,12 +8,17 @@
 import Combine
 import FirebaseFirestore
 
+struct FollowRequest {
+    let profile: UserProfile
+    let date: Date
+}
+
 final class FollowManager {
     
     static let shared = FollowManager()
     
-    private let followRequestsSubject = CurrentValueSubject<[UserProfile], Never>([])
-    var followRequestsPublisher: AnyPublisher<[UserProfile], Never> {
+    private let followRequestsSubject = CurrentValueSubject<[FollowRequest], Never>([])
+    var followRequestsPublisher: AnyPublisher<[FollowRequest], Never> {
         followRequestsSubject.eraseToAnyPublisher()
     }
     
@@ -47,7 +52,7 @@ extension FollowManager {
         try await FirestoreService.acceptFollowRequest(userUid: user.uid, myUid: currentUser.uid)
         
         var currentRequests = followRequestsSubject.value
-        currentRequests.removeAll { $0.uid == user.uid }
+        currentRequests.removeAll { $0.profile.uid == user.uid }
         followRequestsSubject.send(currentRequests)
         
         var currentFollowers = followersSubject.value
@@ -59,18 +64,26 @@ extension FollowManager {
 
 extension FollowManager {
 
-    func fetchFollowRequests(for uid: String) async throws {
+    func fetchFollowRequests() async throws {
+        guard let uid = CurrentUserStore.shared.currentUser?.uid else {
+            return
+        }
         let metaDataList = try await FirestoreService
             .fetchDocuments(
                 for: .followRequests,
                 uid: uid,
                 type: FollowMetadata.self
             )
-        // uid, date
-        let requests = try await fetchProfiles(metaDataList: metaDataList)
-        followRequestsSubject.send(requests)
+        let profiles = try await fetchProfiles(metaDataList: metaDataList)
+        let metaDataDict = Dictionary(uniqueKeysWithValues: metaDataList.map { ($0.uid, $0.date) })
+        
+        let followRequests: [FollowRequest] = profiles.compactMap { profile in
+            guard let date = metaDataDict[profile.uid] else { return nil }
+            return FollowRequest(profile: profile, date: date)
+        }
+        followRequestsSubject.send(followRequests)
     }
-    
+
     func fetchFollowers(for uid: String) async throws {
         let metaDataList = try await FirestoreService
             .fetchDocuments(

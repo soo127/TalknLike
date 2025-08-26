@@ -1,5 +1,5 @@
 //
-//  UserListCell.swift
+//  FollowRequestCell.swift
 //  TalknLike
 //
 //  Created by 이상수 on 8/7/25.
@@ -7,13 +7,13 @@
 
 import UIKit
 
-protocol UserListCellDelegate: AnyObject {
-    func didTapAccept(_ cell: UserListCell)
+protocol FollowRequestCellDelegate: AnyObject {
+    func didTapAccept(_ cell: FollowRequestCell)
 }
 
-final class UserListCell: UITableViewCell {
+final class FollowRequestCell: UITableViewCell {
     
-    weak var delegate: UserListCellDelegate?
+    weak var delegate: FollowRequestCellDelegate?
     let profileImage = UIImageView()
     let nicknameLabel = UILabel()
     let dateLabel = UILabel()
@@ -42,7 +42,7 @@ final class UserListCell: UITableViewCell {
     }
 }
 
-extension UserListCell {
+extension FollowRequestCell {
     
     private func setupProfileImage() {
         profileImage.image = UIImage(systemName: "person.crop.circle")
@@ -100,11 +100,11 @@ extension UserListCell {
     
 }
 
-extension UserListCell {
+extension FollowRequestCell {
     
-    func configure(user: UserProfile, showAcceptButton: Bool) {
+    func configure(user: UserProfile, date: Date, showAcceptButton: Bool) {
         nicknameLabel.text = user.nickname
-        dateLabel.text = Date().formatted()
+        dateLabel.text = date.formatted()
         acceptButton.isHidden = !showAcceptButton
     }
     

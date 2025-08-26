@@ -27,4 +27,18 @@ extension UIButton {
         return button
     }
     
+    func configure(
+        title: String,
+        backgroundColor: UIColor,
+        foregroundColor: UIColor = .white
+    ) {
+        var config = UIButton.Configuration.filled()
+        config.title = title
+        config.attributedTitle?.font = UIFont.systemFont(ofSize: 14, weight: .bold)
+        config.baseBackgroundColor = backgroundColor
+        config.baseForegroundColor = foregroundColor
+        config.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 25, bottom: 8, trailing: 25)
+        self.configuration = config
+    }
+    
 }
