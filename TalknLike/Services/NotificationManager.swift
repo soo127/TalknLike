@@ -35,14 +35,25 @@ enum NotificationManager {
         guard let receiverID = CurrentUserStore.shared.currentUser?.uid else {
             return []
         }
-        let snapshot = try await Firestore.firestore()
+        
+        return try await Firestore.firestore()
             .collection("Notifications")
             .whereField("receiverID", isEqualTo: receiverID)
             .order(by: "createdAt", descending: true)
             .getDocuments()
-        return snapshot.documents.compactMap { doc in
-            try? doc.data(as: NotificationItem.self)
-        }
+            .documents
+            .compactMap { document in
+                var item = try document.data(as: NotificationItem.self)
+                item.documentID = document.documentID
+                return item
+            }
+    }
+    
+    static func deleteNotification(documentID: String) async throws {
+        try await Firestore.firestore()
+            .collection("Notifications")
+            .document(documentID)
+            .delete()
     }
     
 }

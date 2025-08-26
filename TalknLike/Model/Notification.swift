@@ -13,6 +13,7 @@ enum NotificationType: String, Codable {
 }
 
 struct NotificationItem: Codable {
+    var documentID: String?
     let type: NotificationType
     let senderID: String
     let receiverID: String

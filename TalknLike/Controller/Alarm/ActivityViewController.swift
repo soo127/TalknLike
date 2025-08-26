@@ -16,8 +16,28 @@ final class ActivityViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         title = "활동"
-
         setupTableView()
+        layoutTableView()
+        fetchNotifications()
+    }
+
+    private func setupTableView() {
+        view.addSubview(tableView)
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(NotificationCell.self, forCellReuseIdentifier: "NotificationCell")
+    }
+    
+    private func layoutTableView() {
+        tableView.anchor(
+            top: view.topAnchor,
+            leading: view.leadingAnchor,
+            bottom: view.bottomAnchor,
+            trailing: view.trailingAnchor
+        )
+    }
+    
+    private func fetchNotifications() {
         Task {
             let notifications = try await NotificationManager.fetchNotifications()
             let profilesDict = try await FirestoreService.fetchProfiles(uids: notifications.map { $0.senderID })
@@ -30,23 +50,6 @@ final class ActivityViewController: UIViewController {
             }
             self.tableView.reloadData()
         }
-                
-    }
-
-    private func setupTableView() {
-        view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-
-        tableView.dataSource = self
-        tableView.delegate = self
-
-        tableView.register(NotificationCell.self, forCellReuseIdentifier: "NotificationCell")
     }
 
 }
@@ -80,6 +83,32 @@ extension ActivityViewController: UITableViewDataSource, UITableViewDelegate {
         }
         navigationController?.pushViewController(NotificationPostViewController(postID: postID), animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { [weak self] (action, view, completion) in
+            self?.deleteNotification(at: indexPath)
+            completion(true)
+        }
+        deleteAction.image = UIImage(systemName: "trash")
+        deleteAction.backgroundColor = .systemRed
+        
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
+        configuration.performsFirstActionWithFullSwipe = true
+        return configuration
+    }
+    
+    private func deleteNotification(at indexPath: IndexPath) {
+        guard let documentID = notifications[indexPath.row].item.documentID else {
+            showToast(message: "삭제에 실패하였습니다.")
+            return
+        }
+        Task { @MainActor in
+            try await NotificationManager.deleteNotification(documentID: documentID)
+            notifications.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        }
     }
     
 }
