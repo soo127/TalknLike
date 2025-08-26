@@ -57,17 +57,19 @@ extension PostViewController {
         Task {
             do {
                 try await savePost()
-                showAlert(title: "알림", message: toastMessage())
+                showAlert(title: "알림", message: toastMessage(), shouldDismiss: true)
             } catch {
-                showAlert(title: "알림", message: "게시 실패")
+                showAlert(title: "알림", message: "제목과 내용을 작성해주세요.")
             }
         }
     }
     
-    private func showAlert(title: String, message: String) {
+    private func showAlert(title: String, message: String, shouldDismiss: Bool = false) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default) { [weak self] _ in
-            self?.dismiss(animated: true)
+            if shouldDismiss {
+                self?.dismiss(animated: true)
+            }
         })
         present(alert, animated: true)
     }

@@ -33,9 +33,11 @@ final class PostStore {
     }
     
     func post(title: String?, content: String?) async throws {
-        guard let uid = CurrentUserStore.shared.currentUser?.uid,
-              let title, let content else {
+        guard let uid = CurrentUserStore.shared.currentUser?.uid else {
             return
+        }
+        guard let title, let content, !isEmptyPost(title: title, content: content) else {
+            throw PostError.noData
         }
         var newPost = Post(
             uid: uid,
@@ -65,8 +67,8 @@ final class PostStore {
     }
     
     func updatePost(documentID: String, newTitle: String?, newContent: String?) async throws {
-        guard let newTitle, let newContent else {
-            return
+        guard let newTitle, let newContent, !isEmptyPost(title: newTitle, content: newContent) else {
+            throw PostError.noData
         }
         let date = Date()
         try await Firestore.firestore()
@@ -93,6 +95,12 @@ final class PostStore {
                 currentPosts[$0] = updatedPost
                 postsSubject.send(currentPosts)
             }
+    }
+    
+    private func isEmptyPost(title: String, content: String) -> Bool {
+        let title = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let content = content.trimmingCharacters(in: .whitespacesAndNewlines)
+        return title.isEmpty || content.isEmpty
     }
     
 }
@@ -123,4 +131,12 @@ extension PostStore {
         postsSubject.send([])
     }
 
+}
+
+extension PostStore {
+    
+    enum PostError: Error {
+        case noData
+    }
+    
 }
