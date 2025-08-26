@@ -60,6 +60,33 @@ extension FollowManager {
         followersSubject.send(currentFollowers)
     }
     
+    func unfollow(uid: String) async throws {
+        guard let myUid = CurrentUserStore.shared.currentUser?.uid else {
+            return
+        }
+        let db = Firestore.firestore()
+
+        let myFollowingRef = db.collection("Users")
+            .document(myUid)
+            .collection("following")
+            .document(uid)
+
+        let targetFollowersRef = db.collection("Users")
+            .document(uid)
+            .collection("followers")
+            .document(myUid)
+
+        let batch = db.batch()
+        batch.deleteDocument(myFollowingRef)
+        batch.deleteDocument(targetFollowersRef)
+
+        try await batch.commit()
+        
+        var currentFollowings = followingsSubject.value
+        currentFollowings.removeAll { $0.uid == uid }
+        followingsSubject.send(currentFollowings)
+    }
+    
 }
 
 extension FollowManager {

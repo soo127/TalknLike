@@ -111,16 +111,34 @@ extension FollowViewController: UITableViewDataSource, UITableViewDelegate {
 extension FollowViewController: SearchUserCellDelegate {
     
     func didTapButton(_ cell: SearchUserCell) {
-//        guard let indexPath = followView.tableView.indexPath(for: cell) else {
-//            return
-//        }
-        if followView.selectedTab == 0 {
-            // 팔로워 제거
-            print("팔로워 제거")
-        } else {
-            // 팔로우 취소
-            print("팔로우 취소")
+        guard followView.selectedTab == 1 else { return }
+        guard let indexPath = followView.tableView.indexPath(for: cell) else {
+            return
         }
+        let following = followings[indexPath.row]
+        
+        showAlert(uid: following.uid, nickname: following.nickname)
+    }
+    
+    private func showAlert(uid: String, nickname: String) {
+        let alert = UIAlertController(
+            title: "팔로우 취소",
+            message: "\(nickname)님을 언팔로우하시겠습니까?",
+            preferredStyle: .alert
+        )
+        let confirm = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+            Task {
+                do {
+                    try await FollowManager.shared.unfollow(uid: uid)
+                    self?.showToast(message: "더 이상 \(nickname)님을 팔로우하지 않습니다.")
+                }
+            }
+        }
+        let cancel = UIAlertAction(title: "취소", style: .cancel)
+        alert.addAction(cancel)
+        alert.addAction(confirm)
+        
+        present(alert, animated: true)
     }
     
 }

@@ -22,7 +22,6 @@ final class FollowingFeedViewController: BaseFeedViewController {
         FollowManager.shared.followingsPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] profiles in
-                print(profiles)
                 Task {
                     self?.posts = try await PostStore.shared.getFollowingFeed(for: profiles)
                     self?.tableView.reloadData()
