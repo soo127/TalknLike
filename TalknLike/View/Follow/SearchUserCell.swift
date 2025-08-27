@@ -83,10 +83,6 @@ extension SearchUserCell {
     }
     
     private func setupFollowButton() {
-//        followButton.configure(
-//            title: "팔로우",
-//            backgroundColor: .systemBlue
-//        )
         contentView.addSubview(followButton)
         followButton.anchor(
             trailing: contentView.trailingAnchor
@@ -100,8 +96,8 @@ extension SearchUserCell {
 
 extension SearchUserCell {
     
-    func configureSearch(user: UserProfile) {
-        followButton.isHidden = false
+    func configureSearch(user: UserProfile, shouldShowFollowButton: Bool) {
+        followButton.isHidden = !shouldShowFollowButton
         followButton.configure(
             title: "팔로우",
             backgroundColor: .systemBlue
