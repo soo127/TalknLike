@@ -54,17 +54,30 @@ final class PostStore {
         let updated = [newPost] + postsSubject.value
         postsSubject.send(updated)
     }
-
+    
     func deletePost(documentID: String) async throws {
-        try await Firestore.firestore()
-            .collection("Posts")
-            .document(documentID)
-            .delete()
+        let db = Firestore.firestore()
+        let postRef = db.collection("Posts").document(documentID)
+        let batch = db.batch()
+
+        let comments = try await postRef.collection("comments").getDocuments()
+        for doc in comments.documents {
+            batch.deleteDocument(doc.reference)
+        }
+
+        let likes = try await postRef.collection("likes").getDocuments()
+        for doc in likes.documents {
+            batch.deleteDocument(doc.reference)
+        }
+        batch.deleteDocument(postRef)
+
+        try await batch.commit()
         
         var currentPosts = postsSubject.value
         currentPosts.removeAll { $0.documentID == documentID }
         postsSubject.send(currentPosts)
     }
+
     
     func updatePost(documentID: String, newTitle: String?, newContent: String?) async throws {
         guard let newTitle, let newContent, !isEmptyPost(title: newTitle, content: newContent) else {
