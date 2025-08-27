@@ -40,9 +40,15 @@ extension FollowManager {
         guard let currentUser = CurrentUserStore.shared.currentUser else {
             return
         }
-        try await FirestoreService
+        
+        let reference = FirestoreService
             .getReference(for: .followRequests, userUid: user.uid, myUid: currentUser.uid)
-            .setData(FollowMetadata.make(uid: currentUser.uid))
+        
+        let document = try await reference.getDocument()
+        if document.exists {
+            throw FollowError.alreadyRequestSent
+        }
+        try await reference.setData(FollowMetadata.make(uid: currentUser.uid))
     }
     
     func acceptFollowRequest(for user: UserProfile) async throws {
@@ -155,6 +161,14 @@ extension FollowManager {
         followersSubject.send([])
         followingsSubject.send([])
         followRequestsSubject.send([])
+    }
+    
+    func getFollowings() -> [UserProfile] {
+        followingsSubject.value
+    }
+    
+    enum FollowError: Error {
+        case alreadyRequestSent
     }
     
 }

@@ -13,7 +13,6 @@ final class SearchUserViewController: UIViewController {
     
     private let searchUserView = SearchUserView()
     private var searchedUsers: [UserProfile] = []
-    private var followingUserIds: Set<String> = []
     
     override func loadView() {
         view = searchUserView
@@ -23,7 +22,6 @@ final class SearchUserViewController: UIViewController {
         super.viewDidLoad()
         setupTableView()
         setupSearchField()
-        loadFollowingUsers()
     }
     
     private func setupTableView() {
@@ -36,26 +34,7 @@ final class SearchUserViewController: UIViewController {
         searchUserView.searchTextField.delegate = self
         searchUserView.searchTextField.returnKeyType = .search
     }
-    
-    private func loadFollowingUsers() {
-        guard let currentUserId = Auth.auth().currentUser?.uid else { return }
-        
-        Task { @MainActor in
-            do {
-                let followingSnapshot = try await Firestore.firestore()
-                    .collection("Users")
-                    .document(currentUserId)
-                    .collection("following")
-                    .getDocuments()
-                    .documents
-                    .map { $0.documentID }
-                followingUserIds = Set(followingSnapshot)
-            } catch {
-                print("팔로잉 목록 로드 중 오류:", error)
-            }
-        }
-    }
-    
+
     func searchUsers(matching keyword: String) async throws {
         let users = try await Firestore.firestore()
             .collection("Users")
@@ -68,22 +47,23 @@ final class SearchUserViewController: UIViewController {
         
         updateTableView(users: users)
     }
-
+    
     private func updateTableView(users: [UserProfile]) {
         searchedUsers = users
         searchUserView.tableView.reloadData()
     }
     
     private func shouldShowFollowButton(for user: UserProfile) -> Bool {
-        guard let currentUserId = Auth.auth().currentUser?.uid else {
+        guard let currentUserId = CurrentUserStore.shared.currentUser?.uid else {
             return false
         }
-        if user.uid == currentUserId || followingUserIds.contains(user.uid) {
+        let followings = FollowManager.shared.getFollowings()
+        if user.uid == currentUserId || followings.contains(where: { $0.uid == user.uid }) {
             return false
         }
         return true
     }
-    
+        
 }
 
 extension SearchUserViewController: UITableViewDataSource, UITableViewDelegate {
@@ -96,12 +76,13 @@ extension SearchUserViewController: UITableViewDataSource, UITableViewDelegate {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "SearchUserCell", for: indexPath) as? SearchUserCell else {
             return UITableViewCell()
         }
+        
         let user = searchedUsers[indexPath.row]
-        let shouldShowButton = shouldShowFollowButton(for: user)
-        
         cell.delegate = self
-        cell.configureSearch(user: user, shouldShowFollowButton: shouldShowButton)
-        
+        cell.configureSearch(
+            user: user,
+            shouldShowFollowButton: shouldShowFollowButton(for: user)
+        )
         Task { @MainActor in
             let image = await ImageLoader.loadImage(from: user.photoURL)
             if tableView.indexPath(for: cell) == indexPath {
@@ -133,29 +114,23 @@ extension SearchUserViewController: UITextFieldDelegate {
         }
         return true
     }
+    
 }
 
 extension SearchUserViewController: SearchUserCellDelegate {
     
     func didTapButton(_ cell: SearchUserCell) {
-        guard let indexPath = searchUserView.tableView.indexPath(for: cell) else {
-            return
-        }
+        guard let indexPath = searchUserView.tableView.indexPath(for: cell) else { return }
         let user = searchedUsers[indexPath.row]
-        Task {
+        
+        Task { @MainActor in
             do {
                 try await FollowManager.shared.sendFollowRequest(to: user)
-                
-                // 팔로잉 목록에 추가하고 UI 업데이트
-                followingUserIds.insert(user.uid)
-                
-                DispatchQueue.main.async {
-                    self.searchUserView.tableView.reloadRows(at: [indexPath], with: .none)
-                    self.showToast(message: "친구 요청을 보냈어요.")
-                }
+                showToast(message: "친구 요청을 보냈어요.")
             } catch {
-                print("searchUserCell error: \(error)")
+                showToast(message: "이미 팔로우를 요청한 상대에요.")
             }
         }
     }
+    
 }
