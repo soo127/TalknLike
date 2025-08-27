@@ -74,18 +74,20 @@ extension BaseFeedViewController: FollowingFeedCellDelegate  {
         guard let documentID = post.documentID else {
             return
         }
-
+        let isLiked = cell.likeButton.isSelected
         Task {
             await LikeManager.handleLike(
                 postID: documentID,
                 userID: post.uid,
-                isLiked: cell.likeButton.isSelected
+                isLiked: isLiked
             )
-            await NotificationManager.sendNotification(
-                type: .like,
-                receiverID: post.uid,
-                postID: documentID
-            )
+            if isLiked {
+                await NotificationManager.sendNotification(
+                    type: .like,
+                    receiverID: post.uid,
+                    postID: documentID
+                )
+            }
         }
     }
 
