@@ -68,7 +68,10 @@ final class CommentManager {
             .document(comment.postID)
             .collection("comments")
             .document(docID)
-            .updateData(["content": newContent])
+            .updateData([
+                "content": newContent,
+                "createdAt": Date()
+            ])
         
         var current = commentsSubject.value
         if let index = current.firstIndex(where: { $0.documentID == docID }) {

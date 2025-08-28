@@ -8,14 +8,19 @@
 import UIKit
 import Combine
 
+enum CommentInputMode {
+    case new
+    case reply(parentID: String, replyToID: String, nickname: String)
+    case edit(comment: Comment)
+}
+
 final class CommentViewController: UIViewController {
     
     private let commentView = CommentView()
     private var displayComments: [CommentDisplayModel] = []
     private var cancellables = Set<AnyCancellable>()
     
-    private var replyToCommentID: String? = nil
-    private var parentCommentID: String? = nil
+    private var inputMode: CommentInputMode = .new
     let uid: String
     let postID: String
     
@@ -170,13 +175,16 @@ extension CommentViewController {
 
     @objc private func dismissKeyboard(_ gesture: UITapGestureRecognizer) {
         if commentView.commentInputView.isClicked {
-            commentView.commentInputView.clearReply()
-            resetReplyState()
+            resetInputMode()
             view.endEditing(true)
             return
         }
-        // 키보드가 없을 때는 여기에 다른 터치 로직 실행
-        // 예: 테이블 뷰 셀 선택 처리
+    }
+    
+    private func resetInputMode() {
+        inputMode = .new
+        commentView.commentInputView.clearReply()
+        commentView.commentInputView.clearText()
     }
     
 }
@@ -187,24 +195,39 @@ extension CommentViewController: CommentInputViewDelegate {
         guard let text, !text.isEmpty else {
             return
         }
-        Task {
-            try await CommentManager.shared.addComment(
-                postID: postID,
-                content: text,
-                parentID: parentCommentID,
-                replyTo: replyToCommentID
-            )
-            await NotificationManager.sendNotification(type: .comment, receiverID: uid, postID: postID)
-            commentView.commentInputView.clearText()
-            commentView.commentInputView.clearReply()
-            resetReplyState()
+        Task { @MainActor in
+            try await handleSubmit(text: text)
+            resetInputMode()
             commentView.endEditing(true)
         }
     }
     
-    func resetReplyState() {
-        parentCommentID = nil
-        replyToCommentID = nil
+    func handleSubmit(text: String) async throws {
+        switch inputMode {
+        case .new:
+            try await CommentManager.shared.addComment(
+                postID: postID,
+                content: text,
+                parentID: nil,
+                replyTo: nil
+            )
+            await NotificationManager.sendNotification(type: .comment, receiverID: uid, postID: postID)
+            
+        case .reply(let parentID, let replyToID, _):
+            try await CommentManager.shared.addComment(
+                postID: postID,
+                content: text,
+                parentID: parentID,
+                replyTo: replyToID
+            )
+            await NotificationManager.sendNotification(type: .comment, receiverID: uid, postID: postID)
+            
+        case .edit(let comment):
+            try await CommentManager.shared.updateComment(
+                comment: comment,
+                newContent: text
+            )
+        }
     }
     
 }
@@ -216,20 +239,23 @@ extension CommentViewController: CommentCellDelegate {
             return
         }
         let displayComment = displayComments[indexPath.row]
-        let parentID = displayComment.comment.parentID
-        let documentID = displayComment.comment.documentID
-        
-        parentCommentID = parentID ?? documentID
-        replyToCommentID = documentID
+        setupReply(displayComment: displayComment)
+    }
+    
+    private func setupReply(displayComment: CommentDisplayModel) {
+        let comment = displayComment.comment
+        guard let documentID = comment.documentID else {
+            return
+        }
+        let parentID = comment.parentID ?? documentID
         let nickname = displayComment.profile.nickname
         
-        commentView.commentInputView.setupReply(nickname: nickname, commentID: replyToCommentID)
+        inputMode = .reply(parentID: parentID, replyToID: documentID, nickname: nickname)
+        commentView.commentInputView.setupReply(nickname: nickname, commentID: documentID)
     }
     
     func didTapMenu(_ cell: CommentCell) {
-        guard let indexPath = commentView.tableView.indexPath(for: cell) else {
-            return
-        }
+        guard let indexPath = commentView.tableView.indexPath(for: cell) else { return }
         let comment = displayComments[indexPath.row].comment
         
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
@@ -237,6 +263,9 @@ extension CommentViewController: CommentCellDelegate {
             self?.didTapReply(cell)
         })
         if CommentManager.shared.isMyComment(uid: comment.uid) {
+            alert.addAction(UIAlertAction(title: "수정", style: .default) { [weak self] _ in
+                self?.didTapUpdate(comment: comment)
+            })
             alert.addAction(UIAlertAction(title: "삭제", style: .destructive) { [weak self] _ in
                 self?.didTapDelete(comment: comment)
             })
@@ -247,6 +276,7 @@ extension CommentViewController: CommentCellDelegate {
     }
     
     private func didTapUpdate(comment: Comment) {
+        inputMode = .edit(comment: comment)
         commentView.commentInputView.textField.becomeFirstResponder()
         commentView.commentInputView.textField.text = comment.content
     }
