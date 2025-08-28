@@ -103,7 +103,9 @@ extension FollowViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
+        let profile = followView.selectedTab == 0 ? followers[indexPath.row] : followings[indexPath.row]
+        let userPostsVC = UserPostsViewController(userProfile: profile)
+        navigationController?.pushViewController(userPostsVC, animated: true)
     }
     
 }

@@ -49,6 +49,22 @@ class FirestoreService {
         return FeedItem(post: post, profile: user)
     }
     
+    static func fetchFeedItems(uid: String) async throws -> [FeedItem] {
+        let profile = try await fetchProfile(uid: uid)
+        
+        return try await Firestore.firestore()
+            .collection("Posts")
+            .whereField("uid", isEqualTo: uid)
+            .order(by: "createdAt", descending: true)
+            .getDocuments()
+            .documents
+            .compactMap {
+                var post = try $0.data(as: Post.self)
+                post.documentID = $0.documentID
+                return FeedItem(post: post, profile: profile)
+            }
+    }
+    
     static func fetchDocuments<T: Decodable>(
         for collection: FollowCollection,
         uid: String,
