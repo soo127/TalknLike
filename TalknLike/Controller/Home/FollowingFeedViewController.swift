@@ -14,6 +14,7 @@ final class FollowingFeedViewController: BaseFeedViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupUI()
         bindFollowings()
     }
     

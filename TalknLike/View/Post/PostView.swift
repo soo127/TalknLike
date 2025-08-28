@@ -11,7 +11,6 @@ final class PostView: UIView, UITextViewDelegate {
     
     let placeholderLabel = UILabel()
     let profileImageView = UIImageView()
-    let editButton = UIButton(type: .system)
     let nicknameLabel = UILabel()
     let titleTextField = UITextField()
     let textView = UITextView()
@@ -44,14 +43,15 @@ extension PostView {
         setupTextView()
         setupPlaceholder()
         setupProfileImageView()
-        setupEditButton()
         setupNicknameLabel()
         setupTitleTextField()
         setupSeparator()
-        
-        let vStack = UIStackView.make(views: [nicknameLabel, editButton], axis: .vertical, spacing: 4)
-        vStack.alignment = .leading
-        profileHeader = UIStackView.make(views: [profileImageView, vStack], axis: .horizontal, spacing: 12)
+        profileHeader = UIStackView.make(
+            views: [profileImageView, nicknameLabel],
+            axis: .horizontal,
+            spacing: 12,
+            alignment: .top
+        )
     }
     
     private func setupPost() {
@@ -101,10 +101,6 @@ extension PostView {
         separator.anchor(height: 1)
     }
 
-    private func setupEditButton() {
-        editButton.setTitle("편집", for: .normal)
-    }
-    
     private func setupNicknameLabel() {
         nicknameLabel.font = .boldSystemFont(ofSize: 20)
         nicknameLabel.text = "닉네임"
