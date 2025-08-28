@@ -30,6 +30,9 @@ final class UserPostsViewController: BaseFeedViewController {
         Task { @MainActor in
             self.posts = try await FirestoreService.fetchFeedItems(uid: userProfile.uid)
             self.tableView.reloadData()
+            if self.posts.count == 0 {
+                tableView.showEmptyState(message: "\(userProfile.nickname)님이 작성한 게시글이 없습니다.")
+            }
         }
     }
     

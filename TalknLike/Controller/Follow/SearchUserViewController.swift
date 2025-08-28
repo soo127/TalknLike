@@ -94,6 +94,9 @@ extension SearchUserViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let profile = searchedUsers[indexPath.row]
+        let userPostsVC = UserPostsViewController(userProfile: profile)
+        navigationController?.pushViewController(userPostsVC, animated: true)
     }
     
 }
