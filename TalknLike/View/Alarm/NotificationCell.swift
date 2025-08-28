@@ -43,7 +43,6 @@ final class NotificationCell: UITableViewCell {
             messageLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 12),
             messageLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             messageLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
-            //messageLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
             
             dateLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 12),
             dateLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),

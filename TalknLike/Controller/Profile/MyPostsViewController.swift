@@ -16,9 +16,14 @@ final class MyPostsViewController: BaseFeedViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "내 게시글"
+        setupUI()
         bindPosts()
         setupLongPressGesture()
+    }
+        
+    private func setupUI() {
+        title = "내 게시글"
+        emptyStateMessage = "올린 게시글이 없어요."
     }
     
     private func bindPosts() {

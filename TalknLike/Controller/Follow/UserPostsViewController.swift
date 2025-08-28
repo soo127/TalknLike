@@ -22,17 +22,19 @@ final class UserPostsViewController: BaseFeedViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "\(userProfile.nickname)"
+        setupUI()
         loadFeedItems()
+    }
+    
+    private func setupUI() {
+        title = "\(userProfile.nickname)"
+        emptyStateMessage = "\(userProfile.nickname)님은 아직 게시글이 없어요."
     }
     
     private func loadFeedItems() {
         Task { @MainActor in
             self.posts = try await FirestoreService.fetchFeedItems(uid: userProfile.uid)
             self.tableView.reloadData()
-            if self.posts.count == 0 {
-                tableView.showEmptyState(message: "\(userProfile.nickname)님이 작성한 게시글이 없습니다.")
-            }
         }
     }
     

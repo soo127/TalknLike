@@ -19,4 +19,8 @@ extension UITableView {
         backgroundView = emptyLabel
     }
 
+    func hideEmptyState() {
+        backgroundView = nil
+    }
+    
 }

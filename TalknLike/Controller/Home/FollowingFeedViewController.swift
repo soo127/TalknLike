@@ -14,8 +14,12 @@ final class FollowingFeedViewController: BaseFeedViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = "TalknLike"
         bindFollowings()
+    }
+    
+    private func setupUI() {
+        navigationItem.title = "TalknLike"
+        emptyStateMessage = "친구들을 팔로우하여 그들이 올린 게시글을 만나보세요!"
     }
 
     private func bindFollowings() {

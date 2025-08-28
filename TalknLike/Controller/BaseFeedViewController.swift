@@ -9,8 +9,13 @@ import UIKit
 
 class BaseFeedViewController: UIViewController {
     
-    var posts: [FeedItem] = []
     let tableView = UITableView()
+    var posts: [FeedItem] = [] {
+        didSet {
+            updateEmptyState()
+        }
+    }
+    var emptyStateMessage: String = "게시글이 없습니다."
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -115,6 +120,18 @@ extension BaseFeedViewController: FollowingFeedCellDelegate  {
             sheet.preferredCornerRadius = 20
         }
         present(nav, animated: true)
+    }
+    
+}
+
+extension BaseFeedViewController {
+    
+    private func updateEmptyState() {
+        if posts.isEmpty {
+            tableView.showEmptyState(message: emptyStateMessage)
+        } else {
+            tableView.hideEmptyState()
+        }
     }
     
 }
