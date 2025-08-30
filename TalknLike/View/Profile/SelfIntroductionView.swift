@@ -12,6 +12,9 @@ final class SelfIntroductionView: UIView, UITextViewDelegate {
     private let placeholderLabel = UILabel()
     let textView = UITextView()
     private let separator = UIView()
+    private let characterCountLabel = UILabel()
+    
+    private let maxCharacterCount = 30
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -26,14 +29,40 @@ final class SelfIntroductionView: UIView, UITextViewDelegate {
         setupTextView()
         setupPlaceholder()
         setupSeparator()
+        setupCharacterCountLabel()
         setupLayout()
+        updateCharacterCount()
     }
 
-    // Placeholder
     func textViewDidChange(_ textView: UITextView) {
         placeholderLabel.isHidden = !textView.text.isEmpty
+        updateCharacterCount()
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        let currentText = textView.text ?? ""
+        if text == "\n" {
+            if currentText.contains("\n") {
+                return false
+            }
+        }
+        guard let stringRange = Range(range, in: currentText) else {
+            return false
+        }
+        let newText = currentText.replacingCharacters(in: stringRange, with: text)
+        return newText.count <= maxCharacterCount
     }
 
+    
+    private func updateCharacterCount() {
+        let currentCount = textView.text.count
+        characterCountLabel.text = "\(currentCount)/\(maxCharacterCount)"
+        if currentCount > maxCharacterCount {
+            characterCountLabel.textColor = .systemRed
+        } else {
+            characterCountLabel.textColor = .systemGray
+        }
+    }
 }
 
 extension SelfIntroductionView {
@@ -55,22 +84,29 @@ extension SelfIntroductionView {
         separator.backgroundColor = .systemGray
     }
     
+    private func setupCharacterCountLabel() {
+        characterCountLabel.font = .systemFont(ofSize: 12)
+        characterCountLabel.textColor = .systemGray
+        characterCountLabel.textAlignment = .right
+    }
+    
     private func setupLayout() {
         addSubview(textView)
         addSubview(placeholderLabel)
         addSubview(separator)
+        addSubview(characterCountLabel)
 
         textView.anchor(
             top: safeAreaLayoutGuide.topAnchor,
             leading: leadingAnchor,
             trailing: trailingAnchor,
             padding: UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16),
-            height: 150
+            height: 50
         )
         placeholderLabel.anchor(
             top: textView.topAnchor,
             leading: textView.leadingAnchor,
-            padding: UIEdgeInsets(top: 8, left: 5, bottom: 0, right: 0),
+            padding: UIEdgeInsets(top: 8, left: 5, bottom: 0, right: 0)
         )
         separator.anchor(
             top: textView.bottomAnchor,
@@ -79,6 +115,10 @@ extension SelfIntroductionView {
             padding: UIEdgeInsets(top: 8, left: 16, bottom: 0, right: 16),
             height: 1
         )
+        characterCountLabel.anchor(
+            top: separator.bottomAnchor,
+            trailing: trailingAnchor,
+            padding: UIEdgeInsets(top: 4, left: 0, bottom: 0, right: 16)
+        )
     }
-    
 }
