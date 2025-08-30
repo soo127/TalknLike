@@ -53,6 +53,7 @@ final class FollowViewController: UIViewController {
             .receive(on: RunLoop.main)
             .sink { [weak self] profiles in
                 self?.followers = profiles
+                self?.followView.updateFollowerSegment(followers: profiles.count)
                 self?.followView.tableView.reloadData()
             }
             .store(in: &cancellables)
@@ -61,6 +62,7 @@ final class FollowViewController: UIViewController {
             .receive(on: RunLoop.main)
             .sink { [weak self] profiles in
                 self?.followings = profiles
+                self?.followView.updateFollowingSegment(followings: profiles.count)
                 self?.followView.tableView.reloadData()
             }
             .store(in: &cancellables)

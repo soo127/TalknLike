@@ -9,7 +9,7 @@ import UIKit
 
 final class FollowView: UIView {
 
-    private let menus = ["팔로워", "팔로잉"]
+    private let menus = ["팔로워 0", "팔로잉 0"]
     private let underlineView = UIView()
     let segmentedControl = UISegmentedControl()
     let tableView = UITableView()
@@ -119,6 +119,14 @@ extension FollowView {
     
     var selectedTab: Int {
         segmentedControl.selectedSegmentIndex
+    }
+    
+    func updateFollowerSegment(followers: Int) {
+        segmentedControl.setTitle("팔로워 \(followers)", forSegmentAt: 0)
+    }
+    
+    func updateFollowingSegment(followings: Int) {
+        segmentedControl.setTitle("팔로잉 \(followings)", forSegmentAt: 1)
     }
     
 }
