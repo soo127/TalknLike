@@ -28,6 +28,7 @@ final class SignUpViewController: UIViewController {
         super.viewDidLoad()
         signUpView.delegate = self
         observeEmailField()
+        observePasswordField()
     }
     
     private func observeEmailField() {
@@ -35,44 +36,67 @@ final class SignUpViewController: UIViewController {
             
         publisher
             .compactMap { ($0.object as? UITextField)?.text }
-            .debounce(for: .seconds(1.2), scheduler: RunLoop.main)
+            .debounce(for: .seconds(1.1), scheduler: RunLoop.main)
             .removeDuplicates()
             .sink { [weak self] email in
                 self?.handleEmailInputChange(email: email)
             }
             .store(in: &cancellables)
     }
+    
+    private func observePasswordField() {
+        let publisher = NotificationCenter.default
+            .publisher(for: UITextField.textDidChangeNotification, object: signUpView.passwordCheckField)
+        
+        publisher
+            .compactMap { ($0.object as? UITextField)?.text }
+            .debounce(for: .seconds(1.1), scheduler: RunLoop.main)
+            .removeDuplicates()
+            .sink { [weak self] password in
+                self?.handlePwInput(password: password)
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func handlePwInput(password: String) {
+        if !isEqualPw() {
+            signUpView.differentPw()
+            return
+        }
+        let isValid = LoginManager.isValidPassword(password: password)
+        signUpView.updateEmailMessage(isValid: isValid)
+    }
+    
+    private func isEqualPw() -> Bool {
+        if let pw = signUpView.passwordField.text,
+           let pwCheck = signUpView.passwordCheckField.text {
+            return pw == pwCheck
+        }
+        return false
+    }
 
     private func handleEmailInputChange(email: String) {
         Task { @MainActor [weak self] in
-            guard let result = await self?.checkEmailStatus(email: email) else {
-                return
+            do {
+                let result = try await LoginManager.checkEmailStatus(email: email)
+                self?.updateUI(for: result)
+            } catch {
+                self?.showToast(message: "이메일 상태 확인 중 에러 발생")
             }
-            self?.updateUI(for: result)
         }
     }
-    
-    private func checkEmailStatus(email: String) async -> EmailCheckResult {
-        guard !email.isEmpty else { return .empty }
-        do {
-            return try await LoginManager.checkAvailable(email: email) ? .available : .duplicate
-        } catch {
-            showToast(message: "이메일 상태 확인 중 에러 발생")
-            return .error
-        }
-    }
-    
+
     private func updateUI(for result: EmailCheckResult) {
         signUpView.showEmailFieldMessage(result: result)
         signUpView.updateVerifyButton(result: result)
     }
-    
+
 }
 
 extension SignUpViewController: SignUpViewDelegate {
     
     func didTapVerifyButton() {
-        //추후 이메일 인증 로직 추가
+        signUpView.confirmEmail()
     }
     
     func didTapSignUpButton() {

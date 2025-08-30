@@ -11,6 +11,7 @@ enum EmailCheckResult {
     case empty
     case available
     case duplicate
+    case badFormat
     case error
     
     var errorMessage: String {
@@ -21,17 +22,14 @@ enum EmailCheckResult {
             return "사용 가능한 이메일입니다."
         case .duplicate:
             return "이미 존재하는 이메일입니다."
+        case .badFormat:
+            return "이메일 형식을 확인해주세요."
         default:
             return "오류가 발생했습니다."
         }
     }
     
     var isValid: Bool {
-        switch self {
-        case .available:
-            return true
-        default:
-            return false
-        }
+        self == .available
     }
 }

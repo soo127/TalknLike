@@ -13,10 +13,11 @@ final class SignUpView: UIView {
 
     let emailField = UITextField.make("이메일")
     let emailVerifyButton = UIButton.make("인증", backgroundColor: .systemGray2)
-    let passwordField = UITextField.make("비밀번호 (8자 이상)", secure: true)
+    let passwordField = UITextField.make("비밀번호", secure: true)
     let passwordCheckField = UITextField.make("비밀번호 확인", secure: true)
     let signUpButton = UIButton.make("가입", backgroundColor: .systemBlue, height: 44)
     private let emailMessageLabel = UILabel()
+    private let pwMessageLabel = UILabel()
 
     private lazy var emailStack = UIStackView.make(views: [emailField, emailVerifyButton], axis: .horizontal)
 
@@ -33,6 +34,8 @@ final class SignUpView: UIView {
         backgroundColor = .white
         setupEmail()
         setupSignupButton()
+        setupPwLabel()
+        setupPwField()
         setupLayout()
     }
 
@@ -47,6 +50,7 @@ extension SignUpView {
     }
     
     private func setupSignupButton() {
+        signUpButton.isEnabled = false
         signUpButton.addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
     }
     
@@ -59,6 +63,16 @@ extension SignUpView {
     private func setupEmailLabel() {
         emailMessageLabel.font = UIFont.systemFont(ofSize: 12)
         emailMessageLabel.numberOfLines = 1
+    }
+    
+    private func setupPwLabel() {
+        pwMessageLabel.font = UIFont.systemFont(ofSize: 12)
+        pwMessageLabel.numberOfLines = 1
+    }
+    
+    private func setupPwField() {
+        passwordField.isEnabled = false
+        passwordCheckField.isEnabled = false
     }
 
     private func setupLayout() {
@@ -74,12 +88,13 @@ extension SignUpView {
         let stackView = UIStackView.make(
             views: [
                 emailFieldGroup,
-                makeField(icon: "lock.fill", text: "비밀번호", field: passwordField),
+                makeField(icon: "lock.fill", text: "비밀번호 (대/소문자, 숫자, 특수문자 포함 8~10자)", field: passwordField),
                 makeField(icon: "lock.fill", text: "비밀번호 확인", field: passwordCheckField),
+                pwMessageLabel,
                 signUpButton
             ],
             axis: .vertical,
-            spacing: 20
+            spacing: 15
         )
 
         addSubview(stackView)
@@ -109,7 +124,6 @@ extension SignUpView {
     
 }
 
-// MARK: - Delegate Event 연결
 extension SignUpView {
     
     @objc func didTapVerifyButton() {
@@ -122,7 +136,6 @@ extension SignUpView {
     
 }
 
-// MARK: - 외부에서 호출할 메서드들
 extension SignUpView {
     
     func showEmailFieldMessage(result: EmailCheckResult) {
@@ -133,6 +146,24 @@ extension SignUpView {
     func updateVerifyButton(result: EmailCheckResult) {
         emailVerifyButton.isEnabled = result.isValid
         emailVerifyButton.alpha = result.isValid ? 1.0 : 0.5
+    }
+    
+    func confirmEmail() {
+        emailField.isEnabled = false
+        emailVerifyButton.isEnabled = false
+        passwordField.isEnabled = true
+        passwordCheckField.isEnabled = true
+    }
+    
+    func updateEmailMessage(isValid: Bool) {
+        signUpButton.isEnabled = isValid
+        pwMessageLabel.text = isValid ? "비밀번호가 일치합니다." : "비밀번호 형식을 맞춰주세요."
+        pwMessageLabel.textColor = isValid ? .systemGreen : .systemRed
+    }
+    
+    func differentPw() {
+        pwMessageLabel.text = "비밀번호가 일치하지 않습니다."
+        pwMessageLabel.textColor = .systemRed
     }
     
 }
