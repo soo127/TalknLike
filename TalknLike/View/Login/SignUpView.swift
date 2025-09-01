@@ -12,7 +12,7 @@ final class SignUpView: UIView {
     weak var delegate: SignUpViewDelegate?
 
     let emailField = UITextField.make("이메일")
-    let emailVerifyButton = UIButton.make("인증", backgroundColor: .systemGray2)
+    let emailVerifyButton = UIButton.make("확인", backgroundColor: .systemGray2)
     let passwordField = UITextField.make("비밀번호", secure: true)
     let passwordCheckField = UITextField.make("비밀번호 확인", secure: true)
     let signUpButton = UIButton.make("가입", backgroundColor: .systemBlue, height: 44)

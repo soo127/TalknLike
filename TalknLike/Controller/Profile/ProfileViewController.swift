@@ -47,7 +47,7 @@ final class ProfileViewController: UIViewController {
         case 1:
             navigationController?.pushViewController(ProfileEditViewController(), animated: true)
         case 2:
-            logOut()
+            showLogOutAlert()
         default:
             break
         }
@@ -66,13 +66,32 @@ final class ProfileViewController: UIViewController {
             .store(in: &cancellables)
     }
     
+    private func showLogOutAlert() {
+        let alert = UIAlertController(
+            title: "로그아웃",
+            message: "로그아웃 하시겠습니까?",
+            preferredStyle: .alert
+        )
+        let confirm = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+            self?.logOut()
+        }
+        let cancel = UIAlertAction(title: "취소", style: .cancel)
+        alert.addAction(cancel)
+        alert.addAction(confirm)
+        
+        present(alert, animated: true)
+    }
+    
     private func logOut() {
         do {
             try Auth.auth().signOut()
-            reset()
-            if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-                sceneDelegate.window?.rootViewController = LoginViewController()
+            guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else {
+                return
             }
+            let navController = UINavigationController(rootViewController: LoginViewController())
+            sceneDelegate.window?.rootViewController = navController
+            sceneDelegate.window?.makeKeyAndVisible()
+            reset()
         } catch {
             showToast(message: "로그아웃 실패: \(error.localizedDescription)")
         }

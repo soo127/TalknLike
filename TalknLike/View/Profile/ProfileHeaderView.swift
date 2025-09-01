@@ -35,8 +35,6 @@ extension ProfileHeaderView {
         setupProfileImageView()
         setupNicknameLabel()
         setupIntroLabel()
-        
-        [profileImageView, nicknameLabel, introLabel].forEach { $0.debugBorder() }
     }
     
     private func setupProfileImageView() {

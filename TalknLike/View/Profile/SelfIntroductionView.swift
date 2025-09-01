@@ -14,7 +14,7 @@ final class SelfIntroductionView: UIView, UITextViewDelegate {
     private let separator = UIView()
     private let characterCountLabel = UILabel()
     
-    private let maxCharacterCount = 30
+    private let maxCharacterCount = 40
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -42,7 +42,8 @@ final class SelfIntroductionView: UIView, UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         let currentText = textView.text ?? ""
         if text == "\n" {
-            if currentText.contains("\n") {
+            let newlineCount = currentText.components(separatedBy: "\n").count - 1
+            if newlineCount >= 1 {
                 return false
             }
         }
@@ -52,7 +53,6 @@ final class SelfIntroductionView: UIView, UITextViewDelegate {
         let newText = currentText.replacingCharacters(in: stringRange, with: text)
         return newText.count <= maxCharacterCount
     }
-
     
     private func updateCharacterCount() {
         let currentCount = textView.text.count
@@ -63,6 +63,7 @@ final class SelfIntroductionView: UIView, UITextViewDelegate {
             characterCountLabel.textColor = .systemGray
         }
     }
+    
 }
 
 extension SelfIntroductionView {
@@ -101,7 +102,7 @@ extension SelfIntroductionView {
             leading: leadingAnchor,
             trailing: trailingAnchor,
             padding: UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16),
-            height: 50
+            height: 60
         )
         placeholderLabel.anchor(
             top: textView.topAnchor,
@@ -121,4 +122,5 @@ extension SelfIntroductionView {
             padding: UIEdgeInsets(top: 4, left: 0, bottom: 0, right: 16)
         )
     }
+    
 }
