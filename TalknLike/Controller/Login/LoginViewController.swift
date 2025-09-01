@@ -54,6 +54,7 @@ extension LoginViewController: LoginViewDelegate {
     }
 
     private func didTapLoginButton() {
+        view.endEditing(true)
         guard let email = loginView.emailField.text,
               let pw = loginView.passwordField.text else {
             return
