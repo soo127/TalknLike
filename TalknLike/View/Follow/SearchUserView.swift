@@ -37,7 +37,7 @@ final class SearchUserView: UIView {
             image: UIImage(systemName: "x.circle.fill"),
             leftPadding: 5,
             rightPadding: 8
-        )
+        ) { self.clickXButton()}
     }
     
     private func setupLayout() {
@@ -58,6 +58,15 @@ final class SearchUserView: UIView {
             trailing: trailingAnchor,
             padding: UIEdgeInsets(top: 12, left: 16, bottom: 0, right: 16),
         )
+    }
+    
+}
+
+extension SearchUserView {
+    
+    func clickXButton() {
+        searchTextField.text = ""
+        searchTextField.sendActions(for: .editingChanged)
     }
     
 }
