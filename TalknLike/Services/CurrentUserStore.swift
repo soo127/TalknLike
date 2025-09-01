@@ -68,3 +68,16 @@ extension CurrentUserStore {
     }
     
 }
+
+extension CurrentUserStore {
+    
+    var currentUserID: String {
+        get throws {
+            guard let uid = currentUser?.uid else {
+                throw AuthError.userNotFound
+            }
+            return uid
+        }
+    }
+    
+}

@@ -12,7 +12,10 @@ enum LikeManager {
     
     private static let db = Firestore.firestore()
     
-    static func handleLike(postID: String, userID: String, isLiked: Bool) async {
+    static func handleLike(postID: String, isLiked: Bool) async {
+        guard let userID = CurrentUserStore.shared.currentUser?.uid else {
+            return
+        }
         do {
             if isLiked {
                 try await addLike(postID: postID, userID: userID)
@@ -56,7 +59,10 @@ enum LikeManager {
         try await batch.commit()
     }
     
-    static func isLiked(postID: String, userID: String) async throws -> Bool {
+    static func isLiked(postID: String) async throws -> Bool {
+        guard let userID = CurrentUserStore.shared.currentUser?.uid else {
+            return false
+        }
         return try await !db.collection("Posts")
             .document(postID)
             .collection("likes")

@@ -53,10 +53,7 @@ extension BaseFeedViewController: UITableViewDataSource, UITableViewDelegate {
             if tableView.indexPath(for: cell) == indexPath {
                 cell.profileImage.image = await ImageLoader.loadImage(from: feedItem.profile.photoURL)
                 if let documentID = feedItem.post.documentID {
-                    cell.likeButton.isSelected = try await LikeManager.isLiked(
-                        postID: documentID,
-                        userID: feedItem.post.uid
-                    )
+                    cell.likeButton.isSelected = try await LikeManager.isLiked(postID: documentID)
                 }
             }
         }
@@ -83,7 +80,6 @@ extension BaseFeedViewController: FollowingFeedCellDelegate  {
         Task {
             await LikeManager.handleLike(
                 postID: documentID,
-                userID: post.uid,
                 isLiked: isLiked
             )
             if isLiked {
