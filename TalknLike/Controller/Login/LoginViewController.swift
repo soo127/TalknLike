@@ -61,7 +61,13 @@ extension LoginViewController: LoginViewDelegate {
         }
         Task { @MainActor in
             do {
-                try await Auth.auth().signIn(withEmail: email, password: pw)
+                let result = try await Auth.auth().signIn(withEmail: email, password: pw)
+                if !result.user.isEmailVerified {
+                    try Auth.auth().signOut()
+                    showEmailVerificationRequiredAlert()
+                    return
+                }
+                
                 showToast(message: "로그인 성공")
                 await onLoginSuccess()
                 if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
@@ -72,7 +78,19 @@ extension LoginViewController: LoginViewDelegate {
             }
         }
     }
-    
+
+    private func showEmailVerificationRequiredAlert() {
+        let alert = UIAlertController(
+            title: "이메일 인증 필요",
+            message: "로그인하려면 먼저 이메일 인증을 완료해주세요.\n이메일을 확인하고 인증 링크를 클릭한 후 다시 로그인해주세요.",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        
+        present(alert, animated: true)
+    }
+
     func onLoginSuccess() async {
         await CurrentUserStore.shared.fetchCurrentUser()
         await CurrentUserStore.shared.currentUser

@@ -107,10 +107,12 @@ extension SignUpViewController: SignUpViewDelegate {
         Task {
             do {
                 let result = try await createUser(email: email, password: pw)
+                try await sendEmailVerification(user: result.user)
                 try await LoginManager.registerUser(uid: result.user.uid, email: email)
-                showToast(message: "환영합니다.")
+                showEmailVerificationAlert(user: result.user)
+                
             } catch {
-                showToast(message: "회원가입 실패")
+                showToast(message: "회원가입 실패: \(error.localizedDescription)")
             }
         }
     }
@@ -127,5 +129,51 @@ extension SignUpViewController: SignUpViewDelegate {
             }
         }
     }
+    
+    private func sendEmailVerification(user: User) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            user.sendEmailVerification { error in
+                if let error = error { continuation.resume(throwing: error) }
+                else { continuation.resume() }
+            }
+        }
+    }
+   
+    private func showEmailVerificationAlert(user: User) {
+        let alert = UIAlertController(
+            title: "이메일 인증",
+            message: "회원가입이 완료되었습니다!\n이메일을 확인하여 인증을 완료해주세요.",
+            preferredStyle: .alert
+        )
         
+        alert.addAction(UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+            self?.navigationController?.popViewController(animated: true)
+        })
+        
+        alert.addAction(UIAlertAction(title: "인증 이메일 재발송", style: .default) { [weak self] _ in
+            self?.resendEmailVerification(user: user)
+        })
+        
+        present(alert, animated: true)
+    }
+    
+    private func resendEmailVerification(user: User) {
+        Task {
+            do {
+                try await sendEmailVerification(user: user)
+                showToast(message: "인증 이메일이 다시 발송되었습니다.")
+            } catch {
+                showToast(message: "이메일 재발송 실패: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func isEmailVerified() async -> Bool {
+        guard let user = Auth.auth().currentUser else {
+            return false
+        }
+        try? await user.reload()
+        return user.isEmailVerified
+    }
+       
 }

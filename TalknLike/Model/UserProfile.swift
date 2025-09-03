@@ -18,7 +18,7 @@ extension UserProfile {
         return UserProfile(
             uid: uid,
             email: email,
-            nickname: "임시용",
+            nickname: "닉네임",
             bio: nil,
             photoURL: nil
         )
