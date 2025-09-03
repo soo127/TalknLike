@@ -17,7 +17,6 @@ extension LoginViewController {
     enum Button {
         case login
         case signUp
-        case findId
         case findPw
     }
     
@@ -46,8 +45,6 @@ extension LoginViewController: LoginViewDelegate {
             self.didTapLoginButton()
         case .signUp:
             self.didTapSignUpButton()
-        case .findId:
-            self.didTapFindIdButton()
         case .findPw:
             self.didTapFindPwButton()
         }
@@ -104,10 +101,6 @@ extension LoginViewController: LoginViewDelegate {
 
     private func didTapSignUpButton() {
         navigationController?.pushViewController(SignUpViewController(), animated: true)
-    }
-    
-    private func didTapFindIdButton() {
-        navigationController?.pushViewController(FindIdViewController(), animated: true)
     }
     
     private func didTapFindPwButton() {

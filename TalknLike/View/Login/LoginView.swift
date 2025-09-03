@@ -16,8 +16,7 @@ final class LoginView: UIView {
     let passwordField = UITextField.make("비밀번호", secure: true)
     private let loginButton = UIButton.make("로그인", backgroundColor: .systemBlue, height: 44)
     private let signUpButton = UIButton.make("회원가입")
-    private let findIdButton = UIButton.make("아이디 찾기")
-    private let findPwButton = UIButton.make("비밀번호 찾기")
+    private let findPwButton = UIButton.make("비밀번호를 잊으셨나요?")
     private var menuButtons = UIStackView()
     
     override init(frame: CGRect) {
@@ -51,13 +50,12 @@ extension LoginView {
     func setupButtonActions() {
         loginButton.addTarget(self, action: #selector(loginTapped), for: .touchUpInside)
         signUpButton.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
-        findIdButton.addTarget(self, action: #selector(findIdTapped), for: .touchUpInside)
         findPwButton.addTarget(self, action: #selector(findPwTapped), for: .touchUpInside)
     }
    
     private func setupMenus() {
         menuButtons = UIStackView.make(
-            views: [signUpButton, findIdButton, findPwButton],
+            views: [signUpButton, findPwButton],
             axis: .horizontal,
             distribution: .fillEqually
         )
@@ -90,10 +88,6 @@ extension LoginView {
     
     @objc private func signUpTapped() {
         delegate?.didTapButton(.signUp)
-    }
-    
-    @objc private func findIdTapped() {
-        delegate?.didTapButton(.findId)
     }
     
     @objc private func findPwTapped() {
