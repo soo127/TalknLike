@@ -72,6 +72,24 @@ extension NewFollowerViewController: UITableViewDataSource, UITableViewDelegate 
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let rejectAction = UIContextualAction(style: .destructive, title: "거절") { [weak self] (action, view, completion) in
+            self?.rejectFollowRequest(at: indexPath)
+        }
+        rejectAction.backgroundColor = .systemRed
+        rejectAction.image = UIImage(systemName: "trash")
+        
+        let configuration = UISwipeActionsConfiguration(actions: [rejectAction])
+        return configuration
+    }
+    
+    private func rejectFollowRequest(at indexPath: IndexPath) {
+        let user = followRelations[indexPath.row].profile
+        Task { @MainActor in
+            try await FollowManager.shared.rejectFollowRequest(for: user)
+        }
+    }
+    
 }
 
 extension NewFollowerViewController: FollowRequestCellDelegate {

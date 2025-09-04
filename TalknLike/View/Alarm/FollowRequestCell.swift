@@ -94,6 +94,7 @@ extension FollowRequestCell {
         )
         acceptButton.anchor(
             trailing: contentView.trailingAnchor,
+            padding: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 10),
             centerY: contentView.centerYAnchor
         )
     }

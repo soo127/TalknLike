@@ -95,7 +95,6 @@ extension ActivityViewController: UITableViewDataSource, UITableViewDelegate {
         deleteAction.backgroundColor = .systemRed
         
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
-        configuration.performsFirstActionWithFullSwipe = true
         return configuration
     }
     

@@ -66,6 +66,22 @@ extension FollowManager {
         followersSubject.send(currentFollowers)
     }
     
+    func rejectFollowRequest(for user: UserProfile) async throws {
+        guard let myUid = CurrentUserStore.shared.currentUser?.uid else {
+            return
+        }
+        try await Firestore.firestore()
+            .collection("Users")
+            .document(myUid)
+            .collection("followRequests")
+            .document(user.uid)
+            .delete()
+        
+        var currentRequests = followRequestsSubject.value
+        currentRequests.removeAll { $0.profile.uid == user.uid }
+        followRequestsSubject.send(currentRequests)
+    }
+    
     func unfollow(uid: String) async throws {
         guard let myUid = CurrentUserStore.shared.currentUser?.uid else {
             return
