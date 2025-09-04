@@ -1,5 +1,5 @@
 //
-//  IdCheckView.swift
+//  FindPwView.swift
 //  TalknLike
 //
 //  Created by 이상수 on 7/15/25.
@@ -7,12 +7,11 @@
 
 import UIKit
 
-final class IdCheckView: UIView {
+final class FindPwView: UIView {
     
-    private let stepIndicator = StepIndicatorView()
     let title = UILabel()
-    let idField = UITextField.make("아이디 입력")
-    let nextButton = UIButton.make("다음", backgroundColor: .systemBlue, height: 44)
+    let emailField = UITextField.make("이메일 입력")
+    let okButton = UIButton.make("확인", backgroundColor: .systemBlue, height: 44)
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -25,27 +24,16 @@ final class IdCheckView: UIView {
     
     private func setup() {
         backgroundColor = .white
-        setupIndicator()
         setupTitle()
         setupLayout()
     }
 
 }
 
-extension IdCheckView {
-    
-    private func setupIndicator() {
-        addSubview(stepIndicator)
-        stepIndicator.anchor(
-            top: safeAreaLayoutGuide.topAnchor,
-            leading: leadingAnchor,
-            trailing: trailingAnchor,
-            height: 40
-        )
-    }
+extension FindPwView {
 
     private func setupTitle() {
-        title.text = "아이디를 입력해주세요."
+        title.text = "이메일을 입력해주세요."
         title.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
         title.textAlignment = .left
         title.textColor = .black
@@ -53,7 +41,7 @@ extension IdCheckView {
     
     private func setupLayout() {
         let stack = UIStackView.make(
-            views: [title, idField, nextButton],
+            views: [title, emailField, okButton],
             axis: .vertical,
             spacing: 20
         )
@@ -61,7 +49,7 @@ extension IdCheckView {
         
         addSubview(stack)
         stack.anchor(
-            top: stepIndicator.bottomAnchor,
+            top: safeAreaLayoutGuide.topAnchor,
             leading: leadingAnchor,
             trailing: trailingAnchor,
             padding: UIEdgeInsets(top: 150, left: 30, bottom: 0, right: 30)
