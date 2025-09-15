@@ -32,14 +32,8 @@ final class SelfIntroductionView: UIView {
     }
     
     private func setup() {
-        setupTextView()
-        setupPlaceholder()
-        setupSeparator()
-        setupCountLabel()
-        layoutTextView()
-        layoutPlaceholder()
-        layoutSeparator()
-        layoutCountLabel()
+        setupSubviews()
+        setupLayout()
     }
     
 }
@@ -67,6 +61,13 @@ extension SelfIntroductionView: UITextViewDelegate {
 }
 
 extension SelfIntroductionView {
+    
+    private func setupSubviews() {
+        setupTextView()
+        setupPlaceholder()
+        setupSeparator()
+        setupCountLabel()
+    }
     
     private func setupTextView() {
         addSubview(textView)
@@ -100,6 +101,13 @@ extension SelfIntroductionView {
 
 
 extension SelfIntroductionView {
+    
+    private func setupLayout() {
+        layoutTextView()
+        layoutPlaceholder()
+        layoutSeparator()
+        layoutCountLabel()
+    }
     
     private func layoutTextView() {
         textView.anchor(

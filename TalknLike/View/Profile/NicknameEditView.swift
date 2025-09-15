@@ -24,9 +24,7 @@ final class NicknameEditView: UIView {
     }
 
     private func setup() {
-        setupTextField()
-        setupSeparator()
-        setupCharacterCountLabel()
+        setupSubviews()
         setupLayout()
     }
     
@@ -34,21 +32,17 @@ final class NicknameEditView: UIView {
 
 extension NicknameEditView {
     
+    private func setupSubviews() {
+        setupTextField()
+        setupSeparator()
+        setupCharacterCountLabel()
+    }
+    
     private func setupTextField() {
+        addSubview(textField)
         textField.placeholder = "닉네임 입력"
         textField.backgroundColor = .systemBackground
         textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
-    }
-    
-    private func setupSeparator() {
-        separator.backgroundColor = .systemGray5
-    }
-    
-    private func setupCharacterCountLabel() {
-        characterCountLabel.font = .systemFont(ofSize: 12)
-        characterCountLabel.textColor = .systemGray
-        characterCountLabel.textAlignment = .right
-        characterCountLabel.text = "0/\(maxCharacterCount)"
     }
     
     @objc private func textFieldDidChange() {
@@ -57,17 +51,39 @@ extension NicknameEditView {
         characterCountLabel.textColor = currentCount > maxCharacterCount ? .systemRed : .systemGray
     }
     
-    private func setupLayout() {
-        addSubview(textField)
+    private func setupSeparator() {
         addSubview(separator)
+        separator.backgroundColor = .systemGray5
+    }
+    
+    private func setupCharacterCountLabel() {
         addSubview(characterCountLabel)
+        characterCountLabel.font = .systemFont(ofSize: 12)
+        characterCountLabel.textColor = .systemGray
+        characterCountLabel.textAlignment = .right
+        characterCountLabel.text = "0/\(maxCharacterCount)"
+    }
+    
+}
 
+extension NicknameEditView {
+    
+    private func setupLayout() {
+        layoutTextField()
+        layoutSeparator()
+        layoutCountLabel()
+    }
+    
+    private func layoutTextField() {
         textField.anchor(
             top: safeAreaLayoutGuide.topAnchor,
             leading: leadingAnchor,
             trailing: trailingAnchor,
             padding: UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16)
         )
+    }
+    
+    private func layoutSeparator() {
         separator.anchor(
             top: textField.bottomAnchor,
             leading: leadingAnchor,
@@ -75,11 +91,14 @@ extension NicknameEditView {
             padding: UIEdgeInsets(top: 8, left: 16, bottom: 0, right: 16),
             height: 1
         )
+    }
+    
+    private func layoutCountLabel() {
         characterCountLabel.anchor(
             top: separator.bottomAnchor,
             trailing: trailingAnchor,
             padding: UIEdgeInsets(top: 8, left: 16, bottom: 0, right: 16)
-        )
+       )
     }
     
 }

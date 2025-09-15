@@ -11,59 +11,49 @@ import Combine
 
 final class ProfileViewController: UIViewController {
 
-    private let profileView = ProfileView()
-    private let menuItems: [(String, UIImage?)] = [
-        ("내가 쓴 글", UIImage(systemName: "doc.text")),
-        ("편집", UIImage(systemName: "pencil")),
-        ("로그아웃", UIImage(systemName: "rectangle.portrait.and.arrow.right")),
-    ]
+    private let headerView = ProfileHeaderView()
+    private let tableView = UITableView()
+    private let menuItems = ProfileMenuConfig.items
     private var cancellables = Set<AnyCancellable>()
-
-    override func loadView() {
-        view = profileView
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupMenuData()
-        setupMenuActions()
+        setupTableView()
+        layoutTableView()
         bindUser()
     }
     
-    private func setupMenuData() {
-        profileView.menuView.menuItems = menuItems
+    private func setupTableView() {
+        view.addSubview(tableView)
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(ProfileMenuCell.self, forCellReuseIdentifier: "ProfileMenuCell")
     }
     
-    private func setupMenuActions() {
-        profileView.menuView.onMenuTap = { [weak self] index in
-            self?.handleMenuSelection(index: index)
-        }
-    }
-    
-    private func handleMenuSelection(index: Int) {
-        switch index {
-        case 0:
-            navigationController?.pushViewController(MyPostsViewController(), animated: true)
-        case 1:
-            navigationController?.pushViewController(ProfileEditViewController(), animated: true)
-        case 2:
-            showLogOutAlert()
-        default:
-            break
-        }
+    private func layoutTableView() {
+        tableView.anchor(
+            top: view.topAnchor,
+            leading: view.leadingAnchor,
+            bottom: view.bottomAnchor,
+            trailing: view.trailingAnchor
+        )
     }
 
     private func bindUser() {
         CurrentUserStore.shared.userPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] user in
-                self?.profileView.headerView.nicknameLabel.text = user.nickname
-                self?.profileView.headerView.introLabel.text = user.bio
-                Task { @MainActor [weak self] in
-                    self?.profileView.headerView.profileImageView.image = await ImageLoader.loadImage(from: user.photoURL) ?? UIImage(systemName: "person.fill")
-                }
+                self?.setupHeader(user: user)
             }
             .store(in: &cancellables)
+    }
+    
+    private func setupHeader(user: UserProfile) {
+        headerView.nicknameLabel.text = user.nickname
+        headerView.introLabel.text = user.bio
+        Task { @MainActor [weak self] in
+            self?.headerView.profileImageView.image = await ImageLoader.loadImage(from: user.photoURL) ?? UIImage(systemName: "person.fill")
+        }
     }
     
     private func showLogOutAlert() {
@@ -104,3 +94,39 @@ final class ProfileViewController: UIViewController {
     }
     
 }
+
+extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        menuItems.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ProfileMenuCell", for: indexPath) as? ProfileMenuCell else {
+            return UITableViewCell()
+        }
+        let item = menuItems[indexPath.row]
+        cell.configure(title: item.title, image: item.icon)
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        return headerView
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        switch indexPath.row {
+        case 0:
+            navigationController?.pushViewController(MyPostsViewController(), animated: true)
+        case 1:
+            navigationController?.pushViewController(ProfileEditViewController(), animated: true)
+        case 2:
+            showLogOutAlert()
+        default:
+            break
+        }
+    }
+    
+}
+    

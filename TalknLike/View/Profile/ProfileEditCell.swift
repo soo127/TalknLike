@@ -24,22 +24,29 @@ final class ProfileEditCell: UITableViewCell {
     }
     
     private func setup() {
-        setupTitleLabel()
-        setupIcon()
-        setupValueLabel()
+        setupSubviews()
+        setupLayout()
     }
 
 }
 
 extension ProfileEditCell {
     
+    private func setupSubviews() {
+        setupTitleLabel()
+        setupIcon()
+        setupValueLabel()
+    }
+    
     private func setupTitleLabel() {
+        contentView.addSubview(titleLabel)
         titleLabel.font = .systemFont(ofSize: 16)
         titleLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         titleLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
     }
     
     private func setupIcon() {
+        contentView.addSubview(accessoryIcon)
         accessoryIcon.tintColor = .systemGray
         accessoryIcon.contentMode = .scaleAspectFit
         accessoryIcon.setContentCompressionResistancePriority(.required, for: .horizontal)
@@ -47,6 +54,7 @@ extension ProfileEditCell {
     }
     
     private func setupValueLabel() {
+        contentView.addSubview(valueLabel)
         valueLabel.textColor = .secondaryLabel
         valueLabel.textAlignment = .right
         valueLabel.font = .systemFont(ofSize: 15)
@@ -54,23 +62,35 @@ extension ProfileEditCell {
         valueLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
     }
     
-    private func setupLayout() {
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(accessoryIcon)
-        contentView.addSubview(valueLabel)
+}
 
+extension ProfileEditCell {
+    
+    private func setupLayout() {
+        layoutTitleLabel()
+        layoutIcon()
+        layoutValueLabel()
+    }
+    
+    private func layoutTitleLabel() {
         titleLabel.anchor(
             top: contentView.topAnchor,
             leading: contentView.leadingAnchor,
             bottom: contentView.bottomAnchor,
             padding: UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0),
         )
+    }
+    
+    private func layoutIcon() {
         accessoryIcon.anchor(
             top: contentView.topAnchor,
             bottom: contentView.bottomAnchor,
             trailing: contentView.trailingAnchor,
             padding: UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
         )
+    }
+    
+    private func layoutValueLabel() {
         valueLabel.anchor(
             top: contentView.topAnchor,
             leading: titleLabel.trailingAnchor,

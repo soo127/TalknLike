@@ -56,8 +56,9 @@ extension ProfileMenuCell {
         contentView.addSubview(hStack)
         hStack.anchor(
             top: contentView.topAnchor,
+            leading: contentView.leadingAnchor,
             bottom: contentView.bottomAnchor,
-            padding: UIEdgeInsets(top: 12, left: 16, bottom: 12, right: 16)
+            padding: UIEdgeInsets(top: 10, left: 16, bottom: 10, right: 16)
         )
     }
     
