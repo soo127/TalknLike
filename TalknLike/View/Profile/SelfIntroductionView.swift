@@ -7,14 +7,20 @@
 
 import UIKit
 
-final class SelfIntroductionView: UIView, UITextViewDelegate {
+protocol SelfIntroductionViewDelegate: AnyObject {
+    func textDidChange(_ text: String)
+    func shouldChangeText(currentText: String, range: NSRange, text: String) -> Bool
+}
+
+final class SelfIntroductionView: UIView {
 
     private let placeholderLabel = UILabel()
     let textView = UITextView()
     private let separator = UIView()
     private let characterCountLabel = UILabel()
+    let maxCount = 40
     
-    private let maxCharacterCount = 40
+    weak var delegate: SelfIntroductionViewDelegate?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -29,39 +35,33 @@ final class SelfIntroductionView: UIView, UITextViewDelegate {
         setupTextView()
         setupPlaceholder()
         setupSeparator()
-        setupCharacterCountLabel()
-        setupLayout()
-        updateCharacterCount()
+        setupCountLabel()
+        layoutTextView()
+        layoutPlaceholder()
+        layoutSeparator()
+        layoutCountLabel()
+    }
+    
+}
+
+
+extension SelfIntroductionView: UITextViewDelegate {
+    
+    func textViewDidChange(_ textView: UITextView) {
+        delegate?.textDidChange(textView.text)
     }
 
-    func textViewDidChange(_ textView: UITextView) {
-        placeholderLabel.isHidden = !textView.text.isEmpty
-        updateCharacterCount()
+    func update(text: String) {
+        textView.text = text
+        characterCountLabel.text = "\(text.count)/\(maxCount)"
+        placeholderLabel.isHidden = !text.isEmpty
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        let currentText = textView.text ?? ""
-        if text == "\n" {
-            let newlineCount = currentText.components(separatedBy: "\n").count - 1
-            if newlineCount >= 1 {
-                return false
-            }
-        }
-        guard let stringRange = Range(range, in: currentText) else {
-            return false
-        }
-        let newText = currentText.replacingCharacters(in: stringRange, with: text)
-        return newText.count <= maxCharacterCount
-    }
-    
-    private func updateCharacterCount() {
-        let currentCount = textView.text.count
-        characterCountLabel.text = "\(currentCount)/\(maxCharacterCount)"
-        if currentCount > maxCharacterCount {
-            characterCountLabel.textColor = .systemRed
-        } else {
-            characterCountLabel.textColor = .systemGray
-        }
+        return delegate?.shouldChangeText(
+            currentText: textView.text ?? "",
+            range: range,
+            text: text) ?? true
     }
     
 }
@@ -69,6 +69,7 @@ final class SelfIntroductionView: UIView, UITextViewDelegate {
 extension SelfIntroductionView {
     
     private func setupTextView() {
+        addSubview(textView)
         textView.delegate = self
         textView.font = .systemFont(ofSize: 16)
         textView.layer.cornerRadius = 8
@@ -76,27 +77,31 @@ extension SelfIntroductionView {
     }
     
     private func setupPlaceholder() {
+        addSubview(placeholderLabel)
         placeholderLabel.text = "자기소개를 입력하세요"
         placeholderLabel.textColor = .placeholderText
         placeholderLabel.font = .systemFont(ofSize: 16)
     }
-    
+ 
     private func setupSeparator() {
+        addSubview(separator)
         separator.backgroundColor = .systemGray
     }
     
-    private func setupCharacterCountLabel() {
+    private func setupCountLabel() {
+        addSubview(characterCountLabel)
+        characterCountLabel.text = "0/\(maxCount)"
         characterCountLabel.font = .systemFont(ofSize: 12)
         characterCountLabel.textColor = .systemGray
         characterCountLabel.textAlignment = .right
     }
-    
-    private func setupLayout() {
-        addSubview(textView)
-        addSubview(placeholderLabel)
-        addSubview(separator)
-        addSubview(characterCountLabel)
 
+}
+
+
+extension SelfIntroductionView {
+    
+    private func layoutTextView() {
         textView.anchor(
             top: safeAreaLayoutGuide.topAnchor,
             leading: leadingAnchor,
@@ -104,11 +109,17 @@ extension SelfIntroductionView {
             padding: UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16),
             height: 60
         )
+    }
+    
+    private func layoutPlaceholder() {
         placeholderLabel.anchor(
             top: textView.topAnchor,
             leading: textView.leadingAnchor,
             padding: UIEdgeInsets(top: 8, left: 5, bottom: 0, right: 0)
         )
+    }
+    
+    private func layoutSeparator() {
         separator.anchor(
             top: textView.bottomAnchor,
             leading: leadingAnchor,
@@ -116,6 +127,9 @@ extension SelfIntroductionView {
             padding: UIEdgeInsets(top: 8, left: 16, bottom: 0, right: 16),
             height: 1
         )
+    }
+    
+    private func layoutCountLabel() {
         characterCountLabel.anchor(
             top: separator.bottomAnchor,
             trailing: trailingAnchor,

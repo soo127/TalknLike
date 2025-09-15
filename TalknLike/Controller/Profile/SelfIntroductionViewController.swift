@@ -7,19 +7,33 @@
 
 import UIKit
 
+import UIKit
+
 final class SelfIntroductionViewController: UIViewController {
 
-    let selfIntroductionView = SelfIntroductionView()
-    
-    override func loadView() {
-        view = selfIntroductionView
-    }
+    private let selfIntroductionView = SelfIntroductionView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupIntroView()
+        layoutIntroView()
         setupNavigationBar()
+        selfIntroductionView.delegate = self
     }
 
+    private func setupIntroView() {
+        view.addSubview(selfIntroductionView)
+    }
+    
+    private func layoutIntroView() {
+        selfIntroductionView.anchor(
+            top: view.topAnchor,
+            leading: view.leadingAnchor,
+            bottom: view.bottomAnchor,
+            trailing: view.trailingAnchor
+        )
+    }
+    
     private func setupNavigationBar() {
         navigationItem.title = "자기소개"
         navigationItem.leftBarButtonItem = UIBarButtonItem(
@@ -35,7 +49,7 @@ final class SelfIntroductionViewController: UIViewController {
             action: #selector(didTapSave)
         )
     }
-
+    
     @objc private func didTapCancel() {
         navigationController?.popViewController(animated: true)
     }
@@ -51,3 +65,26 @@ final class SelfIntroductionViewController: UIViewController {
     }
     
 }
+
+extension SelfIntroductionViewController: SelfIntroductionViewDelegate {
+    
+    func textDidChange(_ text: String) {
+        selfIntroductionView.update(text: text)
+    }
+    
+    func shouldChangeText(currentText: String, range: NSRange, text: String) -> Bool {
+        if text == "\n" {
+            let newlineCount = currentText.components(separatedBy: "\n").count - 1
+            if newlineCount >= 1 {
+                return false
+            }
+        }
+        guard let stringRange = Range(range, in: currentText) else {
+            return false
+        }
+        let newText = currentText.replacingCharacters(in: stringRange, with: text)
+        return newText.count <= selfIntroductionView.maxCount
+    }
+    
+}
+

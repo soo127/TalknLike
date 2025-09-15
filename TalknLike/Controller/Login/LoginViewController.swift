@@ -59,11 +59,11 @@ extension LoginViewController: LoginViewDelegate {
         Task { @MainActor in
             do {
                 let result = try await Auth.auth().signIn(withEmail: email, password: pw)
-                if !result.user.isEmailVerified {
-                    try Auth.auth().signOut()
-                    showEmailVerificationRequiredAlert()
-                    return
-                }
+//                if !result.user.isEmailVerified {
+//                    try Auth.auth().signOut()
+//                    showEmailVerificationRequiredAlert()
+//                    return
+//                }
                 
                 showToast(message: "로그인 성공")
                 await onLoginSuccess()

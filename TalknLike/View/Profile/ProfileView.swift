@@ -10,7 +10,6 @@ import UIKit
 final class ProfileView: UIView {
     
     let scrollView = UIScrollView()
-    let contentView = UIView()
     let headerView = ProfileHeaderView()
     let menuView = ProfileMenuView()
     
@@ -25,57 +24,37 @@ final class ProfileView: UIView {
     
     private func setup() {
         setupScrollView()
-        setupContentView()
-        setupSubviews()
-        setupLayout()
+        layoutScrollView()
     }
     
     private func setupScrollView() {
         addSubview(scrollView)
+        scrollView.addSubview(headerView)
+        scrollView.addSubview(menuView)
+
         scrollView.backgroundColor = .systemBackground
-        scrollView.showsVerticalScrollIndicator = true
         scrollView.alwaysBounceVertical = true
     }
-    
-    private func setupContentView() {
-        scrollView.addSubview(contentView)
-        contentView.backgroundColor = .systemBackground
-    }
-    
-    private func setupSubviews() {
-        contentView.addSubview(headerView)
-        contentView.addSubview(menuView)
-    }
-    
-    private func setupLayout() {
+
+    private func layoutScrollView() {
         scrollView.anchor(
             top: safeAreaLayoutGuide.topAnchor,
             leading: leadingAnchor,
             bottom: bottomAnchor,
             trailing: trailingAnchor
         )
-        
-        contentView.anchor(
-            top: scrollView.topAnchor,
-            leading: scrollView.leadingAnchor,
-            bottom: scrollView.bottomAnchor,
-            trailing: scrollView.trailingAnchor
-        )
-        
-        contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
-        
+
         headerView.anchor(
-            top: contentView.topAnchor,
-            leading: contentView.leadingAnchor,
-            trailing: contentView.trailingAnchor,
+            top: scrollView.topAnchor,
+            leading: leadingAnchor,
+            trailing: trailingAnchor,
             padding: UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
         )
-        
+
         menuView.anchor(
             top: headerView.bottomAnchor,
-            leading: contentView.leadingAnchor,
-            bottom: contentView.bottomAnchor,
-            trailing: contentView.trailingAnchor,
+            leading: leadingAnchor,
+            trailing: trailingAnchor,
             padding: UIEdgeInsets(top: 18, left: 0, bottom: 0, right: 0)
         )
     }
