@@ -7,18 +7,23 @@
 
 import UIKit
 
+protocol FollowViewDelegate: AnyObject {
+    func didSelectSegment(at index: Int)
+}
+
 final class FollowView: UIView {
 
-    private let menus = ["팔로워 0", "팔로잉 0"]
+    weak var delegate: FollowViewDelegate?
+    
     private let underlineView = UIView()
     let segmentedControl = UISegmentedControl()
     let tableView = UITableView()
+    
     private lazy var lineConstraint: NSLayoutConstraint = {
         let constraint = underlineView.leadingAnchor.constraint(equalTo: segmentedControl.leadingAnchor)
         constraint.isActive = true
         return constraint
     }()
-    var segmentChangedHandler: ((Int) -> Void)?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -30,22 +35,30 @@ final class FollowView: UIView {
     }
     
     private func setup() {
-        setupSegmentedControl()
-        setupUnderlineView()
-        setupUI()
+        setupSubviews()
         setupActions()
+        setupLayout()
     }
 
 }
 
-extension FollowView {
+private extension FollowView {
+    
+    private func setupSubviews() {
+        backgroundColor = .systemBackground
+        setupSegmentedControl()
+        setupUnderlineView()
+        setupTableView()
+    }
     
     private func setupSegmentedControl() {
-        for (idx, menu) in menus.enumerated() {
-            segmentedControl.insertSegment(withTitle: menu, at: idx, animated: false)
+        addSubview(segmentedControl)
+        FollowTab.allCases.forEach { tab in
+            segmentedControl.insertSegment(withTitle: tab.titleWithCount(0), at: tab.rawValue, animated: false)
         }
         segmentedControl.selectedSegmentIndex = 0
         
+        // Appearance
         segmentedControl.selectedSegmentTintColor = .clear
         segmentedControl.setBackgroundImage(UIImage(), for: .normal, barMetrics: .default)
         segmentedControl.setDividerImage(UIImage(), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
@@ -59,16 +72,53 @@ extension FollowView {
             .font: UIFont.systemFont(ofSize: 16, weight: .bold)
         ], for: .selected)
     }
-
+    
     private func setupUnderlineView() {
+        addSubview(underlineView)
         underlineView.backgroundColor = .systemBlue
     }
     
-    private func setupUI() {
-        addSubview(segmentedControl)
-        addSubview(underlineView)
+    private func setupTableView() {
         addSubview(tableView)
+        tableView.backgroundColor = .clear
+        tableView.separatorStyle = .none
+    }
+    
+}
+
+extension FollowView {
+    
+    private func setupActions() {
+        segmentedControl.addTarget(self, action: #selector(segmentedControlChanged(_:)), for: .valueChanged)
+    }
+    
+    @objc private func segmentedControlChanged(_ sender: UISegmentedControl) {
+        let index = sender.selectedSegmentIndex
+        moveUnderline(to: index)
+        delegate?.didSelectSegment(at: index)
+    }
+    
+    func moveUnderline(to index: Int) {
+        let segmentWidth = segmentedControl.frame.width / CGFloat(FollowTab.allCases.count)
+        let newLeading = segmentWidth * CGFloat(index)
+        lineConstraint.constant = newLeading
         
+        UIView.animate(withDuration: 0.25) {
+            self.layoutIfNeeded()
+        }
+    }
+    
+}
+
+extension FollowView {
+    
+    private func setupLayout() {
+        layoutSegmentControl()
+        layoutUnderlineView()
+        layoutTableView()
+    }
+    
+    private func layoutSegmentControl() {
         segmentedControl.anchor(
             top: safeAreaLayoutGuide.topAnchor,
             leading: leadingAnchor,
@@ -76,15 +126,20 @@ extension FollowView {
             padding: UIEdgeInsets(top: 8, left: 16, bottom: 0, right: 16),
             height: 40
         )
-        
+    }
+    
+    private func layoutUnderlineView() {
         underlineView.anchor(
             top: segmentedControl.bottomAnchor,
             height: 3
         )
         underlineView.widthAnchor.constraint(
-            equalTo: segmentedControl.widthAnchor, multiplier: 1 / CGFloat(menus.count)
+            equalTo: segmentedControl.widthAnchor,
+            multiplier: 1.0 / CGFloat(FollowTab.allCases.count)
         ).isActive = true
-        
+    }
+    
+    private func layoutTableView() {
         tableView.anchor(
             top: underlineView.bottomAnchor,
             leading: leadingAnchor,
@@ -93,40 +148,41 @@ extension FollowView {
             padding: UIEdgeInsets(top: 8, left: 16, bottom: 0, right: 16)
         )
     }
-
-    private func setupActions() {
-        segmentedControl.addTarget(self, action: #selector(segmentedControlChanged(_:)), for: .valueChanged)
-    }
-
-    @objc private func segmentedControlChanged(_ sender: UISegmentedControl) {
-        let index = sender.selectedSegmentIndex
-        moveUnderline(to: index)
-        segmentChangedHandler?(index)
-    }
-
-    func moveUnderline(to index: Int) {
-        let segmentWidth = segmentedControl.frame.width / CGFloat(menus.count)
-        let newLeading = segmentWidth * CGFloat(index)
-        lineConstraint.constant = newLeading
-        UIView.animate(withDuration: 0.25) {
-            self.layoutIfNeeded()
-        }
-    }
-
+    
 }
 
 extension FollowView {
     
-    var selectedTab: Int {
-        segmentedControl.selectedSegmentIndex
+    var selectedTab: FollowTab {
+        FollowTab(rawValue: segmentedControl.selectedSegmentIndex) ?? .followers
     }
     
-    func updateFollowerSegment(followers: Int) {
-        segmentedControl.setTitle("팔로워 \(followers)", forSegmentAt: 0)
+    func updateFollowerCount(_ count: Int) {
+        segmentedControl.setTitle(FollowTab.followers.titleWithCount(count), forSegmentAt: FollowTab.followers.rawValue)
     }
     
-    func updateFollowingSegment(followings: Int) {
-        segmentedControl.setTitle("팔로잉 \(followings)", forSegmentAt: 1)
+    func updateFollowingCount(_ count: Int) {
+        segmentedControl.setTitle(FollowTab.followings.titleWithCount(count), forSegmentAt: FollowTab.followings.rawValue)
+    }
+    
+}
+
+extension FollowView {
+    
+    enum FollowTab: Int, CaseIterable {
+        case followers = 0
+        case followings = 1
+        
+        var title: String {
+            switch self {
+            case .followers: return "팔로워"
+            case .followings: return "팔로잉"
+            }
+        }
+        
+        func titleWithCount(_ count: Int) -> String {
+            return "\(title) \(count)"
+        }
     }
     
 }

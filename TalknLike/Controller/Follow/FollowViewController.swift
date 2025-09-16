@@ -22,9 +22,9 @@ final class FollowViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
-        setupSegmentHandler()
         setupNavigationBar()
         bindFollowData()
+        followView.delegate = self
     }
 
     private func setupTableView() {
@@ -32,19 +32,13 @@ final class FollowViewController: UIViewController {
         followView.tableView.delegate = self
         followView.tableView.register(SearchUserCell.self, forCellReuseIdentifier: "SearchUserCell")
     }
-
-    private func setupSegmentHandler() {
-        followView.segmentChangedHandler = { [weak self] _ in
-            self?.followView.tableView.reloadData()
-        }
-    }
     
     private func setupNavigationBar() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "magnifyingglass"),
             style: .plain,
             target: self,
-            action: #selector(didTapPlus)
+            action: #selector(didTapSearch)
         )
     }
     
@@ -53,7 +47,7 @@ final class FollowViewController: UIViewController {
             .receive(on: RunLoop.main)
             .sink { [weak self] profiles in
                 self?.followers = profiles
-                self?.followView.updateFollowerSegment(followers: profiles.count)
+                self?.followView.updateFollowerCount(profiles.count)
                 self?.followView.tableView.reloadData()
             }
             .store(in: &cancellables)
@@ -62,50 +56,61 @@ final class FollowViewController: UIViewController {
             .receive(on: RunLoop.main)
             .sink { [weak self] profiles in
                 self?.followings = profiles
-                self?.followView.updateFollowingSegment(followings: profiles.count)
+                self?.followView.updateFollowingCount(profiles.count)
                 self?.followView.tableView.reloadData()
             }
             .store(in: &cancellables)
     }
     
-    @objc func didTapPlus() {
+    @objc private func didTapSearch() {
         navigationController?.pushViewController(SearchUserViewController(), animated: true)
     }
     
 }
 
-extension FollowViewController: UITableViewDataSource, UITableViewDelegate {
+extension FollowViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        followView.selectedTab == 0 ? followers.count : followings.count
+        return currentUsers.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "SearchUserCell", for: indexPath) as? SearchUserCell else {
             return UITableViewCell()
         }
+        let user = currentUsers[indexPath.row]
+        configureCell(cell, user: user, at: indexPath)
+        loadProfileImage(cell, user: user, at: indexPath, in: tableView)
+        return cell
+    }
+    
+    func configureCell(_ cell: SearchUserCell, user: UserProfile, at indexPath: IndexPath) {
         cell.delegate = self
-        let user: UserProfile
-        if followView.selectedTab == 0 {
-            user = followers[indexPath.row]
-            cell.configureFollower(user: followers[indexPath.row])
-        } else {
-            user = followings[indexPath.row]
-            cell.configureFollowing(user: followings[indexPath.row])
-        }
         
+        switch followView.selectedTab {
+        case .followers:
+            cell.configureFollower(user: user)
+        case .followings:
+            cell.configureFollowing(user: user)
+        }
+    }
+    
+    func loadProfileImage(_ cell: SearchUserCell, user: UserProfile, at indexPath: IndexPath, in tableView: UITableView) {
         Task { @MainActor in
             let image = await ImageLoader.loadImage(from: user.photoURL)
             if tableView.indexPath(for: cell) == indexPath {
                 cell.profileImage.image = image
             }
         }
-        return cell
     }
+    
+}
+
+extension FollowViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let profile = followView.selectedTab == 0 ? followers[indexPath.row] : followings[indexPath.row]
+        let profile = currentUsers[indexPath.row]
         let userPostsVC = UserPostsViewController(userProfile: profile)
         navigationController?.pushViewController(userPostsVC, animated: true)
     }
@@ -115,34 +120,58 @@ extension FollowViewController: UITableViewDataSource, UITableViewDelegate {
 extension FollowViewController: SearchUserCellDelegate {
     
     func didTapButton(_ cell: SearchUserCell) {
-        guard followView.selectedTab == 1 else { return }
+        guard followView.selectedTab == .followings else {
+            return
+        }
         guard let indexPath = followView.tableView.indexPath(for: cell) else {
             return
         }
         let following = followings[indexPath.row]
-        
-        showAlert(uid: following.uid, nickname: following.nickname)
+        showUnfollowAlert(for: following)
     }
     
-    private func showAlert(uid: String, nickname: String) {
+}
+
+extension FollowViewController: FollowViewDelegate {
+    
+    func didSelectSegment(at index: Int) {
+        followView.tableView.reloadData()
+    }
+    
+}
+
+extension FollowViewController {
+    
+    var currentUsers: [UserProfile] {
+        return followView.selectedTab == .followers ? followers : followings
+    }
+    
+    func showUnfollowAlert(for user: UserProfile) {
         let alert = UIAlertController(
             title: "팔로우 취소",
-            message: "\(nickname)님을 언팔로우하시겠습니까?",
+            message: "\(user.nickname)님을 언팔로우하시겠습니까?",
             preferredStyle: .alert
         )
-        let confirm = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
-            Task {
-                do {
-                    try await FollowManager.shared.unfollow(uid: uid)
-                    self?.showToast(message: "더 이상 \(nickname)님을 팔로우하지 않습니다.")
-                }
-            }
+        let confirmAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+            self?.unfollowUser(user)
         }
-        let cancel = UIAlertAction(title: "취소", style: .cancel)
-        alert.addAction(cancel)
-        alert.addAction(confirm)
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+        
+        alert.addAction(cancelAction)
+        alert.addAction(confirmAction)
         
         present(alert, animated: true)
+    }
+    
+    func unfollowUser(_ user: UserProfile) {
+        Task {
+            do {
+                try await FollowManager.shared.unfollow(uid: user.uid)
+                showToast(message: "더 이상 \(user.nickname)님을 팔로우하지 않습니다.")
+            } catch {
+                showToast(message: "언팔로우에 실패했습니다.")
+            }
+        }
     }
     
 }
