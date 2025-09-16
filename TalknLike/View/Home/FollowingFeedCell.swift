@@ -91,13 +91,8 @@ extension FollowingFeedCell {
         configuration.title = "\(likeCount) Like"
         configuration.imagePadding = 10
         configuration.buttonSize = .small
+        configuration.baseForegroundColor = .gray
         likeButton.configuration = configuration
-        likeButton.configurationUpdateHandler = { button in
-            var config = button.configuration
-            config?.image = button.isSelected ? UIImage(systemName: "hand.thumbsup.fill") : UIImage(systemName: "hand.thumbsup")
-            config?.baseForegroundColor = button.isSelected ? .systemBlue : .gray
-            button.configuration = config
-        }
     }
     
     private func setupCommentButton() {
@@ -125,6 +120,7 @@ extension FollowingFeedCell {
         likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
         commentButton.addTarget(self, action: #selector(commentButtonTapped), for: .touchUpInside)
     }
+    
 }
 
 extension FollowingFeedCell {
@@ -197,19 +193,21 @@ extension FollowingFeedCell {
 extension FollowingFeedCell {
     
     @objc private func likeButtonTapped() {
-        likeButton.isSelected.toggle()
-        likeCount = newCount()
-        likeButton.configuration?.title = "\(likeCount) Like"
         delegate?.didTapLikeButton(self)
-    }
-    
-    private func newCount() -> Int {
-        let newCount = likeButton.isSelected ? likeCount + 1 : max(0, likeCount - 1)
-        return newCount
     }
     
     @objc private func commentButtonTapped() {
         delegate?.didTapCommentButton(self)
+    }
+    
+}
+
+extension FollowingFeedCell {
+ 
+    func toggleLikeState() {
+        likeButton.isSelected.toggle()
+        likeCount = likeButton.isSelected ? likeCount + 1 : max(0, likeCount - 1)
+        updateLikeButtonAppearance()
     }
 
     func configure(post: Post, nickname: String) {
@@ -217,8 +215,26 @@ extension FollowingFeedCell {
         dateLabel.text = post.createdAt.formatted()
         titleLabel.text = post.title
         contentLabel.text = post.content
-        likeCount = post.likeCount
-        likeButton.configuration?.title = "\(likeCount) Like"
+    }
+    
+    /// 비동기 작업이 필요하므로 분리
+    func setProfileImage(_ image: UIImage?) {
+        profileImage.image = image
+    }
+    
+    /// 비동기 작업이 필요하므로 분리
+    func setLikeState(count: Int, isLiked: Bool) {
+        likeCount = count
+        likeButton.isSelected = isLiked
+        updateLikeButtonAppearance()
+    }
+    
+    private func updateLikeButtonAppearance() {
+        var configuration = likeButton.configuration
+        configuration?.image = likeButton.isSelected ? UIImage(systemName: "hand.thumbsup.fill") : UIImage(systemName: "hand.thumbsup")
+        configuration?.baseForegroundColor = likeButton.isSelected ? .systemBlue : .gray
+        configuration?.title = "\(likeCount) Like"
+        likeButton.configuration = configuration
     }
     
 }

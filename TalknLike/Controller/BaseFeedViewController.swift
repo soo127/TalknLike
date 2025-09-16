@@ -47,17 +47,23 @@ extension BaseFeedViewController: UITableViewDataSource, UITableViewDelegate {
         }
         let feedItem = posts[indexPath.row]
         cell.configure(post: feedItem.post, nickname: feedItem.profile.nickname)
+        loadAsyncData(cell: cell, feedItem: feedItem, indexPath: indexPath)
         cell.delegate = self
-        
+        return cell
+    }
+    
+    private func loadAsyncData(cell: FollowingFeedCell, feedItem: FeedItem, indexPath: IndexPath) {
         Task { @MainActor in
+            let profileImage = await ImageLoader.loadImage(from: feedItem.profile.photoURL)
+            var isLiked = false
+            if let documentID = feedItem.post.documentID {
+                isLiked = try await LikeManager.isLiked(postID: documentID)
+            }
             if tableView.indexPath(for: cell) == indexPath {
-                cell.profileImage.image = await ImageLoader.loadImage(from: feedItem.profile.photoURL)
-                if let documentID = feedItem.post.documentID {
-                    cell.likeButton.isSelected = try await LikeManager.isLiked(postID: documentID)
-                }
+                cell.setProfileImage(profileImage)
+                cell.setLikeState(count: feedItem.post.likeCount, isLiked: isLiked)
             }
         }
-        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -72,12 +78,15 @@ extension BaseFeedViewController: FollowingFeedCellDelegate  {
         guard let indexPath = tableView.indexPath(for: cell) else {
             return
         }
+        cell.toggleLikeState()
+        
         let post = posts[indexPath.row].post
         guard let documentID = post.documentID else {
             return
         }
-        let isLiked = cell.likeButton.isSelected
+        
         Task {
+            let isLiked = cell.likeButton.isSelected
             await LikeManager.handleLike(
                 postID: documentID,
                 isLiked: isLiked

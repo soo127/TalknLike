@@ -28,8 +28,7 @@ final class CommentInputView: UIView {
     }
     
     private func setup() {
-        setupProfileImageView()
-        setupTextField()
+        setupSubviews()
         setupLayout()
     }
     
@@ -37,13 +36,20 @@ final class CommentInputView: UIView {
 
 extension CommentInputView {
     
+    private func setupSubviews() {
+        setupProfileImageView()
+        setupTextField()
+    }
+    
     private func setupProfileImageView() {
+        addSubview(profileImageView)
         profileImageView.image = UIImage(systemName: "person.circle")
         profileImageView.layer.cornerRadius = 18
         profileImageView.clipsToBounds = true
     }
     
     private func setupTextField() {
+        addSubview(textField)
         textField.placeholder = defaultPlaceHolder
         textField.borderStyle = .roundedRect
         textField.returnKeyType = .done
@@ -52,10 +58,16 @@ extension CommentInputView {
         textField.delegate = self
     }
     
+}
+
+extension CommentInputView {
+    
     private func setupLayout() {
-        addSubview(profileImageView)
-        addSubview(textField)
-        
+        layoutProfileImageView()
+        layoutTextField()
+    }
+    
+    private func layoutProfileImageView() {
         profileImageView.anchor(
             leading: leadingAnchor,
             padding: UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0),
@@ -63,6 +75,9 @@ extension CommentInputView {
             height: 36,
             centerY: centerYAnchor,
         )
+    }
+    
+    private func layoutTextField() {
         textField.anchor(
             leading: profileImageView.trailingAnchor,
             trailing: trailingAnchor,

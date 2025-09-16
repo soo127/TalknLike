@@ -40,14 +40,8 @@ final class CommentCell: UITableViewCell {
     }
     
     private func setup() {
-        setupProfileImage()
-        setupNicknameLabel()
-        setupCommentLabel()
-        setuparrowImageView()
-        setupReplyingLabel()
-        setupDateLabel()
-        setupReplyButton()
-        setupMenuButton()
+        setupSubviews()
+        setupButtonActions()
         setupLayout()
     }
     
@@ -55,73 +49,97 @@ final class CommentCell: UITableViewCell {
 
 extension CommentCell {
     
-    func setupProfileImage() {
+    private func setupSubviews() {
+        setupContainerView()
+        setupProfileImage()
+        setupNicknameLabel()
+        setupArrowImageView()
+        setupReplyingLabel()
+        setupCommentLabel()
+        setupDateLabel()
+        setupReplyButton()
+        setupMenuButton()
+    }
+    
+    private func setupContainerView() {
+        contentView.addSubview(containerView)
+    }
+    
+    private func setupProfileImage() {
+        containerView.addSubview(profileImage)
         profileImage.image = UIImage(systemName: "person.circle")
         profileImage.contentMode = .scaleAspectFill
         profileImage.layer.cornerRadius = 20
         profileImage.clipsToBounds = true
     }
     
-    func setupNicknameLabel() {
+    private func setupNicknameLabel() {
+        containerView.addSubview(nicknameLabel)
         nicknameLabel.font = .boldSystemFont(ofSize: 14)
         nicknameLabel.textColor = .label
     }
     
-    func setupReplyingLabel() {
-        replyingLabel.font = .boldSystemFont(ofSize: 14)
-        replyingLabel.textColor = .label
-    }
-    
-    func setuparrowImageView() {
+    private func setupArrowImageView() {
+        containerView.addSubview(arrowImageView)
         arrowImageView.image = UIImage(systemName: "arrowtriangle.forward.fill")
         arrowImageView.contentMode = .scaleAspectFit
         arrowImageView.tintColor = .secondaryLabel
         arrowImageView.isHidden = true
     }
     
-    func setupCommentLabel() {
+    private func setupReplyingLabel() {
+        containerView.addSubview(replyingLabel)
+        replyingLabel.font = .boldSystemFont(ofSize: 14)
+        replyingLabel.textColor = .label
+    }
+    
+    private func setupCommentLabel() {
+        containerView.addSubview(commentLabel)
         commentLabel.font = .systemFont(ofSize: 14)
         commentLabel.textColor = .label
         commentLabel.numberOfLines = 0
     }
     
-    func setupDateLabel() {
+    private func setupDateLabel() {
+        containerView.addSubview(dateLabel)
         dateLabel.font = .systemFont(ofSize: 12)
         dateLabel.textColor = .secondaryLabel
     }
     
-    func setupReplyButton() {
+    private func setupReplyButton() {
+        containerView.addSubview(replyButton)
         replyButton.setTitle("답글", for: .normal)
         replyButton.titleLabel?.font = .systemFont(ofSize: 12)
-        replyButton.addTarget(self, action: #selector(didTapReply), for: .touchUpInside)
     }
     
-    @objc private func didTapReply() {
-        delegate?.didTapReply(self)
-    }
-    
-    func setupMenuButton() {
+    private func setupMenuButton() {
+        containerView.addSubview(menuButton)
         menuButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         menuButton.tintColor = .secondaryLabel
+    }
+    
+    private func setupButtonActions() {
+        replyButton.addTarget(self, action: #selector(didTapReply), for: .touchUpInside)
         menuButton.addTarget(self, action: #selector(didTapMenu), for: .touchUpInside)
     }
     
-    @objc private func didTapMenu() {
-        delegate?.didTapMenu(self)
+}
+
+extension CommentCell {
+    
+    private func setupLayout() {
+        layoutContainerView()
+        layoutProfileImage()
+        layoutNicknameLabel()
+        layoutArrowImageView()
+        layoutReplyingLabel()
+        layoutCommentLabel()
+        layoutDateLabel()
+        layoutReplyButton()
+        layoutMenuButton()
     }
     
-    func setupLayout() {
-        contentView.addSubview(containerView)
-        
-        containerView.addSubview(profileImage)
-        containerView.addSubview(nicknameLabel)
-        containerView.addSubview(arrowImageView)
-        containerView.addSubview(replyingLabel)
-        containerView.addSubview(commentLabel)
-        containerView.addSubview(dateLabel)
-        containerView.addSubview(replyButton)
-        containerView.addSubview(menuButton)
-        
+    private func layoutContainerView() {
         containerLeadingConstraint.isActive = true
         containerView.anchor(
             top: contentView.topAnchor,
@@ -129,6 +147,9 @@ extension CommentCell {
             trailing: contentView.trailingAnchor,
             padding: UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 8)
         )
+    }
+    
+    private func layoutProfileImage() {
         profileImage.anchor(
             top: containerView.topAnchor,
             leading: containerView.leadingAnchor,
@@ -136,11 +157,62 @@ extension CommentCell {
             width: 40,
             height: 40
         )
+    }
+    
+    private func layoutNicknameLabel() {
         nicknameLabel.anchor(
             top: containerView.topAnchor,
             leading: profileImage.trailingAnchor,
             padding: UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0)
         )
+    }
+    
+    private func layoutArrowImageView() {
+        arrowImageView.anchor(
+            top: containerView.topAnchor,
+            leading: nicknameLabel.trailingAnchor,
+            padding: UIEdgeInsets(top: 0, left: 3, bottom: 0, right: 0),
+            width: 14,
+            height: 14
+        )
+    }
+    
+    private func layoutReplyingLabel() {
+        replyingLabel.anchor(
+            top: containerView.topAnchor,
+            leading: arrowImageView.trailingAnchor,
+            padding: UIEdgeInsets(top: 0, left: 3, bottom: 0, right: 8)
+        )
+    }
+    
+    private func layoutCommentLabel() {
+        commentLabel.anchor(
+            top: nicknameLabel.bottomAnchor,
+            leading: nicknameLabel.leadingAnchor,
+            trailing: containerView.trailingAnchor,
+            padding: UIEdgeInsets(top: 4, left: 0, bottom: 0, right: 0)
+        )
+    }
+    
+    private func layoutDateLabel() {
+        dateLabel.anchor(
+            top: commentLabel.bottomAnchor,
+            leading: nicknameLabel.leadingAnchor,
+            bottom: containerView.bottomAnchor,
+            padding: UIEdgeInsets(top: 4, left: 0, bottom: 0, right: 0)
+        )
+    }
+    
+    private func layoutReplyButton() {
+        replyButton.anchor(
+            top: commentLabel.bottomAnchor,
+            leading: dateLabel.trailingAnchor,
+            bottom: containerView.bottomAnchor,
+            padding: UIEdgeInsets(top: 4, left: 16, bottom: 0, right: 0)
+        )
+    }
+    
+    private func layoutMenuButton() {
         menuButton.anchor(
             top: containerView.topAnchor,
             trailing: containerView.trailingAnchor,
@@ -148,36 +220,18 @@ extension CommentCell {
             width: 18,
             height: 18
         )
-        arrowImageView.anchor(
-            top: containerView.topAnchor,
-            leading: nicknameLabel.trailingAnchor,
-            padding: UIEdgeInsets(top: 0, left: 3, bottom: 0, right: 0),
-            width: 14,
-            height: 14,
-        )
-        replyingLabel.anchor(
-            top: containerView.topAnchor,
-            leading: arrowImageView.trailingAnchor,
-            padding: UIEdgeInsets(top: 0, left: 3, bottom: 0, right: 8)
-        )
-        commentLabel.anchor(
-            top: nicknameLabel.bottomAnchor,
-            leading: nicknameLabel.leadingAnchor,
-            trailing: containerView.trailingAnchor,
-            padding: UIEdgeInsets(top: 4, left: 0, bottom: 0, right: 0)
-        )
-        dateLabel.anchor(
-            top: commentLabel.bottomAnchor,
-            leading: nicknameLabel.leadingAnchor,
-            bottom: containerView.bottomAnchor,
-            padding: UIEdgeInsets(top: 4, left: 0, bottom: 0, right: 0)
-        )
-        replyButton.anchor(
-            top: commentLabel.bottomAnchor,
-            leading: dateLabel.trailingAnchor,
-            bottom: containerView.bottomAnchor,
-            padding: UIEdgeInsets(top: 4, left: 16, bottom: 0, right: 0)
-        )
+    }
+    
+}
+
+extension CommentCell {
+    
+    @objc private func didTapReply() {
+        delegate?.didTapReply(self)
+    }
+    
+    @objc private func didTapMenu() {
+        delegate?.didTapMenu(self)
     }
     
 }
