@@ -15,6 +15,7 @@ protocol FollowingFeedCellDelegate: AnyObject {
 final class FollowingFeedCell: UITableViewCell {
 
     weak var delegate: FollowingFeedCellDelegate?
+    
     let profileImage = UIImageView()
     let nicknameLabel = UILabel()
     let titleLabel = UILabel()
@@ -35,13 +36,7 @@ final class FollowingFeedCell: UITableViewCell {
     }
 
     private func setup() {
-        setupProfileImage()
-        setupNicknameLabel()
-        setupTitleLabel()
-        setupDateLabel()
-        setupContentLabel()
-        setupLikeButton()
-        setupCommentButton()
+        setupSubviews()
         setupButtonActions()
         setupLayout()
     }
@@ -49,27 +44,43 @@ final class FollowingFeedCell: UITableViewCell {
 }
 
 extension FollowingFeedCell {
-
+    
+    private func setupSubviews() {
+        setupProfileImage()
+        setupNicknameLabel()
+        setupTitleLabel()
+        setupDateLabel()
+        setupContentLabel()
+        setupLikeButton()
+        setupCommentButton()
+        setupButtonsStackView()
+    }
+    
     private func setupProfileImage() {
+        contentView.addSubview(profileImage)
         profileImage.image = UIImage(systemName: "person.crop.circle")
         profileImage.layer.cornerRadius = 25
         profileImage.clipsToBounds = true
     }
-
+    
     private func setupNicknameLabel() {
+        contentView.addSubview(nicknameLabel)
         nicknameLabel.font = UIFont.boldSystemFont(ofSize: 14)
     }
-
+    
     private func setupTitleLabel() {
+        contentView.addSubview(titleLabel)
         titleLabel.font = UIFont.boldSystemFont(ofSize: 18)
     }
     
     private func setupDateLabel() {
+        contentView.addSubview(dateLabel)
         dateLabel.textColor = .gray
         dateLabel.font = UIFont.systemFont(ofSize: 12)
     }
-
+    
     private func setupContentLabel() {
+        contentView.addSubview(contentLabel)
         contentLabel.numberOfLines = 0
         contentLabel.font = UIFont.systemFont(ofSize: 14)
     }
@@ -88,7 +99,7 @@ extension FollowingFeedCell {
             button.configuration = config
         }
     }
-
+    
     private func setupCommentButton() {
         var configuration = UIButton.Configuration.plain()
         configuration.image = UIImage(systemName: "text.bubble")
@@ -100,6 +111,10 @@ extension FollowingFeedCell {
     }
     
     private func setupButtonsStackView() {
+        contentView.addSubview(buttonsStackView)
+        buttonsStackView.addArrangedSubview(likeButton)
+        buttonsStackView.addArrangedSubview(commentButton)
+        
         buttonsStackView.axis = .horizontal
         buttonsStackView.distribution = .fillEqually
         buttonsStackView.alignment = .center
@@ -110,17 +125,20 @@ extension FollowingFeedCell {
         likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
         commentButton.addTarget(self, action: #selector(commentButtonTapped), for: .touchUpInside)
     }
+}
 
+extension FollowingFeedCell {
+    
     private func setupLayout() {
-        contentView.addSubview(profileImage)
-        contentView.addSubview(nicknameLabel)
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(dateLabel)
-        contentView.addSubview(contentLabel)
-        buttonsStackView.addArrangedSubview(likeButton)
-        buttonsStackView.addArrangedSubview(commentButton)
-        contentView.addSubview(buttonsStackView)
-
+        layoutProfileImage()
+        layoutNicknameLabel()
+        layoutDateLabel()
+        layoutTitleLabel()
+        layoutContentLabel()
+        layoutButtonsStackView()
+    }
+    
+    private func layoutProfileImage() {
         profileImage.anchor(
             top: contentView.topAnchor,
             leading: contentView.leadingAnchor,
@@ -128,28 +146,43 @@ extension FollowingFeedCell {
             width: 50,
             height: 50
         )
+    }
+    
+    private func layoutNicknameLabel() {
         nicknameLabel.anchor(
             top: profileImage.topAnchor,
             leading: profileImage.trailingAnchor,
             padding: UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
         )
+    }
+    
+    private func layoutDateLabel() {
         dateLabel.anchor(
             top: nicknameLabel.bottomAnchor,
             leading: profileImage.trailingAnchor,
             padding: UIEdgeInsets(top: 5, left: 10, bottom: 0, right: 10)
         )
+    }
+    
+    private func layoutTitleLabel() {
         titleLabel.anchor(
             top: profileImage.bottomAnchor,
             leading: contentView.leadingAnchor,
             trailing: contentView.trailingAnchor,
             padding: UIEdgeInsets(top: 10, left: 10, bottom: 0, right: 10)
         )
+    }
+    
+    private func layoutContentLabel() {
         contentLabel.anchor(
             top: titleLabel.bottomAnchor,
             leading: contentView.leadingAnchor,
             trailing: contentView.trailingAnchor,
             padding: UIEdgeInsets(top: 10, left: 10, bottom: 0, right: 10)
         )
+    }
+    
+    private func layoutButtonsStackView() {
         buttonsStackView.anchor(
             top: contentLabel.bottomAnchor,
             leading: contentView.leadingAnchor,

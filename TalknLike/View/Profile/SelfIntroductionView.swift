@@ -99,7 +99,6 @@ extension SelfIntroductionView {
 
 }
 
-
 extension SelfIntroductionView {
     
     private func setupLayout() {

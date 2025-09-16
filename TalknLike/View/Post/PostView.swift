@@ -54,20 +54,6 @@ extension PostView {
         )
     }
     
-    private func setupPost() {
-        let postView = UIStackView(arrangedSubviews: [profileHeader, titleTextField, separator, textView])
-        postView.axis = .vertical
-        postView.spacing = 12
-        
-        addSubview(postView)
-        postView.anchor(
-            top: safeAreaLayoutGuide.topAnchor,
-            leading: leadingAnchor,
-            trailing: trailingAnchor,
-            padding: UIEdgeInsets(top: 20, left: 16, bottom: 0, right: 16)
-        )
-    }
-    
     private func setupTextView() {
         textView.delegate = self
         textView.font = .systemFont(ofSize: 16)
@@ -92,7 +78,6 @@ extension PostView {
     private func setupProfileImageView() {
         profileImageView.layer.cornerRadius = 30
         profileImageView.clipsToBounds = true
-        
         profileImageView.anchor(width: 60, height: 60)
     }
     
@@ -110,6 +95,20 @@ extension PostView {
         titleTextField.placeholder = "제목"
         titleTextField.font = .boldSystemFont(ofSize: 16)
         titleTextField.anchor(height: 30)
+    }
+    
+    private func setupPost() {
+        let postView = UIStackView(arrangedSubviews: [profileHeader, titleTextField, separator, textView])
+        postView.axis = .vertical
+        postView.spacing = 12
+        
+        addSubview(postView)
+        postView.anchor(
+            top: safeAreaLayoutGuide.topAnchor,
+            leading: leadingAnchor,
+            trailing: trailingAnchor,
+            padding: UIEdgeInsets(top: 20, left: 16, bottom: 0, right: 16)
+        )
     }
     
 }

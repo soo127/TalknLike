@@ -32,16 +32,21 @@ final class SignUpView: UIView {
 
     private func setup() {
         backgroundColor = .white
-        setupEmail()
-        setupSignupButton()
-        setupPwLabel()
-        setupPwField()
+        setupSubviews()
+        setupButtonActions()
         setupLayout()
     }
 
 }
 
 extension SignUpView {
+    
+    private func setupSubviews() {
+        setupEmail()
+        setupSignupButton()
+        setupPwLabel()
+        setupPwField()
+    }
 
     private func setupEmail() {
         setupEmailLabel()
@@ -51,18 +56,16 @@ extension SignUpView {
     
     private func setupSignupButton() {
         signUpButton.isEnabled = false
-        signUpButton.addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
-    }
-    
-    private func setupEmailVerifyButton() {
-        emailVerifyButton.isEnabled = false
-        emailVerifyButton.alpha = 0.5
-        emailVerifyButton.addTarget(self, action: #selector(didTapVerifyButton), for: .touchUpInside)
     }
     
     private func setupEmailLabel() {
         emailMessageLabel.font = UIFont.systemFont(ofSize: 12)
         emailMessageLabel.numberOfLines = 1
+    }
+    
+    private func setupEmailVerifyButton() {
+        emailVerifyButton.isEnabled = false
+        emailVerifyButton.alpha = 0.5
     }
     
     private func setupPwLabel() {
@@ -75,6 +78,11 @@ extension SignUpView {
         passwordCheckField.isEnabled = false
     }
 
+    private func setupButtonActions() {
+        signUpButton.addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
+        emailVerifyButton.addTarget(self, action: #selector(didTapVerifyButton), for: .touchUpInside)
+    }
+    
     private func setupLayout() {
         let emailFieldGroup = UIStackView.make(
             views: [
@@ -84,7 +92,6 @@ extension SignUpView {
             axis: .vertical,
             spacing: 4
         )
-
         let stackView = UIStackView.make(
             views: [
                 emailFieldGroup,
@@ -96,7 +103,6 @@ extension SignUpView {
             axis: .vertical,
             spacing: 15
         )
-
         addSubview(stackView)
         stackView.anchor(
             top: safeAreaLayoutGuide.topAnchor,

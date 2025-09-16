@@ -30,9 +30,8 @@ final class LoginView: UIView {
     }
     
     private func setup() {
-        setupLogoLabel()
+        setupSubviews()
         setupButtonActions()
-        setupMenus()
         setupLayout()
     }
     
@@ -40,25 +39,30 @@ final class LoginView: UIView {
 
 extension LoginView {
     
+    private func setupSubviews() {
+        setupLogoLabel()
+        setupMenus()
+    }
+    
     private func setupLogoLabel() {
         logoLabel.text = "TalknLike"
         logoLabel.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         logoLabel.textAlignment = .center
         logoLabel.textColor = .white
     }
-    
-    func setupButtonActions() {
-        loginButton.addTarget(self, action: #selector(loginTapped), for: .touchUpInside)
-        signUpButton.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
-        findPwButton.addTarget(self, action: #selector(findPwTapped), for: .touchUpInside)
-    }
-   
+
     private func setupMenus() {
         menuButtons = UIStackView.make(
             views: [signUpButton, findPwButton],
             axis: .horizontal,
             distribution: .fillEqually
         )
+    }
+        
+    func setupButtonActions() {
+        loginButton.addTarget(self, action: #selector(loginTapped), for: .touchUpInside)
+        signUpButton.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
+        findPwButton.addTarget(self, action: #selector(findPwTapped), for: .touchUpInside)
     }
     
     private func setupLayout() {
