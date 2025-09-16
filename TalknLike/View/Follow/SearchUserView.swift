@@ -8,26 +8,40 @@
 import UIKit
 
 final class SearchUserView: UIView {
-
+    
     let searchTextField = UITextField()
     let tableView = UITableView()
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupTextField()
+        setupSubviews()
         setupLayout()
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+}
+
+extension SearchUserView {
+    
+    private func setupSubviews() {
+        setupTableView()
+        setupTextField()
+    }
+    
+    private func setupTableView() {
+        addSubview(tableView)
+    }
 
     private func setupTextField() {
+        addSubview(searchTextField)
         searchTextField.placeholder = "사용자 검색"
         searchTextField.backgroundColor = .systemGray6
         searchTextField.layer.cornerRadius = 10
         searchTextField.clipsToBounds = true
-
+        
         searchTextField.setLeftIcon(
             image: UIImage(systemName:"magnifyingglass"),
             leftPadding: 8,
@@ -37,13 +51,19 @@ final class SearchUserView: UIView {
             image: UIImage(systemName: "x.circle.fill"),
             leftPadding: 5,
             rightPadding: 8
-        ) { self.clickXButton()}
+        ) { self.clickXButton() }
     }
+        
+}
+    
+extension SearchUserView {
     
     private func setupLayout() {
-        addSubview(searchTextField)
-        addSubview(tableView)
-
+        layoutTextField()
+        layoutTableView()
+    }
+    
+    private func layoutTextField() {
         searchTextField.anchor(
             top: safeAreaLayoutGuide.topAnchor,
             leading: leadingAnchor,
@@ -51,6 +71,9 @@ final class SearchUserView: UIView {
             padding: UIEdgeInsets(top: 12, left: 10, bottom: 0, right: 10),
             height: 40
         )
+    }
+    
+    private func layoutTableView() {
         tableView.anchor(
             top: searchTextField.bottomAnchor,
             leading: leadingAnchor,

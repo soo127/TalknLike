@@ -11,25 +11,33 @@ import FirebaseFirestore
 
 final class NewFollowerViewController: UIViewController {
     
-    let newFollowerView = NewFollowerView()
+    let tableView = UITableView()
     var followRelations : [FollowRequest] = []
     private var cancellables = Set<AnyCancellable>()
-    
-    override func loadView() {
-        view = newFollowerView
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "새 팔로워"
         setupTableView()
+        layoutTableView()
         bindFollowRequests()
     }
     
     private func setupTableView() {
-        newFollowerView.tableView.dataSource = self
-        newFollowerView.tableView.delegate = self
-        newFollowerView.tableView.register(FollowRequestCell.self, forCellReuseIdentifier: "FollowRequestCell")
+        view.addSubview(tableView)
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(FollowRequestCell.self, forCellReuseIdentifier: "FollowRequestCell")
+    }
+    
+    private func layoutTableView() {
+        tableView.anchor(
+            top: view.topAnchor,
+            leading: view.leadingAnchor,
+            bottom: view.bottomAnchor,
+            trailing: view.trailingAnchor,
+            padding: UIEdgeInsets(top: 12, left: 16, bottom: 0, right: 16),
+        )
     }
     
     private func bindFollowRequests() {
@@ -37,7 +45,7 @@ final class NewFollowerViewController: UIViewController {
             .receive(on: RunLoop.main)
             .sink { [weak self] followRelations in
                 self?.followRelations = followRelations
-                self?.newFollowerView.tableView.reloadData()
+                self?.tableView.reloadData()
             }
             .store(in: &cancellables)
     }
@@ -95,7 +103,7 @@ extension NewFollowerViewController: UITableViewDataSource, UITableViewDelegate 
 extension NewFollowerViewController: FollowRequestCellDelegate {
     
     func didTapAccept(_ cell: FollowRequestCell) {
-        guard let indexPath = newFollowerView.tableView.indexPath(for: cell) else {
+        guard let indexPath = tableView.indexPath(for: cell) else {
             return
         }
         let user = followRelations[indexPath.row].profile

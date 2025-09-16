@@ -30,10 +30,8 @@ final class SearchUserCell: UITableViewCell {
     }
     
     private func setup() {
-        setupProfileImage()
-        setupNicknameLabel()
-        setupIntroLabel()
-        setupFollowButton()
+        setupSubviews()
+        setupLayout()
     }
     
     @objc private func followButtonTapped() {
@@ -44,12 +42,46 @@ final class SearchUserCell: UITableViewCell {
 
 extension SearchUserCell {
     
+    private func setupSubviews() {
+        setupProfileImage()
+        setupNicknameLabel()
+        setupIntroLabel()
+        setupFollowButton()
+    }
+    
     private func setupProfileImage() {
+        contentView.addSubview(profileImage)
         profileImage.image = UIImage(systemName: "person.crop.circle")
         profileImage.layer.cornerRadius = 20
         profileImage.clipsToBounds = true
-        
-        contentView.addSubview(profileImage)
+    }
+    
+    private func setupNicknameLabel() {
+        contentView.addSubview(nicknameLabel)
+        nicknameLabel.font = UIFont.boldSystemFont(ofSize: 14)
+    }
+
+    private func setupIntroLabel() {
+        contentView.addSubview(introLabel)
+        introLabel.textColor = .gray
+    }
+    
+    private func setupFollowButton() {
+        contentView.addSubview(followButton)
+    }
+
+}
+
+extension SearchUserCell {
+    
+    private func setupLayout() {
+        layoutProfileImage()
+        layoutNicknameLabel()
+        layoutIntroLabel()
+        layoutFollowButton()
+    }
+    
+    private func layoutProfileImage() {
         profileImage.anchor(
             top: contentView.topAnchor,
             leading: contentView.leadingAnchor,
@@ -59,21 +91,15 @@ extension SearchUserCell {
         )
     }
     
-    private func setupNicknameLabel() {
-        nicknameLabel.font = UIFont.boldSystemFont(ofSize: 14)
-        
-        contentView.addSubview(nicknameLabel)
+    private func layoutNicknameLabel() {
         nicknameLabel.anchor(
             top: profileImage.topAnchor,
             leading: profileImage.trailingAnchor,
             padding: UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
         )
     }
-
-    private func setupIntroLabel() {
-        introLabel.textColor = .gray
-        
-        contentView.addSubview(introLabel)
+    
+    private func layoutIntroLabel() {
         introLabel.anchor(
             top: nicknameLabel.bottomAnchor,
             leading: nicknameLabel.leadingAnchor,
@@ -82,16 +108,13 @@ extension SearchUserCell {
         )
     }
     
-    private func setupFollowButton() {
-        contentView.addSubview(followButton)
+    private func layoutFollowButton() {
         followButton.anchor(
-            trailing: contentView.trailingAnchor
-        )
-        followButton.anchor(
+            trailing: contentView.trailingAnchor,
             centerY: contentView.centerYAnchor
         )
     }
-
+    
 }
 
 extension SearchUserCell {
