@@ -1,9 +1,5 @@
-본 프로젝트는 아직 완성되지 않은 프로젝트입니다.
-### 테스트 계정: asd@naver.com / tkdtn5584@
-
 # TalknLike 📌
 할 일을 추가하고 마감일 저장, 푸시 알림을 설정할 수 있는 서비스입니다.
-
 
 ## 스킬
 
@@ -12,6 +8,10 @@
 - Combine
 - Firebase (Authentication, Database) / Supabase(프로필 이미지 저장용)
 
+### 참고 사항
++) '이메일 인증 메일 보내기', '비밀번호 재설정 메일 보내기' 는 이미 제공되어있는 Firebase의 메서드를 사용하였습니다.
++) 테스트 계정: asd@naver.com / tkdtn5584@
+
 ## 특징
 
 ### 로그인
@@ -19,20 +19,34 @@
 
 #### 회원가입
 - 이메일 입력을 완료하면, 일정 시간 후에 해당 이메일의 유효성을 평가합니다. (중복 여부, 형식 등)
-- 이메일이 유효하다면, '확인'버튼을 눌러 이메일을 확정합니다.
 
+![Simulator Screen Recording - iPhone 17 Pro - 2025-12-10 at 22 06 54](https://github.com/user-attachments/assets/25972ad1-1ca3-410b-ad4a-64e122783a7b)
+
+- 이메일이 유효하다면, '확인'버튼을 눌러 이메일을 확정합니다.
 - 이메일이 확정되면 비밀번호 필드가 활성화됩니다.
 - 마찬가지로, 비밀번호가 유효하다면 '가입' 버튼이 활성화됩니다.
+- '가입' 버튼을 누르면, 이메일 인증 메시지가 전송됩니다. 확인 버튼을 눌러 메인 화면으로 이동할 수 있으며, 해당 이메일에서 인증하면 로그인이 가능합니다.
 
+![Simulator Screen Recording - iPhone 17 Pro - 2025-12-10 at 22 09 38](https://github.com/user-attachments/assets/f4ce636a-46ab-4b8d-a08e-9410bd747959)
 
-https://github.com/user-attachments/assets/858343ba-68be-456a-9279-5d2869bf1b02
+- 이메일 인증을 하지 않은 채로 로그인하면, 다음과 같은 메시지가 출력됩니다.
+- 편의를 위해, 이메일을 인증하지 않아도 로그인할 수 있도록 해당 기능을 주석처리한 상태입니다.
 
-(현재 비밀번호 필드는 녹화 시 자동으로 가려지는 현상이 발생해서, 추후 프로젝트가 완성될 때 README 전체를 수정하여 재업로드할 예정입니다.)
+<img width="220" height="400" alt="스크린샷 2025-12-10 오후 10 22 41" src="https://github.com/user-attachments/assets/108323c6-6a15-4510-9e6f-8879c9c2bd89" />
 
-#### 아이디 찾기
-- 해당 기능은 준비 중입니다.
+```swift
+// 해당 부분은 주석 처리된 상태입니다.
+if !result.user.isEmailVerified {
+  try Auth.auth().signOut()
+  showEmailVerificationRequiredAlert()
+  return
+}
+```
+
 #### 비밀번호 찾기
-- 해당 기능은 준비 중입니다.
+- 이메일을 입력하여 비밀번호 재설정 메일을 보냅니다.
+- 
+![Simulator Screen Recording - iPhone 17 Pro - 2025-12-10 at 22 24 13](https://github.com/user-attachments/assets/1fd5f587-c5ca-4b07-9cb7-0f9799179813)
 
 ## 메인 화면
 
@@ -50,7 +64,7 @@ https://github.com/user-attachments/assets/858343ba-68be-456a-9279-5d2869bf1b02
 - 자신이 단 댓글/답글이라면, 삭제와 수정이 가능합니다.
 - 최상위 댓글을 삭제하면, 연결된 답글까지 모두 삭제됩니다.
 
-https://github.com/user-attachments/assets/446317a9-5930-48bf-99dc-ffa2bc851f99
+https://github.com/user-attachments/assets/1c97530b-978e-410e-a565-dba706ed8428
 
 ## 친구
 
@@ -58,16 +72,17 @@ https://github.com/user-attachments/assets/446317a9-5930-48bf-99dc-ffa2bc851f99
 - 나를 팔로우하는 사람들을 보여줍니다. 닉네임과 자기 소개, 프로필 사진이 표시됩니다.
 - 셀을 클릭하면, 그 유저가 작성한 글들을 보여줍니다.
 
-https://github.com/user-attachments/assets/2565ab92-a795-4fb1-8071-ab9a8935343f
+https://github.com/user-attachments/assets/5743ed0d-7739-4286-bccd-de7d8ff18225
+
 
 ### 팔로잉
 - 내가 팔로우하는 사람들을 보여줍니다.
 - 셀을 클릭하면, 그 유저가 작성한 글들을 보여줍니다.
 - '해제'버튼을 눌러 팔로잉을 해제할 수 있습니다.
+- 해당 유저의 글이 홈 화면에서 더 이상 보이지 않습니다.
 
 
-https://github.com/user-attachments/assets/603ccc03-63a1-4adb-bb02-afcbe9fdad5f
-
+https://github.com/user-attachments/assets/93f5bfac-9473-4673-83d6-32909814e392
 
   
 ### 유저 찾기
@@ -88,11 +103,10 @@ https://github.com/user-attachments/assets/603ccc03-63a1-4adb-bb02-afcbe9fdad5f
 - 제목과 내용을 작성하고 '게시'버튼을 눌러 게시합니다.
 - 제목과 내용이 모두 있어야 글을 게시할 수 있습니다.
 
-https://github.com/user-attachments/assets/74dc5e68-abd4-423c-b805-47d58aeefff6
+![Simulator Screen Recording - iPhone 17 Pro - 2025-12-10 at 22 50 47](https://github.com/user-attachments/assets/568316c0-ef86-430e-a1b0-6b2053a090ed)
+
 
 ## 알림
-
-
 
 
 ### 새 팔로우 요청
@@ -104,16 +118,20 @@ https://github.com/user-attachments/assets/74dc5e68-abd4-423c-b805-47d58aeefff6
 - 자신의 게시글에 좋아요/ 댓글이 추가될 때마다 알림이 추가됩니다.
 - 해당 알림 셀을 누르면, 그 게시글로 이동합니다.
 
-https://github.com/user-attachments/assets/22bda060-69f5-44fc-8707-7835aa782a87
+
+https://github.com/user-attachments/assets/0cd600f8-8186-47d6-a3a7-40bd8fb38d6d
 
 
 - 이미 삭제된 게시글로는 이동할 수 없습니다.
 
-https://github.com/user-attachments/assets/ba8ae7d8-5a59-45db-8c24-9f6156a536c5
+
+https://github.com/user-attachments/assets/ccfea0c9-18c4-4c52-8ea2-f5f307f311e7
+
 
 - 왼쪽으로 드래그하여 해당 셀을 제거합니다.
 
-https://github.com/user-attachments/assets/5ba352cf-f506-47e1-9db0-579972fece14
+
+https://github.com/user-attachments/assets/9b6acf9a-a553-40af-9ea6-e99e28f15732
 
 
 ## 프로필
@@ -123,14 +141,13 @@ https://github.com/user-attachments/assets/5ba352cf-f506-47e1-9db0-579972fece14
 - 내 게시글을 볼 수 있습니다.
 - 셀을 꾹 누르면, 게시글을 수정하거나 삭제할 수 있습니다.
 
-https://github.com/user-attachments/assets/949c5c76-466a-4350-a49f-929a28f36eff
+https://github.com/user-attachments/assets/ddbbc8f9-b482-4a97-9a32-1fe047daadc6
 
 ### 편집
 - 자신의 프로필 사진과 닉네임, 자기소개를 수정할 수 있습니다.
 - 카메라 버튼을 눌러 사진을 가져옵니다.
-  
+https://github.com/user-attachments/assets/eac3601a-2300-496d-b9a7-4c618959d05f
 
-https://github.com/user-attachments/assets/de5023da-7c3c-4966-a7ab-8eb02dffdaee
 
 
 - 닉네임 수정시, 현재 필드에 입력한 글자 수가 표시됩니다.
@@ -146,4 +163,4 @@ https://github.com/user-attachments/assets/de5023da-7c3c-4966-a7ab-8eb02dffdaee
 ### 로그아웃
 - 로그아웃 버튼을 눌러 로그아웃합니다.
 
-https://github.com/user-attachments/assets/434c3e6b-8fef-496a-8f70-071ed8240704
+https://github.com/user-attachments/assets/4796a491-202d-45a3-82ab-36a08aedde86
