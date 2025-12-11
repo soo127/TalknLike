@@ -147,6 +147,7 @@ https://github.com/user-attachments/assets/ddbbc8f9-b482-4a97-9a32-1fe047daadc6
 ### 편집
 - 자신의 프로필 사진과 닉네임, 자기소개를 수정할 수 있습니다.
 - 카메라 버튼을 눌러 사진을 가져옵니다.
+
 https://github.com/user-attachments/assets/eac3601a-2300-496d-b9a7-4c618959d05f
 
 
