@@ -166,3 +166,52 @@ https://github.com/user-attachments/assets/eac3601a-2300-496d-b9a7-4c618959d05f
 - 로그아웃 버튼을 눌러 로그아웃합니다.
 
 https://github.com/user-attachments/assets/4796a491-202d-45a3-82ab-36a08aedde86
+
+
+---
+
+## 해결한 문제 / 핵심 기능
+
+### 회원 가입 시 불필요한 API 요청 절감 / UX 개선
+```swift
+private func observeEmailField() {
+  let publisher = NotificationCenter.default.publisher(for: UITextField.textDidChangeNotification, object: signUpView.emailField)
+            
+  publisher
+    .compactMap { ($0.object as? UITextField)?.text }
+    .debounce(for: .seconds(1.1), scheduler: RunLoop.main)
+    .removeDuplicates()
+    .sink { [weak self] email in
+      self?.handleEmailInputChange(email: email)
+    }
+    .store(in: &cancellables)
+}
+```
+debounce 적용 전에는, 사용자가 이메일 필드에 텍스트를 한 글자 한 글자 입력할 때마다 handleEmailInputChange()가 호출되어, 과도한 형식 오류 메시지가 발생했습니다.
+debounce(약 1초) 적용으로, 불필요한 이메일 검증 API 호출을 줄이고 입력 도중 과도한 형식 오류 메시지가 뜨지 않도록 UX를 개선했습니다.
+
+
+### 캐시 기반 프로필 이미지 로딩
+```swift
+enum ImageLoader {
+
+    private static var cache = NSCache<NSString, UIImage>()
+
+    static func loadImage(from urlString: String?) async -> UIImage? {
+        
+        if let cached = cache.object(forKey: urlString as NSString) {
+            return cached
+        }
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            /* ... */
+            cache.setObject(image, forKey: urlString as NSString)
+            return image
+        } catch {
+            /* ... */
+        }
+    }
+
+}
+```
+비동기 이미지 로딩 시 NSCache 기반 캐싱을 적용하여, 같은 URL의 이미지(동일한 사람의 프로필)를 여러 번 요청하는 상황에서 불필요한 네트워크 요청을 줄였습니다.
