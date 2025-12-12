@@ -27,7 +27,7 @@ final class ProfileViewController: UIViewController {
         view.addSubview(tableView)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(ProfileMenuCell.self, forCellReuseIdentifier: "ProfileMenuCell")
+        tableView.register(ProfileMenuCell.self, forCellReuseIdentifier: ProfileMenuCell.identifier)
     }
     
     private func layoutTableView() {
@@ -94,7 +94,10 @@ extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ProfileMenuCell", for: indexPath) as? ProfileMenuCell else {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: ProfileMenuCell.identifier,
+            for: indexPath
+        ) as? ProfileMenuCell else {
             return UITableViewCell()
         }
         let item = menuItems[indexPath.row]

@@ -25,7 +25,7 @@ class BaseFeedViewController: UIViewController {
     private func setupTableView() {
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(FollowingFeedCell.self, forCellReuseIdentifier: "FollowingFeedCell")
+        tableView.register(FollowingFeedCell.self, forCellReuseIdentifier: FollowingFeedCell.identifier)
         view.addSubview(tableView)
         tableView.frame = view.bounds
     }
@@ -40,7 +40,7 @@ extension BaseFeedViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: "FollowingFeedCell",
+            withIdentifier: FollowingFeedCell.identifier,
             for: indexPath
         ) as? FollowingFeedCell else {
             return UITableViewCell()

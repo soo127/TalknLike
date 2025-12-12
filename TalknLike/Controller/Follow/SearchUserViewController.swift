@@ -27,7 +27,7 @@ final class SearchUserViewController: UIViewController {
     private func setupTableView() {
         searchUserView.tableView.dataSource = self
         searchUserView.tableView.delegate = self
-        searchUserView.tableView.register(SearchUserCell.self, forCellReuseIdentifier: "SearchUserCell")
+        searchUserView.tableView.register(SearchUserCell.self, forCellReuseIdentifier: SearchUserCell.identifier)
     }
     
     private func setupSearchField() {
@@ -73,7 +73,10 @@ extension SearchUserViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "SearchUserCell", for: indexPath) as? SearchUserCell else {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: SearchUserCell.identifier,
+            for: indexPath
+        ) as? SearchUserCell else {
             return UITableViewCell()
         }
         

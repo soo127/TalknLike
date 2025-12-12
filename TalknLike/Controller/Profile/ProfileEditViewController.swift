@@ -30,7 +30,7 @@ final class ProfileEditViewController: UIViewController, UITableViewDelegate, UI
     private func setupTableView() {
         profileEditView.tableView.dataSource = self
         profileEditView.tableView.delegate = self
-        profileEditView.tableView.register(ProfileEditCell.self, forCellReuseIdentifier: "ProfileEditCell")
+        profileEditView.tableView.register(ProfileEditCell.self, forCellReuseIdentifier: ProfileEditCell.identifier)
     }
 
     private func setupActions() {
@@ -54,7 +54,10 @@ final class ProfileEditViewController: UIViewController, UITableViewDelegate, UI
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ProfileEditCell", for: indexPath) as? ProfileEditCell else {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: ProfileEditCell.identifier,
+            for: indexPath
+        ) as? ProfileEditCell else {
             return UITableViewCell()
         }
         let item = menu[indexPath.row]

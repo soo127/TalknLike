@@ -27,7 +27,7 @@ final class NewFollowerViewController: UIViewController {
         view.addSubview(tableView)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(FollowRequestCell.self, forCellReuseIdentifier: "FollowRequestCell")
+        tableView.register(FollowRequestCell.self, forCellReuseIdentifier: FollowRequestCell.identifier)
     }
     
     private func layoutTableView() {
@@ -59,7 +59,10 @@ extension NewFollowerViewController: UITableViewDataSource, UITableViewDelegate 
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "FollowRequestCell", for: indexPath) as? FollowRequestCell else {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: FollowRequestCell.identifier,
+            for: indexPath
+        ) as? FollowRequestCell else {
             return UITableViewCell()
         }
         let profile = followRelations[indexPath.row].profile

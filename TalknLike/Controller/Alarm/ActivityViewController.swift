@@ -25,7 +25,7 @@ final class ActivityViewController: UIViewController {
         view.addSubview(tableView)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(NotificationCell.self, forCellReuseIdentifier: "NotificationCell")
+        tableView.register(NotificationCell.self, forCellReuseIdentifier: NotificationCell.identifier)
     }
     
     private func layoutTableView() {
@@ -61,7 +61,10 @@ extension ActivityViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationCell", for: indexPath) as? NotificationCell else {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: NotificationCell.identifier,
+            for: indexPath
+        ) as? NotificationCell else {
             return UITableViewCell()
         }
         let notification = notifications[indexPath.row]

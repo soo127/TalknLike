@@ -52,7 +52,7 @@ final class CommentViewController: UIViewController {
     private func setupTableView() {
         commentView.tableView.dataSource = self
         commentView.tableView.delegate = self
-        commentView.tableView.register(CommentCell.self, forCellReuseIdentifier: "CommentCell")
+        commentView.tableView.register(CommentCell.self, forCellReuseIdentifier: CommentCell.identifier)
         commentView.tableView.contentInsetAdjustmentBehavior = .never
     }
     
@@ -100,7 +100,10 @@ extension CommentViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "CommentCell", for: indexPath) as? CommentCell else {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: CommentCell.identifier,
+            for: indexPath
+        ) as? CommentCell else {
             return UITableViewCell()
         }
         cell.configure(displayComment: displayComments[indexPath.row])

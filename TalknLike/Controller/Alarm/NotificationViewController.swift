@@ -23,7 +23,7 @@ final class NotificationViewController: UIViewController {
         view.addSubview(tableView)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: UITableViewCell.identifier)
     }
 
     private func layoutTableView() {
@@ -44,7 +44,7 @@ extension NotificationViewController: UITableViewDataSource, UITableViewDelegate
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: UITableViewCell.identifier, for: indexPath)
         cell.textLabel?.text = indexPath.row == 0 ? "새 팔로우 요청" : "활동"
         return cell
     }

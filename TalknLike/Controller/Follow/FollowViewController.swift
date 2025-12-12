@@ -30,7 +30,7 @@ final class FollowViewController: UIViewController {
     private func setupTableView() {
         followView.tableView.dataSource = self
         followView.tableView.delegate = self
-        followView.tableView.register(SearchUserCell.self, forCellReuseIdentifier: "SearchUserCell")
+        followView.tableView.register(SearchUserCell.self, forCellReuseIdentifier: SearchUserCell.identifier)
     }
     
     private func setupNavigationBar() {
@@ -75,7 +75,10 @@ extension FollowViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "SearchUserCell", for: indexPath) as? SearchUserCell else {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: SearchUserCell.identifier,
+            for: indexPath
+        ) as? SearchUserCell else {
             return UITableViewCell()
         }
         let user = currentUsers[indexPath.row]
