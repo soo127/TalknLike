@@ -80,7 +80,6 @@ extension FollowViewController: UITableViewDataSource {
         }
         let user = currentUsers[indexPath.row]
         configureCell(cell, user: user, at: indexPath)
-        loadProfileImage(cell, user: user, at: indexPath, in: tableView)
         return cell
     }
     
@@ -92,15 +91,6 @@ extension FollowViewController: UITableViewDataSource {
             cell.configureFollower(user: user)
         case .followings:
             cell.configureFollowing(user: user)
-        }
-    }
-    
-    func loadProfileImage(_ cell: SearchUserCell, user: UserProfile, at indexPath: IndexPath, in tableView: UITableView) {
-        Task { @MainActor in
-            let image = await ImageLoader.loadImage(from: user.photoURL)
-            if tableView.indexPath(for: cell) == indexPath {
-                cell.profileImage.image = image
-            }
         }
     }
     

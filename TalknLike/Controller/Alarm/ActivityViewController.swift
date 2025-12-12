@@ -65,14 +65,7 @@ extension ActivityViewController: UITableViewDataSource, UITableViewDelegate {
             return UITableViewCell()
         }
         let notification = notifications[indexPath.row]
-        let item = notification.item, profile = notification.profile
-        cell.configure(item: item, profile: profile)
-        Task { @MainActor in
-            let image = await ImageLoader.loadImage(from: profile.photoURL)
-            if tableView.indexPath(for: cell) == indexPath {
-                cell.profileImageView.image = image
-            }
-        }
+        cell.configure(item: notification.item, profile: notification.profile)
         return cell
     }
 

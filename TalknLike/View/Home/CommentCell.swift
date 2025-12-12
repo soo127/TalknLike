@@ -237,14 +237,24 @@ extension CommentCell {
 }
 
 extension CommentCell {
-    
-    func configure(comment: Comment, nickname: String, replyTo replyNickname: String?) {
-        nicknameLabel.text = nickname
+
+    func configure(displayComment: CommentDisplayModel) {
+        let comment = displayComment.comment
+        let profile = displayComment.profile
+        let replyNickname = displayComment.replyNickname
+        
+        nicknameLabel.text = profile.nickname
         arrowImageView.isHidden = replyNickname == nil
         replyingLabel.text = replyNickname
         commentLabel.text = comment.content
         dateLabel.text = comment.createdAt.formatted()
+        
         containerLeadingConstraint.constant = comment.parentID != nil ? 40 : 8
+        
+        Task { @MainActor in
+            let image = await ImageLoader.loadImage(from: profile.photoURL)
+            profileImage.image = image
+        }
     }
     
 }

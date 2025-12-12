@@ -43,17 +43,9 @@ final class ProfileViewController: UIViewController {
         CurrentUserStore.shared.userPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] user in
-                self?.setupHeader(user: user)
+                self?.headerView.configure(user: user)
             }
             .store(in: &cancellables)
-    }
-    
-    private func setupHeader(user: UserProfile) {
-        headerView.nicknameLabel.text = user.nickname
-        headerView.introLabel.text = user.bio
-        Task { @MainActor [weak self] in
-            self?.headerView.profileImageView.image = await ImageLoader.loadImage(from: user.photoURL) ?? UIImage(systemName: "person.fill")
-        }
     }
     
     private func showLogOutAlert() {

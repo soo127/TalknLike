@@ -83,12 +83,6 @@ extension SearchUserViewController: UITableViewDataSource, UITableViewDelegate {
             user: user,
             shouldShowFollowButton: shouldShowFollowButton(for: user)
         )
-        Task { @MainActor in
-            let image = await ImageLoader.loadImage(from: user.photoURL)
-            if tableView.indexPath(for: cell) == indexPath {
-                cell.profileImage.image = image
-            }
-        }
         return cell
     }
     

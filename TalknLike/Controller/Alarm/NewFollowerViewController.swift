@@ -67,12 +67,6 @@ extension NewFollowerViewController: UITableViewDataSource, UITableViewDelegate 
 
         cell.configure(user: profile, date: date, showAcceptButton: true)
         cell.delegate = self
-        Task { @MainActor in
-            let image = await ImageLoader.loadImage(from: profile.photoURL)
-            if tableView.indexPath(for: cell) == indexPath {
-                cell.profileImage.image = image
-            }
-        }
         return cell
     }
     

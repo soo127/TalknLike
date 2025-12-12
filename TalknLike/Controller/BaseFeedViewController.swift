@@ -46,24 +46,9 @@ extension BaseFeedViewController: UITableViewDataSource, UITableViewDelegate {
             return UITableViewCell()
         }
         let feedItem = posts[indexPath.row]
-        cell.configure(post: feedItem.post, nickname: feedItem.profile.nickname)
-        loadAsyncData(cell: cell, feedItem: feedItem, indexPath: indexPath)
+        cell.configure(feedItem: feedItem)
         cell.delegate = self
         return cell
-    }
-    
-    private func loadAsyncData(cell: FollowingFeedCell, feedItem: FeedItem, indexPath: IndexPath) {
-        Task { @MainActor in
-            let profileImage = await ImageLoader.loadImage(from: feedItem.profile.photoURL)
-            var isLiked = false
-            if let documentID = feedItem.post.documentID {
-                isLiked = try await LikeManager.isLiked(postID: documentID)
-            }
-            if tableView.indexPath(for: cell) == indexPath {
-                cell.setProfileImage(profileImage)
-                cell.setLikeState(count: feedItem.post.likeCount, isLiked: isLiked)
-            }
-        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

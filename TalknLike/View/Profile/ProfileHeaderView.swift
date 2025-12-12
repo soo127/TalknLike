@@ -103,6 +103,20 @@ extension ProfileHeaderView {
 
 extension ProfileHeaderView {
     
+    func configure(user: UserProfile) {
+        nicknameLabel.text = user.nickname
+        introLabel.text = user.bio
+        
+        Task { @MainActor in
+            let image = await ImageLoader.loadImage(from: user.photoURL) ?? UIImage(systemName: "person.fill")
+            self.profileImageView.image = image
+        }
+    }
+    
+}
+
+extension ProfileHeaderView {
+    
     fileprivate enum Sizes {
         static let profileImage = CGSize(width: 80, height: 80)
     }

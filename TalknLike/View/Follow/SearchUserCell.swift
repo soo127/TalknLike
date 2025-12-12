@@ -145,6 +145,10 @@ extension SearchUserCell {
     private func configure(user: UserProfile) {
         nicknameLabel.text = user.nickname
         introLabel.text = user.bio
+        Task { @MainActor in
+            let image = await ImageLoader.loadImage(from: user.photoURL)
+            profileImage.image = image
+        }
     }
     
 }

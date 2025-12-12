@@ -15,7 +15,8 @@ protocol FollowingFeedCellDelegate: AnyObject {
 final class FollowingFeedCell: UITableViewCell {
 
     weak var delegate: FollowingFeedCellDelegate?
-    
+    private var loadTask: Task<Void, Never>?
+
     let profileImage = UIImageView()
     let nicknameLabel = UILabel()
     let titleLabel = UILabel()
@@ -210,23 +211,34 @@ extension FollowingFeedCell {
         updateLikeButtonAppearance()
     }
 
-    func configure(post: Post, nickname: String) {
-        nicknameLabel.text = nickname
+    func configure(feedItem: FeedItem) {
+        nicknameLabel.text = feedItem.profile.nickname
+
+        let post = feedItem.post
         dateLabel.text = post.createdAt.formatted()
         titleLabel.text = post.title
         contentLabel.text = post.content
+        
+        loadTask?.cancel()
+        loadAsyncData(feedItem: feedItem)
     }
     
-    /// 비동기 작업이 필요하므로 분리
-    func setProfileImage(_ image: UIImage?) {
-        profileImage.image = image
-    }
-    
-    /// 비동기 작업이 필요하므로 분리
-    func setLikeState(count: Int, isLiked: Bool) {
-        likeCount = count
-        likeButton.isSelected = isLiked
-        updateLikeButtonAppearance()
+    private func loadAsyncData(feedItem: FeedItem) {
+        loadTask = Task { @MainActor in
+            let profileImage = await ImageLoader.loadImage(from: feedItem.profile.photoURL)
+            
+            var isLiked = false
+            if let documentID = feedItem.post.documentID {
+                isLiked = (try? await LikeManager.isLiked(postID: documentID)) ?? false
+            }
+            
+            guard !Task.isCancelled else { return }
+            
+            self.profileImage.image = profileImage
+            self.likeCount = feedItem.post.likeCount
+            self.likeButton.isSelected = isLiked
+            updateLikeButtonAppearance()
+        }
     }
     
     private func updateLikeButtonAppearance() {

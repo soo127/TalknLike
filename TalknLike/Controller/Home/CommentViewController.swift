@@ -103,19 +103,8 @@ extension CommentViewController: UITableViewDataSource, UITableViewDelegate {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "CommentCell", for: indexPath) as? CommentCell else {
             return UITableViewCell()
         }
-        let displayComment = displayComments[indexPath.row]
-        cell.configure(
-            comment: displayComment.comment,
-            nickname: displayComment.profile.nickname,
-            replyTo: displayComment.replyNickname
-        )
+        cell.configure(displayComment: displayComments[indexPath.row])
         cell.delegate = self
-        Task { @MainActor in
-            let image = await ImageLoader.loadImage(from: displayComment.profile.photoURL)
-            if tableView.indexPath(for: cell) == indexPath {
-                cell.profileImage.image = image
-            }
-        }
         return cell
     }
 
