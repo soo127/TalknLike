@@ -14,10 +14,10 @@ protocol SearchUserCellDelegate: AnyObject {
 final class SearchUserCell: UITableViewCell {
     
     weak var delegate: SearchUserCellDelegate?
-    let profileImage = UIImageView()
-    let nicknameLabel = UILabel()
-    let introLabel = UILabel()
-    let followButton = UIButton()
+    private let profileImage = UIImageView()
+    private let nicknameLabel = UILabel()
+    private let introLabel = UILabel()
+    private let followButton = UIButton()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

@@ -9,9 +9,9 @@ import UIKit
 
 final class ProfileHeaderView: UIView {
 
-    let profileImageView = UIImageView()
-    let nicknameLabel = UILabel()
-    let introLabel = UILabel()
+    private let profileImageView = UIImageView()
+    private let nicknameLabel = UILabel()
+    private let introLabel = UILabel()
 
     override init(frame: CGRect) {
         super.init(frame: frame)

@@ -16,7 +16,7 @@ final class FollowView: UIView {
     weak var delegate: FollowViewDelegate?
     
     private let underlineView = UIView()
-    let segmentedControl = UISegmentedControl()
+    private let segmentedControl = UISegmentedControl()
     let tableView = UITableView()
     
     private lazy var lineConstraint: NSLayoutConstraint = {

@@ -16,15 +16,15 @@ final class CommentCell: UITableViewCell {
     
     weak var delegate: CommentCellDelegate?
     
-    let containerView = UIView()
-    let profileImage = UIImageView()
-    let nicknameLabel = UILabel()
+    private let containerView = UIView()
+    private let profileImage = UIImageView()
+    private let nicknameLabel = UILabel()
     private let arrowImageView = UIImageView()
-    let replyingLabel = UILabel()
-    let commentLabel = UILabel()
-    let dateLabel = UILabel()
-    let replyButton = UIButton(type: .system)
-    let menuButton = UIButton(type: .system)
+    private let replyingLabel = UILabel()
+    private let commentLabel = UILabel()
+    private let dateLabel = UILabel()
+    private let replyButton = UIButton(type: .system)
+    private let menuButton = UIButton(type: .system)
     
     private lazy var containerLeadingConstraint: NSLayoutConstraint = {
         containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8)

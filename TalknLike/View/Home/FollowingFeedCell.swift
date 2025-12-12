@@ -17,15 +17,15 @@ final class FollowingFeedCell: UITableViewCell {
     weak var delegate: FollowingFeedCellDelegate?
     private var loadTask: Task<Void, Never>?
 
-    let profileImage = UIImageView()
-    let nicknameLabel = UILabel()
-    let titleLabel = UILabel()
-    let dateLabel = UILabel()
-    let contentLabel = UILabel()
-    let likeButton = UIButton()
-    var likeCount: Int = 0
-    let commentButton = UIButton()
-    let buttonsStackView = UIStackView()
+    private let profileImage = UIImageView()
+    private let nicknameLabel = UILabel()
+    private let titleLabel = UILabel()
+    private let dateLabel = UILabel()
+    private let contentLabel = UILabel()
+    private let likeButton = UIButton()
+    private var likeCount: Int = 0
+    private let commentButton = UIButton()
+    private let buttonsStackView = UIStackView()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -205,6 +205,10 @@ extension FollowingFeedCell {
 
 extension FollowingFeedCell {
  
+    var isLike: Bool {
+        likeButton.isSelected
+    }
+    
     func toggleLikeState() {
         likeButton.isSelected.toggle()
         likeCount = likeButton.isSelected ? likeCount + 1 : max(0, likeCount - 1)

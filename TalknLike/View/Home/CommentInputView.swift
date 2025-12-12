@@ -14,9 +14,10 @@ protocol CommentInputViewDelegate: AnyObject {
 final class CommentInputView: UIView {
     
     weak var delegate: CommentInputViewDelegate?
-    let profileImageView = UIImageView()
-    let textField = UITextField()
+
+    private let profileImageView = UIImageView()
     private let defaultPlaceHolder = "댓글 추가..."
+    let textField = UITextField()
     
     override init(frame: CGRect) {
         super.init(frame: frame)

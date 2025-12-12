@@ -75,8 +75,9 @@ extension PostViewController {
     }
 
     private func savePost() async throws {
-        let title = postView.titleTextField.text
-        let content = postView.textView.text
+        let title = postView.title
+        let content = postView.content
+        
         switch mode {
         case .create:
             try await PostStore.shared.post(title: title, content: content)
@@ -96,10 +97,7 @@ extension PostViewController {
         CurrentUserStore.shared.userPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] user in
-                self?.postView.nicknameLabel.text = user.nickname
-                Task { @MainActor [weak self] in
-                    self?.postView.profileImageView.image = await ImageLoader.loadImage(from: user.photoURL) ?? UIImage(systemName: "person.fill")
-                }
+                self?.postView.configure(user: user)
             }
             .store(in: &cancellables)
     }
@@ -124,9 +122,7 @@ extension PostViewController {
             title = "새 게시글"
         case .edit(let post):
             title = "게시글 수정"
-            postView.textView.text = post.content
-            postView.titleTextField.text = post.title
-            postView.placeholderLabel.isHidden = true
+            postView.configureEdit(post: post)
         }
     }
     

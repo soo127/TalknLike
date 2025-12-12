@@ -10,8 +10,9 @@ import UIKit
 final class ProfileEditView: UIView {
 
     let cameraButton = UIButton()
-    let profileImageView = UIImageView()
     let tableView = UITableView(frame: .zero, style: .grouped)
+    
+    private let profileImageView = UIImageView()
     private let header = UIView()
 
     override init(frame: CGRect) {
@@ -102,6 +103,18 @@ extension ProfileEditView {
             trailing: trailingAnchor,
             padding: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         )
+    }
+    
+}
+
+extension ProfileEditView {
+    
+    func configure(user: UserProfile) {
+        tableView.reloadData()
+        
+        Task { @MainActor [weak self] in
+            self?.profileImageView.image = await ImageLoader.loadImage(from: user.photoURL) ?? UIImage(systemName: "person.fill")
+        }
     }
     
 }

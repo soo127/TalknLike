@@ -9,7 +9,7 @@ import UIKit
 
 final class FindPwView: UIView {
     
-    let title = UILabel()
+    private let title = UILabel()
     let emailField = UITextField.make("이메일 입력")
     let okButton = UIButton.make("확인", backgroundColor: .systemBlue, height: 44)
 

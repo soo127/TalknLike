@@ -41,10 +41,7 @@ final class ProfileEditViewController: UIViewController, UITableViewDelegate, UI
         CurrentUserStore.shared.userPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] user in
-                self?.profileEditView.tableView.reloadData()
-                Task { @MainActor [weak self] in
-                    self?.profileEditView.profileImageView.image = await ImageLoader.loadImage(from: user.photoURL) ?? UIImage(systemName: "person.fill")
-                }
+                self?.profileEditView.configure(user: user)
             }
             .store(in: &cancellables)
     }

@@ -9,7 +9,7 @@ import UIKit
 
 final class NotificationCell: UITableViewCell {
 
-    let profileImageView = UIImageView()
+    private let profileImageView = UIImageView()
     private let messageLabel = UILabel()
     private let dateLabel = UILabel()
 

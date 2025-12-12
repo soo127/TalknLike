@@ -9,13 +9,16 @@ import UIKit
 
 final class PostView: UIView, UITextViewDelegate {
     
-    let placeholderLabel = UILabel()
-    let profileImageView = UIImageView()
-    let nicknameLabel = UILabel()
-    let titleTextField = UITextField()
-    let textView = UITextView()
+    private let placeholderLabel = UILabel()
+    private let profileImageView = UIImageView()
+    private let nicknameLabel = UILabel()
+    private let titleTextField = UITextField()
+    private let textView = UITextView()
     private let separator = UIView()
     private var profileHeader = UIStackView()
+    
+    var title: String? { return titleTextField.text }
+    var content: String? { return textView.text }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -111,4 +114,21 @@ extension PostView {
         )
     }
     
+}
+
+extension PostView {
+    
+    func configure(user: UserProfile) {
+        nicknameLabel.text = user.nickname
+        Task { @MainActor [weak self] in
+            self?.profileImageView.image = await ImageLoader.loadImage(from: user.photoURL) ?? UIImage(systemName: "person.fill")
+        }
+    }
+    
+    func configureEdit(post: Post) {
+        textView.text = post.content
+        titleTextField.text = post.title
+        placeholderLabel.isHidden = true
+    }
+
 }

@@ -15,10 +15,10 @@ final class FollowRequestCell: UITableViewCell {
     
     weak var delegate: FollowRequestCellDelegate?
     
-    let profileImage = UIImageView()
-    let nicknameLabel = UILabel()
-    let dateLabel = UILabel()
-    let acceptButton = UIButton()
+    private let profileImage = UIImageView()
+    private let nicknameLabel = UILabel()
+    private let dateLabel = UILabel()
+    private let acceptButton = UIButton()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
