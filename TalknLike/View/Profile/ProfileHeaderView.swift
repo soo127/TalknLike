@@ -108,7 +108,7 @@ extension ProfileHeaderView {
         introLabel.text = user.bio
         
         Task { @MainActor in
-            let image = await ImageLoader.loadImage(from: user.photoURL) ?? UIImage(systemName: "person.fill")
+            let image = await ImageLoader.shared.loadImage(from: user.photoURL) ?? UIImage(systemName: "person.fill")
             self.profileImageView.image = image
         }
     }

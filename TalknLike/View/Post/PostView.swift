@@ -121,7 +121,7 @@ extension PostView {
     func configure(user: UserProfile) {
         nicknameLabel.text = user.nickname
         Task { @MainActor [weak self] in
-            self?.profileImageView.image = await ImageLoader.loadImage(from: user.photoURL) ?? UIImage(systemName: "person.fill")
+            self?.profileImageView.image = await ImageLoader.shared.loadImage(from: user.photoURL) ?? UIImage(systemName: "person.fill")
         }
     }
     

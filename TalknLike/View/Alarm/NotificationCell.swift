@@ -112,7 +112,7 @@ extension NotificationCell {
             messageLabel.text = "\(nickname)님이 당신의 게시글에 댓글을 남겼습니다."
         }
         Task { @MainActor in
-            let image = await ImageLoader.loadImage(from: profile.photoURL)
+            let image = await ImageLoader.shared.loadImage(from: profile.photoURL)
             
             profileImageView.image = image
         }

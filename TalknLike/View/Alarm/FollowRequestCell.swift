@@ -141,7 +141,7 @@ extension FollowRequestCell {
         dateLabel.text = date.formatted()
         acceptButton.isHidden = !showAcceptButton
         Task { @MainActor in
-            let image = await ImageLoader.loadImage(from: user.photoURL)
+            let image = await ImageLoader.shared.loadImage(from: user.photoURL)
             profileImage.image = image
             
         }

@@ -252,7 +252,7 @@ extension CommentCell {
         containerLeadingConstraint.constant = comment.parentID != nil ? 40 : 8
         
         Task { @MainActor in
-            let image = await ImageLoader.loadImage(from: profile.photoURL)
+            let image = await ImageLoader.shared.loadImage(from: profile.photoURL)
             profileImage.image = image
         }
     }

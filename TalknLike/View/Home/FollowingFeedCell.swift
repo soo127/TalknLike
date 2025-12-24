@@ -229,7 +229,7 @@ extension FollowingFeedCell {
     
     private func loadAsyncData(feedItem: FeedItem) {
         loadTask = Task { @MainActor in
-            let profileImage = await ImageLoader.loadImage(from: feedItem.profile.photoURL)
+            let profileImage = await ImageLoader.shared.loadImage(from: feedItem.profile.photoURL)
             
             var isLiked = false
             if let documentID = feedItem.post.documentID {

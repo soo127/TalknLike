@@ -119,7 +119,7 @@ extension CommentInputView {
     
     func configure(profileImageURL: String?) {
         Task { @MainActor [weak self] in
-            self?.profileImageView.image = await ImageLoader.loadImage(from: profileImageURL)
+            self?.profileImageView.image = await ImageLoader.shared.loadImage(from: profileImageURL)
         }
     }
     
