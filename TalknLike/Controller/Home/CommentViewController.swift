@@ -38,9 +38,14 @@ final class CommentViewController: UIViewController {
         view = commentView
         view.backgroundColor = .systemBackground
     }
+    
+    deinit {
+        CommentManager.shared.stopObserving()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        CommentManager.shared.startObserving(postID: postID)
         setupTableView()
         setupNavigationBar()
         bindComments()
@@ -72,15 +77,20 @@ final class CommentViewController: UIViewController {
         CommentManager.shared.commentsPublisher
             .receive(on: RunLoop.main)
             .sink{ [weak self] comments in
-                Task {
-                    let count = comments.count
-                    let orderedComments = CommentManager.shared.makeDisplayOrder(comments: comments)
-                    self?.displayComments = try await CommentManager.shared.mergeWithProfiles(comments: orderedComments)
-                    self?.title = "댓글 \(count)개"
-                    self?.commentView.tableView.reloadData()
-                }
+                self?.updateUI(with: comments)
             }
             .store(in: &cancellables)
+    }
+    
+    @MainActor
+    private func updateUI(with comments: [Comment]) {
+        Task {
+            let count = comments.count
+            self.title = "댓글 \(count)개"
+            let ordered = CommentManager.shared.makeDisplayOrder(comments: comments)
+            self.displayComments = try await CommentManager.shared.mergeWithProfiles(comments: ordered)
+            self.commentView.tableView.reloadData()
+        }
     }
     
     private func setupCommentInputView() {

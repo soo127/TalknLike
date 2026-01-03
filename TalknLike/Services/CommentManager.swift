@@ -11,25 +11,36 @@ import FirebaseFirestore
 final class CommentManager {
     
     static let shared = CommentManager()
+    private var listener: ListenerRegistration?
     
     private let commentsSubject = CurrentValueSubject<[Comment], Never>([])
     var commentsPublisher: AnyPublisher<[Comment], Never> {
         commentsSubject.eraseToAnyPublisher()
     }
-    
-    func fetchComments(postID: String) async throws {
-        let comments = try await Firestore.firestore()
+
+    func startObserving(postID: String) {
+        listener = Firestore.firestore()
             .collection("Posts")
             .document(postID)
             .collection("comments")
-            .getDocuments()
-            .documents
-            .compactMap {
-                var data = try $0.data(as: Comment.self)
-                data.documentID = $0.documentID
-                return data
+            .addSnapshotListener { [weak self] snapshot, _ in
+                guard let documents = snapshot?.documents else { return }
+                
+                let comments = documents.compactMap { doc -> Comment? in
+                    guard var data = try? doc.data(as: Comment.self) else {
+                        return nil
+                    }
+                    data.documentID = doc.documentID
+                    return data
+                }
+                
+                self?.commentsSubject.send(comments)
             }
-        commentsSubject.send(comments)
+    }
+    
+    func stopObserving() {
+        listener?.remove()
+        commentsSubject.send([])
     }
     
     func addComment(postID: String, content: String, parentID: String?, replyTo replyingID: String?) async throws {
@@ -53,10 +64,6 @@ final class CommentManager {
         
         newComment.documentID = ref.documentID
         try ref.setData(from: newComment)
-        
-        var current = commentsSubject.value
-        current.append(newComment)
-        commentsSubject.send(current)
     }
     
     func updateComment(comment: Comment, newContent: String) async throws {
@@ -72,12 +79,6 @@ final class CommentManager {
                 "content": newContent,
                 "createdAt": Date()
             ])
-        
-        var current = commentsSubject.value
-        if let index = current.firstIndex(where: { $0.documentID == docID }) {
-            current[index].content = newContent
-            commentsSubject.send(current)
-        }
     }
     
     func deleteComment(comment: Comment) async throws {
@@ -108,13 +109,8 @@ final class CommentManager {
                     }
                 }
             }
-            
             try await group.waitForAll()
         }
-        
-        var current = commentsSubject.value
-        current.removeAll { $0.documentID == docID || $0.parentID == docID }
-        commentsSubject.send(current)
     }
     
     func makeDisplayOrder(comments: [Comment]) -> [Comment] {

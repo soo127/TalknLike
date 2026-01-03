@@ -93,10 +93,7 @@ extension BaseFeedViewController: FollowingFeedCellDelegate  {
         guard let postID = feedItem.post.documentID else {
             return
         }
-        Task { @MainActor in
-            try await CommentManager.shared.fetchComments(postID: postID)
-            presentCommentSheet(uid: feedItem.profile.uid, postID: postID)
-        }
+        presentCommentSheet(uid: feedItem.profile.uid, postID: postID)
     }
 
     func presentCommentSheet(uid: String, postID: String) {
