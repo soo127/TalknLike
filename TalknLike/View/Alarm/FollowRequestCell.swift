@@ -14,6 +14,7 @@ protocol FollowRequestCellDelegate: AnyObject {
 final class FollowRequestCell: UITableViewCell {
     
     weak var delegate: FollowRequestCellDelegate?
+    private var imageLoadTask: Task<Void, Never>?
     
     private let profileImage = UIImageView()
     private let nicknameLabel = UILabel()
@@ -33,6 +34,13 @@ final class FollowRequestCell: UITableViewCell {
         setupSubviews()
         setupButtonActions()
         setupLayout()
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageLoadTask?.cancel()
+        imageLoadTask = nil
+        profileImage.image = UIImage(systemName: "person.crop.circle")
     }
     
 }
@@ -140,10 +148,13 @@ extension FollowRequestCell {
         nicknameLabel.text = user.nickname
         dateLabel.text = date.formatted()
         acceptButton.isHidden = !showAcceptButton
-        Task { @MainActor in
+        
+        imageLoadTask?.cancel()
+        imageLoadTask = Task { @MainActor in
             let image = await ImageLoader.shared.loadImage(from: user.photoURL)
-            profileImage.image = image
-            
+            if !Task.isCancelled {
+                profileImage.image = image
+            }
         }
     }
     

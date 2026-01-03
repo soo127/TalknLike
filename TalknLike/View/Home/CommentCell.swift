@@ -15,6 +15,7 @@ protocol CommentCellDelegate: AnyObject {
 final class CommentCell: UITableViewCell {
     
     weak var delegate: CommentCellDelegate?
+    private var imageLoadTask: Task<Void, Never>?
     
     private let containerView = UIView()
     private let profileImage = UIImageView()
@@ -43,6 +44,13 @@ final class CommentCell: UITableViewCell {
         setupSubviews()
         setupButtonActions()
         setupLayout()
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageLoadTask?.cancel()
+        imageLoadTask = nil
+        profileImage.image = UIImage(systemName: "person.crop.circle")
     }
     
 }
@@ -251,9 +259,12 @@ extension CommentCell {
         
         containerLeadingConstraint.constant = comment.parentID != nil ? 40 : 8
         
-        Task { @MainActor in
+        imageLoadTask?.cancel()
+        imageLoadTask = Task { @MainActor in
             let image = await ImageLoader.shared.loadImage(from: profile.photoURL)
-            profileImage.image = image
+            if !Task.isCancelled {
+                profileImage.image = image
+            }
         }
     }
     

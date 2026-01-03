@@ -14,6 +14,8 @@ protocol SearchUserCellDelegate: AnyObject {
 final class SearchUserCell: UITableViewCell {
     
     weak var delegate: SearchUserCellDelegate?
+    private var imageLoadTask: Task<Void, Never>?
+    
     private let profileImage = UIImageView()
     private let nicknameLabel = UILabel()
     private let introLabel = UILabel()
@@ -36,6 +38,13 @@ final class SearchUserCell: UITableViewCell {
     
     @objc private func followButtonTapped() {
         delegate?.didTapButton(self)
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageLoadTask?.cancel()
+        imageLoadTask = nil
+        profileImage.image = UIImage(systemName: "person.crop.circle")
     }
     
 }
@@ -145,9 +154,13 @@ extension SearchUserCell {
     private func configure(user: UserProfile) {
         nicknameLabel.text = user.nickname
         introLabel.text = user.bio
-        Task { @MainActor in
+        
+        imageLoadTask?.cancel()
+        imageLoadTask = Task { @MainActor in
             let image = await ImageLoader.shared.loadImage(from: user.photoURL)
-            profileImage.image = image
+            if !Task.isCancelled {
+                profileImage.image = image
+            }
         }
     }
     
