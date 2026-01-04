@@ -75,7 +75,7 @@ final class CommentViewController: UIViewController {
     
     private func bindComments() {
         CommentManager.shared.commentsPublisher
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .sink{ [weak self] comments in
                 self?.updateUI(with: comments)
             }

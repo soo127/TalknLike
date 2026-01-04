@@ -42,7 +42,7 @@ final class NewFollowerViewController: UIViewController {
     
     private func bindFollowRequests() {
         FollowManager.shared.followRequestsPublisher
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] followRelations in
                 self?.followRelations = followRelations
                 self?.tableView.reloadData()

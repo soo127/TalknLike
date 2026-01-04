@@ -44,7 +44,7 @@ final class FollowViewController: UIViewController {
     
     private func bindFollowData() {
         FollowManager.shared.followersPublisher
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] profiles in
                 self?.followers = profiles
                 self?.followView.updateFollowerCount(profiles.count)
@@ -53,7 +53,7 @@ final class FollowViewController: UIViewController {
             .store(in: &cancellables)
         
         FollowManager.shared.followingsPublisher
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] profiles in
                 self?.followings = profiles
                 self?.followView.updateFollowingCount(profiles.count)

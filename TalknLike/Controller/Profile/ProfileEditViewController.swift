@@ -39,7 +39,7 @@ final class ProfileEditViewController: UIViewController, UITableViewDelegate, UI
 
     private func bindUser() {
         CurrentUserStore.shared.userPublisher
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] user in
                 self?.profileEditView.configure(user: user)
             }

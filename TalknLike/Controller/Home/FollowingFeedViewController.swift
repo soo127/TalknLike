@@ -25,7 +25,7 @@ final class FollowingFeedViewController: BaseFeedViewController {
 
     private func bindFollowings() {
         FollowManager.shared.followingsPublisher
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] profiles in
                 Task {
                     self?.posts = try await PostStore.shared.getFollowingFeed(for: profiles)

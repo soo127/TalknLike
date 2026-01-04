@@ -28,7 +28,7 @@ final class MyPostsViewController: BaseFeedViewController {
     
     private func bindPosts() {
         PostStore.shared.postsPublisher
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] posts in
                 guard let currentUser = CurrentUserStore.shared.currentUser else {
                     return
